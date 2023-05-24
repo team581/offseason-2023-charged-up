@@ -33,6 +33,7 @@ import frc.robot.managers.AutoRotate;
 import frc.robot.managers.Autobalance;
 import frc.robot.managers.SuperstructureManager;
 import frc.robot.managers.SuperstructureMotionManager;
+import frc.robot.managers.VisionManager;
 import frc.robot.swerve.SwerveModule;
 import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.util.scheduling.LifecycleSubsystemManager;
@@ -107,6 +108,8 @@ public class Robot extends LoggedRobot {
           new CANdle(Config.LIGHTS_CANDLE_ID), intake, superstructureManager, localization);
   private final RumbleControllerSubsystem rumbleController =
       new RumbleControllerSubsystem(new XboxController(Config.OPERATOR_CONTROLLER_PORT));
+      private final VisionManager visionManager =
+      new VisionManager(localization, superstructureManager, swerve);
 
   private final Autobalance autobalance = new Autobalance(swerve, imu);
   private final AutoRotate autoRotate = new AutoRotate(swerve);
@@ -173,7 +176,7 @@ public class Robot extends LoggedRobot {
     // Intake on floor
     driveController
         .leftTrigger(0.3)
-        .onTrue(superstructureManager.getFloorIntakeSpinningCommand())
+        .onTrue(visionManager.getConeIntakeCommand())
         .onFalse(superstructureManager.getFloorIntakeIdleCommand());
     // Outtake/score low node/finish manual score
     driveController

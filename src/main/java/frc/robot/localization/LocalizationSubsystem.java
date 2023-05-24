@@ -173,6 +173,11 @@ public class LocalizationSubsystem extends LifecycleSubsystem {
     resetPose(pose);
   }
 
+  public GamePiecePosition getGamePiecePosition() {
+    return new GamePiecePosition(
+        LimelightHelpers.getTX("limelight"), LimelightHelpers.getTY("limelight"));
+  }
+
   public boolean isVisionWorking() {
     return visionWorking;
   }

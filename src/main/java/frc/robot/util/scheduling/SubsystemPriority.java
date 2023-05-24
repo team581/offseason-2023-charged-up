@@ -12,6 +12,7 @@ public enum SubsystemPriority {
   // Run autobalance and autorotate before swerve
   AUTOBALANCE(11),
   AUTOROTATE(11),
+  VISION_MANAGER(11),
 
   WRIST(10),
   ELEVATOR(10),

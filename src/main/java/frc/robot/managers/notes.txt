@@ -1,0 +1,4 @@
+lower Intake and spinning
+get tx of cone and point robot in that direction so it is aligned with cone
+drive forward slowly
+when cone is picked stow

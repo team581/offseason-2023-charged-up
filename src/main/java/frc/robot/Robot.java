@@ -111,7 +111,7 @@ public class Robot extends LoggedRobot {
 
   private final Autobalance autobalance = new Autobalance(swerve, imu);
   private final AutoRotate autoRotate = new AutoRotate(swerve);
-  private final VisionManager visionManager = new VisionManager(localization, swerve, intake, imu);
+  private final VisionManager visionManager = new VisionManager(localization, swerve, intake, imu, superstructureManager);
 
   private final Autos autos =
       new Autos(

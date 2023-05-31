@@ -111,6 +111,7 @@ public class LifecycleSubsystem extends SubsystemBase {
 
     previousStage = stage;
   }
+
   /** {@link IterativeRobotBase#testInit()} */
   public void testInit() {}
 

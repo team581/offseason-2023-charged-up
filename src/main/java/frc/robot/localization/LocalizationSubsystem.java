@@ -189,8 +189,7 @@ public class LocalizationSubsystem extends LifecycleSubsystem {
 
   public GamePiecePosition getGamePiecePosition() {
     return new GamePiecePosition(
-        LimelightHelpers.getTX("limelight"),
-        LimelightHelpers.getTY("limelight"));
+        LimelightHelpers.getTX("limelight"), LimelightHelpers.getTY("limelight"));
   }
 
   public boolean atPose(Pose2d goal) {

@@ -111,7 +111,8 @@ public class Robot extends LoggedRobot {
 
   private final Autobalance autobalance = new Autobalance(swerve, imu);
   private final AutoRotate autoRotate = new AutoRotate(swerve);
-  private final VisionManager visionManager = new VisionManager(localization, swerve, intake, imu, superstructureManager);
+  private final VisionManager visionManager =
+      new VisionManager(localization, swerve, intake, imu, superstructureManager);
 
   private final Autos autos =
       new Autos(
@@ -173,11 +174,9 @@ public class Robot extends LoggedRobot {
     swerve.setDefaultCommand(swerve.getDriveTeleopCommand(driveController));
 
     // Intake on floor
-    driveController
-        .leftTrigger(0.3)
-        .onTrue(visionManager.getIntakeConeCommand());
-             // .onTrue(superstructureManager.getFloorIntakeSpinningCommand())
-             // .onFalse(superstructureManager.getFloorIntakeIdleCommand());
+    driveController.leftTrigger(0.3).onTrue(visionManager.getIntakeConeCommand());
+    // .onTrue(superstructureManager.getFloorIntakeSpinningCommand())
+    // .onFalse(superstructureManager.getFloorIntakeIdleCommand());
     // Outtake/score low node/finish manual score
     driveController
         .rightTrigger(0.3)

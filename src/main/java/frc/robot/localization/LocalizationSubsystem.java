@@ -187,6 +187,12 @@ public class LocalizationSubsystem extends LifecycleSubsystem {
         () -> resetGyro(Rotation2d.fromDegrees(FmsSubsystem.isRedAlliance() ? 0 : 180)));
   }
 
+  public GamePiecePosition getGamePiecePosition() {
+    return new GamePiecePosition(
+        LimelightHelpers.getTX("limelight"),
+        LimelightHelpers.getTY("limelight"));
+  }
+
   public boolean atPose(Pose2d goal) {
 
     Pose2d pose = getPose();

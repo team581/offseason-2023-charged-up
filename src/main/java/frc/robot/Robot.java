@@ -33,6 +33,7 @@ import frc.robot.managers.AutoRotate;
 import frc.robot.managers.Autobalance;
 import frc.robot.managers.SuperstructureManager;
 import frc.robot.managers.SuperstructureMotionManager;
+import frc.robot.managers.VisionManager;
 import frc.robot.swerve.SwerveModule;
 import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.util.scheduling.LifecycleSubsystemManager;
@@ -110,6 +111,7 @@ public class Robot extends LoggedRobot {
 
   private final Autobalance autobalance = new Autobalance(swerve, imu);
   private final AutoRotate autoRotate = new AutoRotate(swerve);
+  private final VisionManager visionManager = new VisionManager(localization, swerve, intake, imu);
 
   private final Autos autos =
       new Autos(
@@ -173,8 +175,9 @@ public class Robot extends LoggedRobot {
     // Intake on floor
     driveController
         .leftTrigger(0.3)
-        .onTrue(superstructureManager.getFloorIntakeSpinningCommand())
-        .onFalse(superstructureManager.getFloorIntakeIdleCommand());
+        .onTrue(visionManager.getIntakeConeCommand());
+             // .onTrue(superstructureManager.getFloorIntakeSpinningCommand())
+             // .onFalse(superstructureManager.getFloorIntakeIdleCommand());
     // Outtake/score low node/finish manual score
     driveController
         .rightTrigger(0.3)

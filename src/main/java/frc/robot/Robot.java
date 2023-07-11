@@ -224,17 +224,17 @@ public class Robot extends LoggedRobot {
     operatorController
         .a()
         .onTrue(superstructureManager.getManualScoreCommand(NodeHeight.LOW))
-        .onFalse(superstructureManager.getCommand(States.STOWED_ROLLING));
+        .onFalse(superstructureManager.getCommand(States.STOWED));
     // Manual score mid
     operatorController
         .b()
         .onTrue(superstructureManager.getManualScoreCommand(NodeHeight.MID))
-        .onFalse(superstructureManager.getCommand(States.STOWED_ROLLING));
+        .onFalse(superstructureManager.getCommand(States.STOWED));
     // Manual score high
     operatorController
         .y()
         .onTrue(superstructureManager.getManualScoreCommand(NodeHeight.HIGH))
-        .onFalse(superstructureManager.getCommand(States.STOWED_ROLLING));
+        .onFalse(superstructureManager.getCommand(States.STOWED));
 
     // Stow all
     operatorController.x().onTrue(superstructureManager.getCommand(States.STOWED));

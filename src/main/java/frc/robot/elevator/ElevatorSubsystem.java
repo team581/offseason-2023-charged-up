@@ -8,12 +8,14 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
+import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Positions;
 import frc.robot.config.Config;
+import frc.robot.util.HomingState;
 import frc.robot.util.scheduling.LifecycleSubsystem;
 import frc.robot.util.scheduling.SubsystemPriority;
 import org.littletonrobotics.junction.Logger;
@@ -23,8 +25,7 @@ public class ElevatorSubsystem extends LifecycleSubsystem {
   private final TalonFX motor;
   private double goalPositionInInches = Positions.STOWED.height;
   private double sensorUnitsPerElevatorInch = (Config.ELEVATOR_GEARING * 2048) / (1.75 * Math.PI);
-  private boolean isHoming = false;
-  private boolean goToGoal = false;
+  private HomingState homingState = HomingState.NOT_HOMED;
   private static final double TOLERANCE = 0.5;
 
   public ElevatorSubsystem(TalonFX motor) {
@@ -47,11 +48,16 @@ public class ElevatorSubsystem extends LifecycleSubsystem {
   }
 
   public void startHoming() {
-    this.isHoming = true;
+    homingState = HomingState.HOMING;
   }
 
-  public boolean isHoming() {
-    return isHoming;
+  public void resetHoming() {
+    homingState = HomingState.NOT_HOMED;
+    motor.set(TalonFXControlMode.PercentOutput, 0);
+  }
+
+  public HomingState getHomingState() {
+    return homingState;
   }
 
   public double getHeight() {
@@ -74,7 +80,6 @@ public class ElevatorSubsystem extends LifecycleSubsystem {
     // Save goal position
     this.goalPositionInInches =
         MathUtil.clamp(goal, Config.ELEVATOR_MIN_HEIGHT, Config.ELEVATOR_MAX_HEIGHT);
-    goToGoal = true;
   }
 
   @Override
@@ -82,29 +87,24 @@ public class ElevatorSubsystem extends LifecycleSubsystem {
     Logger.getInstance().recordOutput("Elevator/Position", getHeight());
     Logger.getInstance().recordOutput("Elevator/Current", motor.getSupplyCurrent());
     Logger.getInstance().recordOutput("Elevator/GoalPosition", goalPositionInInches);
-    Logger.getInstance().recordOutput("Elevator/Homing", isHoming);
+    Logger.getInstance().recordOutput("Elevator/Homing", homingState.toString());
     Logger.getInstance().recordOutput("Elevator/AppliedVoltage", motor.getMotorOutputVoltage());
     Logger.getInstance().recordOutput("Elevator/SensorVelocity", motor.getSelectedSensorVelocity());
-  }
-
-  @Override
-  public void enabledInit() {
-    goToGoal = false;
   }
 
   @Override
   public void enabledPeriodic() {
     // Add homing sequence
     // Convert goal in inches to sensor units, and set motor
-    if (isHoming) {
+    if (homingState == HomingState.HOMING) {
       motor.set(ControlMode.PercentOutput, -0.15);
       double current = motor.getSupplyCurrent();
       if (current > HOMING_CURRENT) {
         motor.setSelectedSensorPosition(0);
-        this.isHoming = false;
+        homingState = HomingState.HOMED;
         goalPositionInInches = Positions.STOWED.height;
       }
-    } else if (goToGoal) {
+    } else if (homingState == HomingState.HOMED) {
       double goalPositionInSensorUnits = goalPositionInInches * sensorUnitsPerElevatorInch;
       motor.set(
           ControlMode.MotionMagic,
@@ -117,6 +117,6 @@ public class ElevatorSubsystem extends LifecycleSubsystem {
   }
 
   public Command getHomeCommand() {
-    return runOnce(() -> startHoming()).andThen(Commands.waitUntil(() -> isHoming() == false));
+    return runOnce(() -> startHoming()).andThen(Commands.waitUntil(() -> homingState == HomingState.HOMED));
   }
 }

@@ -117,6 +117,7 @@ public class ElevatorSubsystem extends LifecycleSubsystem {
   }
 
   public Command getHomeCommand() {
-    return runOnce(() -> startHoming()).andThen(Commands.waitUntil(() -> homingState == HomingState.HOMED));
+    return runOnce(() -> startHoming())
+        .andThen(Commands.waitUntil(() -> homingState == HomingState.HOMED));
   }
 }

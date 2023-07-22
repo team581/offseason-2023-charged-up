@@ -46,7 +46,6 @@ public class SuperstructureMotionManager extends LifecycleSubsystem {
     double wristRange = Config.SUPERSTRUCTURE_WRIST_RANGE.getDegrees();
     double goalDegrees = newGoal.angle.getDegrees();
     double wristAngle = wrist.getAngle().getDegrees();
-    double intermediatePointDegrees = 50;
 
     boolean wristGoalInCollisionArea = goalDegrees < wristRange;
     boolean currentWristAngleInCollisionArea = wristAngle < wristRange;
@@ -65,9 +64,10 @@ public class SuperstructureMotionManager extends LifecycleSubsystem {
         && (wristGoalInCollisionArea || currentWristAngleInCollisionArea)
         && (leavingBumperArea || goingToBumperArea)) {
       positionList.add(
-          new SuperstructurePosition(elevator.getHeight(), Rotation2d.fromDegrees(50), -1));
+          new SuperstructurePosition(elevator.getHeight(), Rotation2d.fromDegrees(wristRange), -1));
       positionList.add(
-          new SuperstructurePosition(goalHeight, Rotation2d.fromDegrees(50), goalHeight / 3));
+          new SuperstructurePosition(
+              goalHeight, Rotation2d.fromDegrees(wristRange), goalHeight / 3));
     }
 
     positionList.add(new SuperstructurePosition(goalHeight, newGoal.angle, -1));

@@ -94,7 +94,7 @@ public class Config {
 
   public static final double ELEVATOR_GEARING = IS_SPIKE ? 7.2 : 16.0;
   public static final double ELEVATOR_MIN_HEIGHT = IS_SPIKE ? 0 : 0;
-  public static final double ELEVATOR_MAX_HEIGHT = IS_SPIKE ? 25.3 : 12;
+  public static final double ELEVATOR_MAX_HEIGHT = IS_SPIKE ? 25.6 : 12;
   public static final double ELEVATOR_KF = IS_SPIKE ? 0 : 0;
   public static final double ELEVATOR_KP = IS_SPIKE ? 0.7 : 0.8;
   public static final double ELEVATOR_KI = IS_SPIKE ? 0 : 0;
@@ -110,15 +110,16 @@ public class Config {
   public static final int WRIST_MOTOR_ID = 16;
   public static final double WRIST_GEARING = IS_SPIKE ? 25.0 * 2 : 48.0 * 2;
   public static final int WRIST_KF = IS_SPIKE ? 0 : 0;
-  public static final double WRIST_KP = IS_SPIKE ? 0.25 : 0.1;
+  public static final double WRIST_KP = IS_SPIKE ? 0.2 : 0.1;
   public static final int WRIST_KI = IS_SPIKE ? 0 : 0;
   public static final int WRIST_KD = IS_SPIKE ? 0 : 0;
-  public static final int WRIST_MOTION_CRUISE_VELOCITY = IS_SPIKE ? 10000 : 20000;
-  public static final int WRIST_MOTION_ACCELERATION = IS_SPIKE ? 65000 : 50000;
-  public static final double WRIST_HOMED_CURRENT = IS_SPIKE ? 4 : 5;
+  public static final int WRIST_MOTION_CRUISE_VELOCITY = IS_SPIKE ? 7500 : 20000;
+  public static final int WRIST_MOTION_ACCELERATION = IS_SPIKE ? 60000 : 50000;
+  public static final double WRIST_HOMED_CURRENT = IS_SPIKE ? 1.3 : 5;
   public static final Rotation2d WRIST_HOMED_ANGLE =
-      IS_SPIKE ? Rotation2d.fromDegrees(0) : Rotation2d.fromDegrees(0.0);
-  public static final double WRIST_HOMING_VOLTAGE = IS_SPIKE ? -0.15 : -0.15;
+      IS_SPIKE ? Rotation2d.fromDegrees(73) : Rotation2d.fromDegrees(0.0);
+  // TODO: Once hardstop is added, start homing with a negative voltage
+  public static final double WRIST_HOMING_VOLTAGE = IS_SPIKE ? 0.1 : -0.15;
 
   public static final int INTAKE_MOTOR_ID = 17;
   public static final boolean INVERTED_INTAKE = IS_SPIKE ? false : true;
@@ -154,7 +155,7 @@ public class Config {
 
   public static final double SUPERSTRUCTURE_COLLISION_HEIGHT = IS_SPIKE ? 0.75 : 26;
   public static final Rotation2d SUPERSTRUCTURE_WRIST_RANGE =
-      IS_SPIKE ? Rotation2d.fromDegrees(50) : Rotation2d.fromDegrees(13);
+      IS_SPIKE ? Rotation2d.fromDegrees(25) : Rotation2d.fromDegrees(13);
 
   public static final double ROBOT_CENTER_TO_FRONT =
       IS_SPIKE ? Units.inchesToMeters(20) : Units.inchesToMeters(17.5);

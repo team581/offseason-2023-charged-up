@@ -140,7 +140,7 @@ public class SuperstructureManager extends LifecycleSubsystem {
         getManualScoreCommand(scoringLocation)
             .andThen(Commands.waitSeconds(delay))
             .andThen(finishManualScoreCommand())
-            .andThen(getCommand(States.STOWED_ROLLING).unless(() -> !autoStow)),
+            .andThen(getCommand(States.STOWED).unless(() -> !autoStow)),
         () ->
             goal.position.height >= Positions.CONE_NODE_MID.height
                 || goal.position.height >= Positions.CUBE_NODE_MID.height);

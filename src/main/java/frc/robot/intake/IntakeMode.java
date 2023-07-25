@@ -11,5 +11,6 @@ public enum IntakeMode {
   MANUAL_OUTTAKE,
   OUTTAKE_CUBE,
   OUTTAKE_CONE,
+  SHOOT_CONE,
   STOPPED;
 }

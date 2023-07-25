@@ -250,28 +250,37 @@ public class SuperstructureManager extends LifecycleSubsystem {
             () -> {
               goalBeforeDunk = goal;
             })
+        .andThen(getDunkCommand().unless(() -> !shouldDunk()))
         .andThen(
-            getCommand(
-                    () ->
-                        new SuperstructureState(
-                            new SuperstructurePosition(
-                                goalBeforeDunk.position.height + 0.5,
-                                Rotation2d.fromDegrees(
-                                    goalBeforeDunk.position.angle.getDegrees() + 15),
-                                -1),
-                            IntakeMode.OUTTAKE_CONE))
-                .unless(
-                    () ->
-                        mode == HeldGamePiece.CUBE
-                            || goal.position.height < Positions.CONE_NODE_MID.height))
-        .andThen(
-            Commands.either(
-                Commands.runOnce(() -> setManualIntakeMode(IntakeMode.OUTTAKE_CUBE)),
-                Commands.runOnce(() -> setManualIntakeMode(IntakeMode.OUTTAKE_CONE)),
-                () -> mode == HeldGamePiece.CUBE))
+            Commands.runOnce(
+                () -> {
+                  if (mode == HeldGamePiece.CUBE) {
+                    setManualIntakeMode(IntakeMode.OUTTAKE_CUBE);
+                  } else if (goal.position.height == Positions.CONE_NODE_HIGH.height) {
+                    setManualIntakeMode(IntakeMode.SHOOT_CONE);
+                  } else {
+                    setManualIntakeMode(IntakeMode.OUTTAKE_CONE);
+                  }
+                }))
         .andThen(Commands.waitUntil(() -> intake.getGamePiece() == HeldGamePiece.NOTHING))
         .andThen(Commands.runOnce(() -> scoringState = ScoringState.FINISHED_SCORING))
         .withName("SuperstructureFinishManualScore");
+  }
+
+  private Command getDunkCommand() {
+    return getCommand(
+        () ->
+            new SuperstructureState(
+                new SuperstructurePosition(
+                    goalBeforeDunk.position.height + 0.5,
+                    Rotation2d.fromDegrees(goalBeforeDunk.position.angle.getDegrees() + 15),
+                    -1),
+                IntakeMode.OUTTAKE_CONE));
+  }
+
+  private boolean shouldDunk() {
+    // Only dunk when scoring cones on mid
+    return mode == HeldGamePiece.CONE && goal.position.height == Positions.CONE_NODE_MID.height;
   }
 
   public Command getHomeCommand() {

@@ -76,7 +76,7 @@ public class IntakeSubsystem extends LifecycleSubsystem {
       if (!cubeSensor) {
         gamePiece = HeldGamePiece.NOTHING;
       }
-    } else if (mode == IntakeMode.OUTTAKE_CONE) {
+    } else if (mode == IntakeMode.OUTTAKE_CONE || mode == IntakeMode.SHOOT_CONE) {
       if (!coneSensor) {
         gamePiece = HeldGamePiece.NOTHING;
       }
@@ -90,6 +90,8 @@ public class IntakeSubsystem extends LifecycleSubsystem {
       motor.set(TalonFXControlMode.PercentOutput, -0.3);
     } else if (mode == IntakeMode.OUTTAKE_CONE) {
       motor.set(TalonFXControlMode.PercentOutput, 0.6);
+    } else if (mode == IntakeMode.SHOOT_CONE) {
+      motor.set(TalonFXControlMode.PercentOutput, 1);
     } else if (gamePiece == HeldGamePiece.CUBE) {
       motor.set(TalonFXControlMode.PercentOutput, 0.15);
     } else if (gamePiece == HeldGamePiece.CONE) {
@@ -118,7 +120,9 @@ public class IntakeSubsystem extends LifecycleSubsystem {
     if (mode != goal) {
       return false;
     }
-    if (mode == IntakeMode.OUTTAKE_CONE || mode == IntakeMode.OUTTAKE_CUBE) {
+    if (mode == IntakeMode.OUTTAKE_CONE
+        || mode == IntakeMode.SHOOT_CONE
+        || mode == IntakeMode.OUTTAKE_CUBE) {
       return gamePiece == HeldGamePiece.NOTHING;
     }
     if (mode == IntakeMode.STOPPED) {

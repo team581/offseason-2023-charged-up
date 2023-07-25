@@ -41,7 +41,7 @@ public class States {
   public static final SuperstructureState CONE_NODE_MID =
       new SuperstructureState(Positions.CONE_NODE_MID, IntakeMode.OUTTAKE_CONE, false);
   public static final SuperstructureState CONE_NODE_HIGH =
-      new SuperstructureState(Positions.CONE_NODE_HIGH, IntakeMode.OUTTAKE_CONE, false);
+      new SuperstructureState(Positions.CONE_NODE_HIGH, IntakeMode.SHOOT_CONE, false);
 
   private States() {}
 }

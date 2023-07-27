@@ -20,7 +20,6 @@ import frc.robot.NodeHeight;
 import frc.robot.States;
 import frc.robot.config.Config;
 import frc.robot.elevator.ElevatorSubsystem;
-import frc.robot.fms.FmsSubsystem;
 import frc.robot.imu.ImuSubsystem;
 import frc.robot.intake.HeldGamePiece;
 import frc.robot.intake.IntakeSubsystem;
@@ -224,15 +223,18 @@ public class Autos {
   }
 
   public Command getAutoCommand() {
-    AutoKindWithoutTeam rawAuto = autoChooser.get();
+    return swerve.followPathAdaptivePurePursuitCommand(
+        Paths.getInstance().getPath(AutoKind.BLUE_SHORT_SIDE_3).get(0), localization);
 
-    if (rawAuto == null) {
-      rawAuto = AutoKindWithoutTeam.MID_1_5_BALANCE;
-    }
+    // AutoKindWithoutTeam rawAuto = autoChooser.get();
 
-    AutoKind auto = FmsSubsystem.isRedAlliance() ? rawAuto.redVersion : rawAuto.blueVersion;
+    // if (rawAuto == null) {
+    //   rawAuto = AutoKindWithoutTeam.MID_1_5_BALANCE;
+    // }
 
-    return buildAutoCommand(auto);
+    // AutoKind auto = FmsSubsystem.isRedAlliance() ? rawAuto.redVersion : rawAuto.blueVersion;
+
+    // return buildAutoCommand(auto);
   }
 
   private Command buildAutoCommand(AutoKind auto) {

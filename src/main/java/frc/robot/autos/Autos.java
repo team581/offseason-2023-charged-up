@@ -164,7 +164,7 @@ public class Autos {
             (states) -> swerve.setModuleStates(states, false, false),
             eventMap,
             false,
-            FollowerStrategy.PURE_PURSUIT,
+            FollowerStrategy.TIME_PURE_PURSUIT,
             swerve);
 
     CommandScheduler.getInstance()

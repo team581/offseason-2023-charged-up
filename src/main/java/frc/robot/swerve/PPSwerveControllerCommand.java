@@ -5,23 +5,29 @@
 package frc.robot.swerve;
 
 import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.server.PathPlannerServer;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.trajectory.Trajectory.State;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
+import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class PPSwerveControllerCommand extends CommandBase {
+  private final Timer timer = new Timer();
   private final PathPlannerTrajectory trajectory;
   private final Supplier<Pose2d> poseSupplier;
   private final SwerveDriveKinematics kinematics;
@@ -32,6 +38,9 @@ public class PPSwerveControllerCommand extends CommandBase {
   private final boolean useAllianceColor;
 
   private PathPlannerTrajectory transformedTrajectory;
+  private State endState;
+  private List<State> pathStates;
+  private Pose2d currentPose;
 
   private static Consumer<PathPlannerTrajectory> logActiveTrajectory = null;
   private static Consumer<Pose2d> logTargetPose = null;
@@ -243,23 +252,66 @@ public class PPSwerveControllerCommand extends CommandBase {
     }
 
     PathPlannerServer.sendActivePath(transformedTrajectory.getStates());
-  }
 
-  @Override
-  public void execute() {
-    if (followerStrategy == FollowerStrategy.PID) {
+    endState = transformedTrajectory.getEndState();
+    pathStates = transformedTrajectory.getStates();
+    currentPose = poseSupplier.get();
 
-    } else if (followerStrategy == FollowerStrategy.PURE_PURSUIT) {
-
+    if (followerStrategy == FollowerStrategy.TIME_PURE_PURSUIT) {
+      timer.reset();
+      timer.start();
     }
   }
 
   @Override
-  public void end(boolean interrupted) {}
+  public void execute() {
+    // Initalize variables.
+    currentPose = poseSupplier.get();
+    ChassisSpeeds targetChassisSpeeds = new ChassisSpeeds(0, 0, 0);
+
+    // Caluclate chassis speeds.
+    if (followerStrategy == FollowerStrategy.PID) {
+
+    } else if (followerStrategy == FollowerStrategy.POSITION_PURE_PURSUIT) {
+      targetChassisSpeeds = updatePositionPurePursuit();
+    } else if (followerStrategy == FollowerStrategy.TIME_PURE_PURSUIT) {
+      targetChassisSpeeds = updateTimePurePursuit();
+    }
+
+    // Set chassis speeds.
+    if (useKinematics) {
+      SwerveModuleState[] targetModuleStates = kinematics.toSwerveModuleStates(targetChassisSpeeds);
+      outputModuleStates.accept(targetModuleStates);
+    } else {
+      outputChassisSpeeds.accept(targetChassisSpeeds);
+    }
+  }
+
+  @Override
+  public void end(boolean interrupted) {
+    if (followerStrategy == FollowerStrategy.TIME_PURE_PURSUIT) {
+      timer.stop();
+    }
+
+    if (interrupted
+        || Math.abs(transformedTrajectory.getEndState().velocityMetersPerSecond) < 0.1) {
+      if (useKinematics) {
+        this.outputModuleStates.accept(
+            this.kinematics.toSwerveModuleStates(new ChassisSpeeds(0, 0, 0)));
+      } else {
+        this.outputChassisSpeeds.accept(new ChassisSpeeds());
+      }
+    }
+  }
 
   @Override
   public boolean isFinished() {
-    return false;
+    Transform2d poseError = endState.poseMeters.minus(currentPose);
+
+    return (pathStates.size() <= 2)
+        && (poseError.getX() < 0.01)
+        && (poseError.getY() < 0.01)
+        && (poseError.getRotation().getRadians() < 0.01);
   }
 
   /**
@@ -291,5 +343,50 @@ public class PPSwerveControllerCommand extends CommandBase {
     SmartDashboard.putNumber("PPSwerveControllerCommand/yErrorMeters", translationError.getY());
     SmartDashboard.putNumber(
         "PPSwerveControllerCommand/rotationErrorDegrees", rotationError.getDegrees());
+  }
+
+  private static Pose2d getClosestPointOnSegment(
+      Pose2d currentPose, Pose2d segmentStart, Pose2d segmentEnd) {
+    // Find slope perpendiular to segment.
+    double segmentSlope;
+    double perpendiularSlope;
+    if (segmentEnd.getX() == segmentStart.getX()) {
+      segmentSlope = 1e9;
+      perpendiularSlope = 0;
+    } else if (segmentEnd.getY() == segmentStart.getY()) {
+      segmentSlope = 0;
+      perpendiularSlope = 1e9;
+    } else {
+      segmentSlope =
+          (segmentEnd.getY() - segmentStart.getY()) / (segmentEnd.getX() - segmentStart.getX());
+      perpendiularSlope = -1 / segmentSlope;
+    }
+
+    // Find point that intersects with segment.
+    double b1 = segmentEnd.getY() - segmentSlope * segmentEnd.getX();
+    double b2 = currentPose.getY() - perpendiularSlope * currentPose.getX();
+    double intersectionX = (b2 - b1) / (segmentSlope - perpendiularSlope);
+    double intersectionY = intersectionX * segmentSlope + b1;
+
+    // Clamp point between ends.
+    return new Pose2d(intersectionX, intersectionY, new Rotation2d(0));
+  }
+
+  private ChassisSpeeds updatePositionPurePursuit() {
+    // Get closest point on current segment & next segment.
+    Pose2d closestPointOnSegment =
+        getClosestPointOnSegment(
+            currentPose, pathStates.get(0).poseMeters, pathStates.get(1).poseMeters);
+
+    return new ChassisSpeeds(0, 0, 0);
+  }
+
+  private ChassisSpeeds updateTimePurePursuit() {
+    double currentTime = this.timer.get();
+    PathPlannerState desiredState = (PathPlannerState) transformedTrajectory.sample(currentTime);
+
+    ChassisSpeeds targetChassisSpeeds = controller.calculate(currentPose, desiredState);
+
+    return new ChassisSpeeds(0, 0, 0);
   }
 }

@@ -1,7 +1,10 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
 package frc.robot.swerve;
 
 import com.pathplanner.lib.PathPlannerTrajectory;
-import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.server.PathPlannerServer;
 import edu.wpi.first.math.controller.PIDController;
@@ -17,8 +20,6 @@ import edu.wpi.first.wpilibj2.command.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-import frc.robot.swerve.FollowerStrategy;
-
 
 public class PPSwerveControllerCommand extends CommandBase {
   private final PathPlannerTrajectory trajectory;
@@ -40,7 +41,7 @@ public class PPSwerveControllerCommand extends CommandBase {
 
   private static FollowerStrategy followerStrategy;
 
-    /**
+  /**
    * Constructs a new PPSwerveControllerCommand that when executed will follow the provided
    * trajectory. This command will not return output voltages but ChassisSpeeds from the position
    * controllers which need to be converted to module states and put into a velocity PID.
@@ -248,22 +249,20 @@ public class PPSwerveControllerCommand extends CommandBase {
   public void execute() {
     if (followerStrategy == FollowerStrategy.PID) {
 
-    }
-    else if (followerStrategy == FollowerStrategy.PURE_PURSUIT){
+    } else if (followerStrategy == FollowerStrategy.PURE_PURSUIT) {
 
     }
   }
 
   @Override
-  public void end(boolean interrupted) {
-  }
+  public void end(boolean interrupted) {}
 
   @Override
   public boolean isFinished() {
     return false;
   }
 
-    /**
+  /**
    * Set custom logging callbacks for this command to use instead of the default configuration of
    * pushing values to SmartDashboard
    *
@@ -293,5 +292,4 @@ public class PPSwerveControllerCommand extends CommandBase {
     SmartDashboard.putNumber(
         "PPSwerveControllerCommand/rotationErrorDegrees", rotationError.getDegrees());
   }
-
 }

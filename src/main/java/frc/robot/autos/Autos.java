@@ -5,9 +5,6 @@
 package frc.robot.autos;
 
 import com.pathplanner.lib.PathPlannerTrajectory;
-import frc.robot.autos.SwerveAutoBuilder;
-import frc.robot.swerve.FollowerStrategy;
-import frc.robot.swerve.PPSwerveControllerCommand;
 import com.pathplanner.lib.server.PathPlannerServer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -28,6 +25,8 @@ import frc.robot.localization.LocalizationSubsystem;
 import frc.robot.localization.VisionMode;
 import frc.robot.managers.Autobalance;
 import frc.robot.managers.SuperstructureManager;
+import frc.robot.swerve.FollowerStrategy;
+import frc.robot.swerve.PPSwerveControllerCommand;
 import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.wrist.WristSubsystem;
 import java.lang.ref.WeakReference;

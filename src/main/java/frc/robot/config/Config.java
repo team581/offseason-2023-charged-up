@@ -117,7 +117,7 @@ public class Config {
   public static final int WRIST_MOTION_ACCELERATION = IS_SPIKE ? 60000 : 50000;
   public static final double WRIST_HOMED_CURRENT = IS_SPIKE ? 1.3 : 5;
   public static final Rotation2d WRIST_HOMED_ANGLE =
-      IS_SPIKE ? Rotation2d.fromDegrees(0) : Rotation2d.fromDegrees(0.0);
+      IS_SPIKE ? Rotation2d.fromDegrees(-1) : Rotation2d.fromDegrees(0.0);
   public static final double WRIST_HOMING_VOLTAGE = IS_SPIKE ? -0.1 : -0.15;
 
   public static final int INTAKE_MOTOR_ID = 17;

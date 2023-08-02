@@ -87,7 +87,7 @@ public class IntakeSubsystem extends LifecycleSubsystem {
     } else if (mode == IntakeMode.MANUAL_OUTTAKE) {
       motor.set(TalonFXControlMode.PercentOutput, -0.5);
     } else if (mode == IntakeMode.OUTTAKE_CUBE) {
-      motor.set(TalonFXControlMode.PercentOutput, -0.3);
+      motor.set(TalonFXControlMode.PercentOutput, -0.5);
     } else if (mode == IntakeMode.OUTTAKE_CONE) {
       motor.set(TalonFXControlMode.PercentOutput, 0.6);
     } else if (mode == IntakeMode.SHOOT_CONE) {
@@ -97,7 +97,7 @@ public class IntakeSubsystem extends LifecycleSubsystem {
     } else if (gamePiece == HeldGamePiece.CONE) {
       motor.set(TalonFXControlMode.PercentOutput, -0.1);
     } else if (mode == IntakeMode.INTAKE_CUBE) {
-      motor.set(TalonFXControlMode.PercentOutput, 0.5);
+      motor.set(TalonFXControlMode.PercentOutput, 0.75);
     } else if (mode == IntakeMode.INTAKE_CONE) {
       motor.set(TalonFXControlMode.PercentOutput, -1);
     } else {

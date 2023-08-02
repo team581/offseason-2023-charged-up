@@ -110,7 +110,7 @@ public class Config {
   public static final int WRIST_MOTOR_ID = 16;
   public static final double WRIST_GEARING = IS_SPIKE ? 25.0 * 2 : 48.0 * 2;
   public static final int WRIST_KF = IS_SPIKE ? 0 : 0;
-  public static final double WRIST_KP = IS_SPIKE ? 0.2 : 0.1;
+  public static final double WRIST_KP = IS_SPIKE ? 0.25 : 0.1;
   public static final int WRIST_KI = IS_SPIKE ? 0 : 0;
   public static final int WRIST_KD = IS_SPIKE ? 0 : 0;
   public static final int WRIST_MOTION_CRUISE_VELOCITY = IS_SPIKE ? 7500 : 20000;

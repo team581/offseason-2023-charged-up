@@ -5,6 +5,7 @@
 package frc.robot.wrist;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
@@ -41,6 +42,7 @@ public class WristSubsystem extends LifecycleSubsystem {
 
     this.motor.configMotionCruiseVelocity(Config.WRIST_MOTION_CRUISE_VELOCITY);
     this.motor.configMotionAcceleration(Config.WRIST_MOTION_ACCELERATION);
+    this.motor.setNeutralMode(NeutralMode.Brake);
 
     this.motor.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 25, 25, 0.5));
   }

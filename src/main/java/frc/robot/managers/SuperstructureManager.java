@@ -280,7 +280,10 @@ public class SuperstructureManager extends LifecycleSubsystem {
 
   private boolean shouldDunk() {
     // Only dunk when scoring cones on mid
-    return mode == HeldGamePiece.CONE && goal.position.height == Positions.CONE_NODE_MID.height;
+    // Temporarily disable dunking while we test new mid cone scoring position
+    return false
+        && mode == HeldGamePiece.CONE
+        && goal.position.height == Positions.CONE_NODE_MID.height;
   }
 
   public Command getHomeCommand() {

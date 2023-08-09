@@ -11,11 +11,11 @@ import frc.robot.managers.SuperstructurePosition;
 public class Positions {
   public static final SuperstructurePosition STOWED =
       Config.IS_SPIKE
-          ? new SuperstructurePosition(0, Rotation2d.fromDegrees(2), -1)
+          ? new SuperstructurePosition(0.1, Rotation2d.fromDegrees(2), -1)
           : new SuperstructurePosition(0, Rotation2d.fromDegrees(35), -1);
   public static final SuperstructurePosition STOWED_UNSAFE =
       Config.IS_SPIKE
-          ? new SuperstructurePosition(0, Rotation2d.fromDegrees(2), -1, true)
+          ? new SuperstructurePosition(0.1, Rotation2d.fromDegrees(2), -1, true)
           : new SuperstructurePosition(0, Rotation2d.fromDegrees(35), -1, true);
 
   public static final SuperstructurePosition INTAKING_CUBE_FLOOR =

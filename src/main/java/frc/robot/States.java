@@ -14,8 +14,6 @@ public class States {
       new SuperstructureState(Positions.STOWED_UNSAFE, IntakeMode.STOPPED, true);
   public static final SuperstructureState STOWED_ROLLING =
       new SuperstructureState(Positions.STOWED, IntakeMode.STOPPED, false);
-  public static final SuperstructureState FULL_EXTENSION =
-      new SuperstructureState(Positions.FULL_EXTENSION, IntakeMode.STOPPED, true);
 
   public static final SuperstructureState INTAKING_CUBE_FLOOR_IDLE =
       new SuperstructureState(Positions.INTAKING_CUBE_FLOOR, IntakeMode.STOPPED, true);

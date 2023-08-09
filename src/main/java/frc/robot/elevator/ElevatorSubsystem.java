@@ -90,6 +90,7 @@ public class ElevatorSubsystem extends LifecycleSubsystem {
     Logger.getInstance().recordOutput("Elevator/Homing", homingState.toString());
     Logger.getInstance().recordOutput("Elevator/AppliedVoltage", motor.getMotorOutputVoltage());
     Logger.getInstance().recordOutput("Elevator/SensorVelocity", motor.getSelectedSensorVelocity());
+    Logger.getInstance().recordOutput("Elevator/TemperatureCelsius", motor.getTemperature());
   }
 
   @Override

@@ -255,9 +255,13 @@ public class SuperstructureManager extends LifecycleSubsystem {
             Commands.runOnce(
                 () -> {
                   if (mode == HeldGamePiece.CUBE) {
-                    setManualIntakeMode(IntakeMode.OUTTAKE_CUBE);
+                    if (goal.position.height == Positions.CUBE_NODE_LOW.height) {
+                      setManualIntakeMode(States.CUBE_NODE_LOW.intakeMode);
+                    } else {
+                      setManualIntakeMode(IntakeMode.OUTTAKE_CUBE_FAST);
+                    }
                   } else if (goal.position.height == Positions.CONE_NODE_HIGH.height) {
-                    setManualIntakeMode(IntakeMode.SHOOT_CONE);
+                    setManualIntakeMode(States.CONE_NODE_HIGH.intakeMode);
                   } else {
                     setManualIntakeMode(IntakeMode.OUTTAKE_CONE);
                   }

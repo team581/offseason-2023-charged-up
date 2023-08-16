@@ -22,11 +22,11 @@ public class States {
   public static final SuperstructureState INTAKING_CUBE_SHELF =
       new SuperstructureState(Positions.INTAKING_CUBE_SHELF, IntakeMode.INTAKE_CUBE, true);
   public static final SuperstructureState CUBE_NODE_LOW =
-      new SuperstructureState(Positions.CUBE_NODE_LOW, IntakeMode.OUTTAKE_CUBE, false);
+      new SuperstructureState(Positions.CUBE_NODE_LOW, IntakeMode.OUTTAKE_CUBE_SLOW, false);
   public static final SuperstructureState CUBE_NODE_MID =
-      new SuperstructureState(Positions.CUBE_NODE_MID, IntakeMode.OUTTAKE_CUBE, false);
+      new SuperstructureState(Positions.CUBE_NODE_MID, IntakeMode.OUTTAKE_CUBE_FAST, false);
   public static final SuperstructureState CUBE_NODE_HIGH =
-      new SuperstructureState(Positions.CUBE_NODE_HIGH, IntakeMode.OUTTAKE_CUBE, false);
+      new SuperstructureState(Positions.CUBE_NODE_HIGH, IntakeMode.OUTTAKE_CUBE_FAST, false);
 
   public static final SuperstructureState INTAKING_CONE_FLOOR_IDLE =
       new SuperstructureState(Positions.INTAKING_CONE_FLOOR, IntakeMode.STOPPED, true);

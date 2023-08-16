@@ -86,6 +86,7 @@ public class ElevatorSubsystem extends LifecycleSubsystem {
   public void robotPeriodic() {
     Logger.getInstance().recordOutput("Elevator/Position", getHeight());
     Logger.getInstance().recordOutput("Elevator/StatorCurrent", motor.getStatorCurrent());
+    Logger.getInstance().recordOutput("Elevator/SupplyCurrent", motor.getSupplyCurrent());
     Logger.getInstance().recordOutput("Elevator/GoalPosition", goalPositionInInches);
     Logger.getInstance().recordOutput("Elevator/Homing", homingState.toString());
     Logger.getInstance().recordOutput("Elevator/AppliedVoltage", motor.getMotorOutputVoltage());

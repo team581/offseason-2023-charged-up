@@ -25,6 +25,7 @@ public enum SubsystemPriority {
   // Update the lights after everything else has been updated
   LIGHTS(0),
   FMS(0),
+  HEALTH(0),
   RUMBLE_CONTROLLER(0);
 
   final int value;

@@ -43,7 +43,7 @@ public class ElevatorSubsystem extends LifecycleSubsystem {
     this.motor.configMotionCruiseVelocity(Config.ELEVATOR_CRUISE_VELOCITY);
     this.motor.configMotionAcceleration(Config.ELEVATOR_ACCELERATION);
     // Set current limiting
-    this.motor.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(false, 40, 40, 1));
+    this.motor.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, 80, 80, 0.5));
     this.motor.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 20, 30, 0.5));
   }
 

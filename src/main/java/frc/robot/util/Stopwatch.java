@@ -19,7 +19,7 @@ public class Stopwatch {
     return instance;
   }
 
-  private static double getTimestamp() {
+  private static double getTimestampMs() {
     return Logger.getInstance().getRealTimestamp() / 1e3;
   }
 
@@ -28,11 +28,11 @@ public class Stopwatch {
   private Stopwatch() {}
 
   public void start(String name) {
-    lastTimestamps.put(name, getTimestamp());
+    lastTimestamps.put(name, getTimestampMs());
   }
 
   public void stop(String name) {
-    double timestamp = getTimestamp();
+    double timestamp = getTimestampMs();
     double lastTimestamp = lastTimestamps.get(name);
     Logger.getInstance().recordOutput(name, timestamp - lastTimestamp);
   }

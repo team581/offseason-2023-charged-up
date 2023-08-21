@@ -15,11 +15,11 @@ import frc.robot.intake.HeldGamePiece;
 import frc.robot.intake.IntakeMode;
 import frc.robot.intake.IntakeSubsystem;
 import frc.robot.localization.LocalizationSubsystem;
-import frc.robot.vision.VisionMode;
 import frc.robot.managers.ScoringState;
 import frc.robot.managers.SuperstructureManager;
 import frc.robot.util.scheduling.LifecycleSubsystem;
 import frc.robot.util.scheduling.SubsystemPriority;
+import frc.robot.vision.VisionMode;
 import org.littletonrobotics.junction.Logger;
 
 public class LightsSubsystem extends LifecycleSubsystem {

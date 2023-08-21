@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.autos.Autos;
-import frc.robot.visionActions.AutoScoreLocation;
 import frc.robot.config.Config;
 import frc.robot.controller.DriveController;
 import frc.robot.controller.RumbleControllerSubsystem;
@@ -28,7 +27,6 @@ import frc.robot.intake.HeldGamePiece;
 import frc.robot.intake.IntakeMode;
 import frc.robot.intake.IntakeSubsystem;
 import frc.robot.lights.LightsSubsystem;
-import frc.robot.vision.JacksonLagUtil;
 import frc.robot.localization.LocalizationSubsystem;
 import frc.robot.managers.AutoRotate;
 import frc.robot.managers.Autobalance;
@@ -37,6 +35,8 @@ import frc.robot.managers.SuperstructureMotionManager;
 import frc.robot.swerve.SwerveModule;
 import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.util.scheduling.LifecycleSubsystemManager;
+import frc.robot.vision.JacksonLagUtil;
+import frc.robot.visionActions.AutoScoreLocation;
 import frc.robot.wrist.WristSubsystem;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -108,7 +108,7 @@ public class Robot extends LoggedRobot {
           new CANdle(Config.LIGHTS_CANDLE_ID), intake, superstructureManager, localization);
   private final RumbleControllerSubsystem rumbleController =
       new RumbleControllerSubsystem(new XboxController(Config.OPERATOR_CONTROLLER_PORT));
-      private final HealthSubsystem health = new HealthSubsystem();
+  private final HealthSubsystem health = new HealthSubsystem();
 
   private final Autobalance autobalance = new Autobalance(swerve, imu);
   private final AutoRotate autoRotate = new AutoRotate(swerve);

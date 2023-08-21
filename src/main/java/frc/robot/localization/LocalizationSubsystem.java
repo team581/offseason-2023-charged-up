@@ -17,12 +17,12 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.config.Config;
 import frc.robot.fms.FmsSubsystem;
 import frc.robot.imu.ImuSubsystem;
-import frc.robot.vision.LimelightHelpers;
-import frc.robot.vision.VisionMode;
-import frc.robot.vision.LimelightHelpers.LimelightResults;
 import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.util.scheduling.LifecycleSubsystem;
 import frc.robot.util.scheduling.SubsystemPriority;
+import frc.robot.vision.LimelightHelpers;
+import frc.robot.vision.LimelightHelpers.LimelightResults;
+import frc.robot.vision.VisionMode;
 import org.littletonrobotics.junction.Logger;
 
 public class LocalizationSubsystem extends LifecycleSubsystem {

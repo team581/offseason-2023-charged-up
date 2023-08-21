@@ -108,7 +108,7 @@ public class Robot extends LoggedRobot {
           new CANdle(Config.LIGHTS_CANDLE_ID), intake, superstructureManager, localization);
   private final RumbleControllerSubsystem rumbleController =
       new RumbleControllerSubsystem(new XboxController(Config.OPERATOR_CONTROLLER_PORT));
-      private final HealthSubsystem health = new HealthSubsystem();
+  private final HealthSubsystem health = new HealthSubsystem();
 
   private final Autobalance autobalance = new Autobalance(swerve, imu);
   private final AutoRotate autoRotate = new AutoRotate(swerve);

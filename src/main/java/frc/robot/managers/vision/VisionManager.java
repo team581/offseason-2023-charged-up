@@ -47,14 +47,13 @@ public class VisionManager extends LifecycleSubsystem {
                       // Calculate X and Y speeds
 
                       // Set swerve speeds.
-
-                      // Set doneDriving to True once at location
                     },
                     limelight,
                     swerve)
                 .until(
                     () -> {
-                      // Until done driving
+                      // Return true once at location
+
                       return false;
                     }))
         .finallyDo(

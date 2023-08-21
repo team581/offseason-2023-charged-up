@@ -4,14 +4,16 @@
 
 package frc.robot.vision;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.util.scheduling.LifecycleSubsystem;
+import frc.robot.util.scheduling.SubsystemPriority;
 import frc.robot.vision.LimelightHelpers.LimelightResults;
 
-public class Limelight extends SubsystemBase {
-
+public class LimelightSubsystem extends LifecycleSubsystem {
   public final String limelightName;
 
-  public Limelight(String limelightName) {
+  public LimelightSubsystem(String limelightName) {
+    super(SubsystemPriority.VISION, "LimelightSubsystem_" + limelightName);
+
     /* Constructor method. */
     this.limelightName = limelightName;
   }

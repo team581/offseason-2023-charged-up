@@ -4,6 +4,7 @@
 
 package frc.robot.vision;
 
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.util.scheduling.LifecycleSubsystem;
 import frc.robot.util.scheduling.SubsystemPriority;
 import frc.robot.vision.LimelightHelpers.LimelightResults;
@@ -64,5 +65,12 @@ public class LimelightSubsystem extends LifecycleSubsystem {
 
     // Get results */
     return new VisionTarget(0, 0, 0, 0);
+  }
+
+  public CommandBase setPipelineCommand(int pipeline) {
+    return runOnce(
+        () -> {
+          // TODO(Simon): Set proper limelight pipeline and turn on LEDs.
+        });
   }
 }

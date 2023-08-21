@@ -4,7 +4,9 @@
 
 package frc.robot.managers.vision;
 
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.util.scheduling.LifecycleSubsystem;
@@ -29,33 +31,9 @@ public class VisionManager extends LifecycleSubsystem {
     // TODO(Simon): Finish command.
     // Do we drive to position, raise up, then score? Do we raise up, drive to position, then raise
     // up?
-    return Commands.runOnce(
-            () -> {
-              /* Starts ScoreMiddleCone command up. */
-
-              // TODO(Simon): Set proper limelight pipeline and turn on LEDs.
-            },
-            limelight,
-            swerve)
-        .andThen(
-            Commands.run(
-                    () -> {
-                      // TODO(Simon): Fill in.
-
-                      // Get closest middle cone target.
-
-                      // Calculate X and Y speeds
-
-                      // Set swerve speeds.
-                    },
-                    limelight,
-                    swerve)
-                .until(
-                    () -> {
-                      // Return true once at location
-
-                      return false;
-                    }))
+    return limelight
+        .setPipelineCommand(123)
+        .andThen(alignWithVisionTargetCommand().until(() -> atLocation()))
         .finallyDo(
             (boolean interrupted) -> {
               // TODO(Simon): Fill in.
@@ -64,5 +42,30 @@ public class VisionManager extends LifecycleSubsystem {
 
               // Turn off LEDs.
             });
+  }
+
+  private CommandBase alignWithVisionTargetCommand() {
+    return Commands.run(
+        () -> {
+          // TODO(Simon): Fill in.
+
+          // Set swerve speeds with calculateSwerveSpeeds()
+        },
+        limelight,
+        swerve);
+  }
+
+  private boolean atLocation() {
+    // Return true once at location
+
+    return false;
+  }
+
+  private ChassisSpeeds calculateSwerveSpeeds() {
+    // Get closest middle cone target.
+
+    // Calculate X and Y speeds
+
+    return new ChassisSpeeds();
   }
 }

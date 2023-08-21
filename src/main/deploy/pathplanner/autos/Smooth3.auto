@@ -1,0 +1,60 @@
+{
+  "version": 1.0,
+  "startingPose": null,
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "home"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "preloadCone"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "scoreHigh"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "stowFast"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SmoothIntake1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SmoothScore2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SmoothIntake2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SmoothScore3"
+          }
+        }
+      ]
+    }
+  },
+  "folder": "Smooth"
+}

@@ -15,7 +15,7 @@
   "[java]": {"editor.defaultFormatter": "richardwillis.vscode-spotless-gradle"},
   "[json]": {"editor.defaultFormatter": "richardwillis.vscode-spotless-gradle"},
   "[ignore]": {"editor.defaultFormatter": "richardwillis.vscode-spotless-gradle"},
-  "files.associations": {"*.path": "json"},
+  "files.associations": {"*.{path,auto}": "json"},
   "[groovy]": {"editor.defaultFormatter": "richardwillis.vscode-spotless-gradle"},
   "java.configuration.updateBuildConfiguration": "automatic",
   "java.test.defaultConfig": "WPIlibUnitTests",

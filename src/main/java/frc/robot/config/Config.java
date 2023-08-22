@@ -94,7 +94,7 @@ public class Config {
 
   public static final double ELEVATOR_GEARING = IS_SPIKE ? 7.2 : 16.0;
   public static final double ELEVATOR_MIN_HEIGHT = IS_SPIKE ? 0 : 0;
-  public static final double ELEVATOR_MAX_HEIGHT = IS_SPIKE ? 26.4 : 12;
+  public static final double ELEVATOR_MAX_HEIGHT = IS_SPIKE ? 27 : 12;
   public static final double ELEVATOR_KF = IS_SPIKE ? 0 : 0;
   public static final double ELEVATOR_KP = IS_SPIKE ? 0.7 : 0.8;
   public static final double ELEVATOR_KI = IS_SPIKE ? 0 : 0;
@@ -110,7 +110,7 @@ public class Config {
   public static final int WRIST_MOTOR_ID = 16;
   public static final double WRIST_GEARING = IS_SPIKE ? 25.0 * 2 : 48.0 * 2;
   public static final int WRIST_KF = IS_SPIKE ? 0 : 0;
-  public static final double WRIST_KP = IS_SPIKE ? 0.25 : 0.1;
+  public static final double WRIST_KP = IS_SPIKE ? 0.5 : 0.1;
   public static final int WRIST_KI = IS_SPIKE ? 0 : 0;
   public static final int WRIST_KD = IS_SPIKE ? 0 : 0;
   public static final int WRIST_MOTION_CRUISE_VELOCITY = IS_SPIKE ? 7500 : 20000;

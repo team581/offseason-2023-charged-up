@@ -4,11 +4,6 @@
 
 package frc.robot.elevator;
 
-import com.ctre.phoenixpro.StatusCode;
-import com.ctre.phoenixpro.configs.TalonFXConfiguration;
-import com.ctre.phoenixpro.controls;
-
-import com.ctre.phoenix;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
@@ -40,17 +35,6 @@ public class ElevatorSubsystem extends LifecycleSubsystem {
     this.motor.setInverted(Config.ELEVATOR_INVERTED);
 
     // Set pid for slot 0
-
-    com.ctre.phoenixpro.configs.TalonFXConfiguration elevatorMotor = new TalonFXConfiguration();
-
-    elevatorMotor.Slot0.kV = Config.ELEVATOR_KV;
-    elevatorMotor.Slot0.kP = Config.ELEVATOR_KP;
-    elevatorMotor.Slot0.kI = Config.ELEVATOR_KI;
-    elevatorMotor.Slot0.kD = Config.ELEVATOR_KD;
-    elevatorMotor.Slot0.kS = Config.ELEVATOR_KS;
-
-
-
     this.motor.config_kF(0, Config.ELEVATOR_KF);
     this.motor.config_kP(0, Config.ELEVATOR_KP);
     this.motor.config_kI(0, Config.ELEVATOR_KI);

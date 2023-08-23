@@ -9,12 +9,17 @@
       "groupId": "com.ctre.phoenix",
       "artifactId": "wpiapi-java",
       "version": "5.31.0"
+    },
+    {
+      "groupId": "com.ctre.phoenix6",
+      "artifactId": "wpiapi-java",
+      "version": "23.2.2"
     }
   ],
-  "fileName": "Phoenix.json",
+  "fileName": "Phoenix6And5.json",
   "frcYear": 2023,
-  "jsonUrl": "https://maven.ctr-electronics.com/release/com/ctre/phoenix/Phoenix5-frc2023-latest.json",
-  "name": "CTRE-Phoenix (v5)",
+  "jsonUrl": "https://maven.ctr-electronics.com/release/com/ctre/phoenix6/latest/Phoenix6And5-frc2023-latest.json",
+  "name": "CTRE-Phoenix (v6 And v5)",
   "jniDependencies": [
     {
       "simMode": "hwsim",
@@ -414,8 +419,38 @@
         "osxuniversal"
       ],
       "sharedLibrary": true
+    },
+    {
+      "simMode": "hwsim",
+      "groupId": "com.ctre.phoenix6",
+      "libName": "CTRE_Phoenix6_WPI",
+      "artifactId": "wpiapi-cpp",
+      "skipInvalidPlatforms": true,
+      "version": "23.2.2",
+      "headerClassifier": "headers",
+      "binaryPlatforms": [
+        "windowsx86-64",
+        "linuxx86-64",
+        "linuxathena"
+      ],
+      "sharedLibrary": true
+    },
+    {
+      "simMode": "swsim",
+      "groupId": "com.ctre.phoenix6.sim",
+      "libName": "CTRE_Phoenix6_WPISim",
+      "artifactId": "wpiapi-cpp-sim",
+      "skipInvalidPlatforms": true,
+      "version": "23.2.2",
+      "headerClassifier": "headers",
+      "binaryPlatforms": [
+        "windowsx86-64",
+        "linuxx86-64",
+        "osxuniversal"
+      ],
+      "sharedLibrary": true
     }
   ],
-  "version": "5.31.0+23.2.2",
-  "uuid": "ab676553-b602-441f-a38d-f1296eff6537"
+  "version": "23.2.2",
+  "uuid": "3fcf3402-e646-4fa6-971e-18afe8173b1a"
 }

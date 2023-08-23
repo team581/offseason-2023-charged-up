@@ -4,13 +4,11 @@
 
 package frc.robot.intake;
 
-import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.ForwardLimitValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.ReverseLimitValue;
-
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -37,7 +35,10 @@ public class IntakeSubsystem extends LifecycleSubsystem {
     this.motor = motor;
 
     TalonFXConfiguration motorConfig = new TalonFXConfiguration();
-    motorConfig.MotorOutput.Inverted =Config.INVERTED_INTAKE? InvertedValue.Clockwise_Positive:InvertedValue.CounterClockwise_Positive;
+    motorConfig.MotorOutput.Inverted =
+        Config.INVERTED_INTAKE
+            ? InvertedValue.Clockwise_Positive
+            : InvertedValue.CounterClockwise_Positive;
 
     motorConfig.CurrentLimits.SupplyCurrentLimit = 15;
     motorConfig.CurrentLimits.SupplyCurrentLimit = 15;

@@ -4,16 +4,10 @@
 
 package frc.robot.elevator;
 
-import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.ControlModeValue;
-import com.ctre.phoenix6.signals.InvertedValue;
-import com.ctre.phoenix6.configs.MotionMagicConfigs;
-import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
-import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
-
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -22,21 +16,18 @@ import frc.robot.config.Config;
 import frc.robot.util.HomingState;
 import frc.robot.util.scheduling.LifecycleSubsystem;
 import frc.robot.util.scheduling.SubsystemPriority;
-import frc.robot.util.sensors.SensorUnitConverter;
-
 import org.littletonrobotics.junction.Logger;
 
 public class ElevatorSubsystem extends LifecycleSubsystem {
   private static final double TOLERANCE = 0.5;
   private static final double HOMING_CURRENT = 5;
-  private static final double ROTATIONS_PER_ELEVATOR_INCH = 1.0/ (1.75 * Math.PI);
+  private static final double ROTATIONS_PER_ELEVATOR_INCH = 1.0 / (1.75 * Math.PI);
 
   private final TalonFX motor;
   private final MotionMagicVoltage motionMagic = new MotionMagicVoltage(0);
 
   private double goalPositionInInches = Positions.STOWED.height;
   private HomingState homingState = HomingState.NOT_HOMED;
-
 
   public ElevatorSubsystem(TalonFX motor) {
     super(SubsystemPriority.ELEVATOR);
@@ -50,7 +41,10 @@ public class ElevatorSubsystem extends LifecycleSubsystem {
     motorConfig.Slot0.kD = Config.ELEVATOR_KD;
     motorConfig.Slot0.kS = Config.ELEVATOR_KS;
 
-    motorConfig.MotorOutput.Inverted =Config.ELEVATOR_INVERTED? InvertedValue.Clockwise_Positive:InvertedValue.CounterClockwise_Positive;
+    motorConfig.MotorOutput.Inverted =
+        Config.ELEVATOR_INVERTED
+            ? InvertedValue.Clockwise_Positive
+            : InvertedValue.CounterClockwise_Positive;
 
     motorConfig.MotionMagic.MotionMagicCruiseVelocity = Config.ELEVATOR_CRUISE_VELOCITY;
     motorConfig.MotionMagic.MotionMagicAcceleration = Config.ELEVATOR_ACCELERATION;
@@ -105,13 +99,16 @@ public class ElevatorSubsystem extends LifecycleSubsystem {
   @Override
   public void robotPeriodic() {
     Logger.getInstance().recordOutput("Elevator/Position", getHeight());
-    Logger.getInstance().recordOutput("Elevator/StatorCurrent", motor.getStatorCurrent().getValue());
-    Logger.getInstance().recordOutput("Elevator/SupplyCurrent", motor.getSupplyCurrent().getValue());
+    Logger.getInstance()
+        .recordOutput("Elevator/StatorCurrent", motor.getStatorCurrent().getValue());
+    Logger.getInstance()
+        .recordOutput("Elevator/SupplyCurrent", motor.getSupplyCurrent().getValue());
     Logger.getInstance().recordOutput("Elevator/GoalPosition", goalPositionInInches);
     Logger.getInstance().recordOutput("Elevator/Homing", homingState.toString());
     Logger.getInstance().recordOutput("Elevator/AppliedDutyCycle", motor.getDutyCycle().getValue());
     Logger.getInstance().recordOutput("Elevator/SensorVelocity", motor.getVelocity().getValue());
-    Logger.getInstance().recordOutput("Elevator/TemperatureCelsius", motor.getDeviceTemp().getValue());
+    Logger.getInstance()
+        .recordOutput("Elevator/TemperatureCelsius", motor.getDeviceTemp().getValue());
   }
 
   @Override
@@ -128,8 +125,7 @@ public class ElevatorSubsystem extends LifecycleSubsystem {
       }
     } else if (homingState == HomingState.HOMED) {
       double goalPosition = goalPositionInInches * ROTATIONS_PER_ELEVATOR_INCH;
-      motor.setControl(
-            motionMagic.withPosition(goalPosition));
+      motor.setControl(motionMagic.withPosition(goalPosition));
     } else {
       motor.set(0);
     }

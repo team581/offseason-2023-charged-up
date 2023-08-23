@@ -4,14 +4,9 @@
 
 package frc.robot.wrist;
 
-import com.ctre.phoenix6.StatusSignal;
-import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
-import com.ctre.phoenix6.configs.MotionMagicConfigs;
-import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -40,8 +35,7 @@ public class WristSubsystem extends LifecycleSubsystem {
 
     TalonFXConfiguration motorConfig = new TalonFXConfiguration();
 
-
-    //slot0Configs
+    // slot0Configs
     motorConfig.Slot0.kV = Config.WRIST_KV;
     motorConfig.Slot0.kP = Config.WRIST_KP;
     motorConfig.Slot0.kI = Config.WRIST_KI;
@@ -62,8 +56,7 @@ public class WristSubsystem extends LifecycleSubsystem {
   }
 
   public Rotation2d getAngle() {
-    return Rotation2d.fromRotations(
-        motor.getPosition().getValue());
+    return Rotation2d.fromRotations(motor.getPosition().getValue());
   }
 
   public void setAngle(Rotation2d angle) {

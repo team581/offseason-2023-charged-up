@@ -6,7 +6,7 @@ package frc.robot.controller;
 
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.NodeHeight;
-import frc.robot.visionActions.NodeKind;
+import frc.robot.managers.vision.NodeKind;
 
 public class DriveController extends CommandXboxController {
   private boolean slowModeEnabled;

@@ -5,6 +5,8 @@
 package frc.robot.imu;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
+import com.ctre.phoenix6.configs.MountPoseConfigs;
+import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -19,6 +21,10 @@ public class ImuSubsystem extends LifecycleSubsystem {
     super(SubsystemPriority.IMU);
 
     this.imu = imu;
+
+    Pigeon2Configuration imuConfig = new Pigeon2Configuration();
+
+    imu.getConfigurator().apply(imuConfig);
   }
 
   public void robotPeriodic() {
@@ -28,17 +34,21 @@ public class ImuSubsystem extends LifecycleSubsystem {
   }
 
   public Rotation2d getRobotHeading() {
-    return Rotation2d.fromDegrees(imu.getYaw());
+    return Rotation2d.fromDegrees(imu.getYaw().getValue());
   }
 
   public Rotation2d getRoll() {
-    return Rotation2d.fromDegrees(imu.getRoll());
+    return Rotation2d.fromDegrees(imu.getRoll().getValue());
   }
 
   public void zero() {
-
     setAngle(new Rotation2d());
-    this.imu.configMountPoseRoll(this.imu.getRoll());
+
+    MountPoseConfigs mountPoseConfig = new MountPoseConfigs();
+
+    mountPoseConfig.MountPoseRoll = getRoll().getDegrees();
+
+    imu.getConfigurator().apply(mountPoseConfig);
   }
 
   public void setAngle(Rotation2d zeroAngle) {

@@ -5,18 +5,14 @@
 package frc.robot.elevator;
 
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.ControlModeValue;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.controls.DutyCycleOut;
-
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.DemandType;
-import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
-import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
-import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.motorcontrol.Talon;
@@ -27,51 +23,50 @@ import frc.robot.config.Config;
 import frc.robot.util.HomingState;
 import frc.robot.util.scheduling.LifecycleSubsystem;
 import frc.robot.util.scheduling.SubsystemPriority;
+import frc.robot.util.sensors.SensorUnitConverter;
+
 import org.littletonrobotics.junction.Logger;
 
 public class ElevatorSubsystem extends LifecycleSubsystem {
-  private static final double HOMING_CURRENT = 5;
-  private final TalonFX motor;
-  private double goalPositionInInches = Positions.STOWED.height;
-  private double sensorUnitsPerElevatorInch = (Config.ELEVATOR_GEARING * 2048) / (1.75 * Math.PI);
-  private HomingState homingState = HomingState.NOT_HOMED;
   private static final double TOLERANCE = 0.5;
+  private static final double HOMING_CURRENT = 5;
+  private static final double ROTATIONS_PER_ELEVATOR_INCH = 1.0/ (1.75 * Math.PI);
+
+  private final TalonFX motor;
+  private final MotionMagicVoltage motionMagic = new MotionMagicVoltage(0);
+
+  private double goalPositionInInches = Positions.STOWED.height;
+  private HomingState homingState = HomingState.NOT_HOMED;
+
 
   public ElevatorSubsystem(TalonFX motor) {
     super(SubsystemPriority.ELEVATOR);
 
     this.motor = motor;
-    this.motor.setInverted(Config.ELEVATOR_INVERTED);
 
-    // Set pid for slot 0
-    Slot0Configs slot0configs = new Slot0Configs();
+    TalonFXConfiguration motorConfig = new TalonFXConfiguration();
+    motorConfig.Slot0.kV = Config.ELEVATOR_KV;
+    motorConfig.Slot0.kP = Config.ELEVATOR_KP;
+    motorConfig.Slot0.kI = Config.ELEVATOR_KI;
+    motorConfig.Slot0.kD = Config.ELEVATOR_KD;
+    motorConfig.Slot0.kS = Config.ELEVATOR_KS;
 
-    slot0configs.kV = Config.ELEVATOR_KV;
-    slot0configs.kP = Config.ELEVATOR_KP;
-    slot0configs.kI = Config.ELEVATOR_KI;
-    slot0configs.kD = Config.ELEVATOR_KD;
-    slot0configs.kS = Config.ELEVATOR_KS;
+    motorConfig.MotorOutput.Inverted =Config.ELEVATOR_INVERTED? InvertedValue.Clockwise_Positive:InvertedValue.CounterClockwise_Positive;
 
-    // Set motion magic
-    MotionMagicConfigs motionMagicConfigs = new MotionMagicConfigs();
-    motionMagicConfigs.MotionMagicCruiseVelocity = Config.ELEVATOR_CRUISE_VELOCITY;
-    motionMagicConfigs.MotionMagicAcceleration = Config.ELEVATOR_ACCELERATION;
+    motorConfig.MotionMagic.MotionMagicCruiseVelocity = Config.ELEVATOR_CRUISE_VELOCITY;
+    motorConfig.MotionMagic.MotionMagicAcceleration = Config.ELEVATOR_ACCELERATION;
 
-    // Set current limiting
-    CurrentLimitsConfigs currentLimits = new CurrentLimitsConfigs();
-    TalonFXConfiguration toConfigure = new TalonFXConfiguration();
-    //this.motor.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, 80, 100, 1));
-    currentLimits.StatorCurrentLimit = 80;
-    currentLimits.StatorCurrentLimitEnable = true;
+    motorConfig.CurrentLimits.StatorCurrentLimit = 80;
+    motorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
+    motorConfig.CurrentLimits.SupplyCurrentLimit = 20;
+    motorConfig.CurrentLimits.SupplyCurrentThreshold = 30;
+    motorConfig.CurrentLimits.SupplyTimeThreshold = 0.5;
+    motorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
-    //this.motor.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 20, 30, 0.5));
-    currentLimits.SupplyCurrentLimit = 20;
-    currentLimits.SupplyCurrentThreshold = 30;
-    currentLimits.SupplyTimeThreshold = 0.5;
-    currentLimits.SupplyCurrentLimitEnable = true;
+    motorConfig.Feedback.SensorToMechanismRatio = Config.ELEVATOR_GEARING;
 
-    toConfigure.
+    motor.getConfigurator().apply(motorConfig);
   }
 
   public void startHoming() {
@@ -80,7 +75,7 @@ public class ElevatorSubsystem extends LifecycleSubsystem {
 
   public void resetHoming() {
     homingState = HomingState.NOT_HOMED;
-    motor.set(TalonFXControlMode.PercentOutput, 0);
+    motor.disable();
   }
 
   public HomingState getHomingState() {
@@ -88,9 +83,8 @@ public class ElevatorSubsystem extends LifecycleSubsystem {
   }
 
   public double getHeight() {
-    // Read talon sensor, convert to inches
-    double sensorUnits = motor.getRotorPosition().getValue();
-    double position = sensorUnits / sensorUnitsPerElevatorInch;
+    double rotations = motor.getRotorPosition().getValue();
+    double position = rotations / ROTATIONS_PER_ELEVATOR_INCH;
     return position;
   }
 
@@ -112,13 +106,13 @@ public class ElevatorSubsystem extends LifecycleSubsystem {
   @Override
   public void robotPeriodic() {
     Logger.getInstance().recordOutput("Elevator/Position", getHeight());
-    Logger.getInstance().recordOutput("Elevator/StatorCurrent", motor.getStatorCurrent());
-    Logger.getInstance().recordOutput("Elevator/SupplyCurrent", motor.getSupplyCurrent());
+    Logger.getInstance().recordOutput("Elevator/StatorCurrent", motor.getStatorCurrent().getValue());
+    Logger.getInstance().recordOutput("Elevator/SupplyCurrent", motor.getSupplyCurrent().getValue());
     Logger.getInstance().recordOutput("Elevator/GoalPosition", goalPositionInInches);
     Logger.getInstance().recordOutput("Elevator/Homing", homingState.toString());
-    Logger.getInstance().recordOutput("Elevator/AppliedVoltage", motor.getMotorOutputVoltage());
-    Logger.getInstance().recordOutput("Elevator/SensorVelocity", motor.getSelectedSensorVelocity());
-    Logger.getInstance().recordOutput("Elevator/TemperatureCelsius", motor.getTemperature());
+    Logger.getInstance().recordOutput("Elevator/AppliedDutyCycle", motor.getDutyCycle().getValue());
+    Logger.getInstance().recordOutput("Elevator/SensorVelocity", motor.getVelocity().getValue());
+    Logger.getInstance().recordOutput("Elevator/TemperatureCelsius", motor.getDeviceTemp().getValue());
   }
 
   @Override
@@ -126,22 +120,19 @@ public class ElevatorSubsystem extends LifecycleSubsystem {
     // Add homing sequence
     // Convert goal in inches to sensor units, and set motor
     if (homingState == HomingState.HOMING) {
-      motor.set(ControlMode.PercentOutput, -0.15);
-      double current = motor.getSupplyCurrent();
+      motor.set(-0.15);
+      double current = motor.getSupplyCurrent().getValue();
       if (current > HOMING_CURRENT) {
-        motor.setSelectedSensorPosition(0);
+        motor.setRotorPosition(0);
         homingState = HomingState.HOMED;
         goalPositionInInches = Positions.STOWED.height;
       }
     } else if (homingState == HomingState.HOMED) {
-      double goalPositionInSensorUnits = goalPositionInInches * sensorUnitsPerElevatorInch;
-      motor.set(
-          ControlMode.MotionMagic,
-          goalPositionInSensorUnits,
-          DemandType.ArbitraryFeedForward,
-          Config.ELEVATOR_ARB_F);
+      double goalPosition = goalPositionInInches * ROTATIONS_PER_ELEVATOR_INCH;
+      motor.setControl(
+            motionMagic.withPosition(goalPosition));
     } else {
-      motor.set(ControlMode.PercentOutput, 0);
+      motor.set(0);
     }
   }
 

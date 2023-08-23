@@ -4,11 +4,14 @@
 
 package frc.robot.wrist;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
-import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
+
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -35,21 +38,32 @@ public class WristSubsystem extends LifecycleSubsystem {
 
     motor.setInverted(false);
 
-    motor.config_kF(0, Config.WRIST_KF);
-    motor.config_kP(0, Config.WRIST_KP);
-    motor.config_kI(0, Config.WRIST_KI);
-    motor.config_kD(0, Config.WRIST_KD);
+    TalonFXConfiguration motorConfig = new TalonFXConfiguration();
 
-    this.motor.configMotionCruiseVelocity(Config.WRIST_MOTION_CRUISE_VELOCITY);
-    this.motor.configMotionAcceleration(Config.WRIST_MOTION_ACCELERATION);
-    this.motor.setNeutralMode(NeutralMode.Brake);
 
-    this.motor.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 25, 25, 0.5));
+    //slot0Configs
+    motorConfig.Slot0.kV = Config.WRIST_KV;
+    motorConfig.Slot0.kP = Config.WRIST_KP;
+    motorConfig.Slot0.kI = Config.WRIST_KI;
+    motorConfig.Slot0.kD = Config.WRIST_KD;
+
+    motorConfig.MotionMagic.MotionMagicCruiseVelocity = Config.WRIST_MOTION_CRUISE_VELOCITY;
+    motorConfig.MotionMagic.MotionMagicAcceleration = Config.WRIST_MOTION_ACCELERATION;
+    motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+
+    motorConfig.CurrentLimits.SupplyCurrentLimit = 25;
+    motorConfig.CurrentLimits.SupplyCurrentThreshold = 25;
+    motorConfig.CurrentLimits.SupplyTimeThreshold = 0.5;
+    motorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+
+    motorConfig.Feedback.SensorToMechanismRatio = Config.WRIST_GEARING;
+
+    motor.getConfigurator().apply(motorConfig);
   }
 
   public Rotation2d getAngle() {
     return Rotation2d.fromRotations(
-        motor.getSelectedSensorPosition() / 2048.0 / Config.WRIST_GEARING);
+        motor.getPosition().getValue());
   }
 
   public void setAngle(Rotation2d angle) {
@@ -67,7 +81,7 @@ public class WristSubsystem extends LifecycleSubsystem {
 
   public void resetHoming() {
     homingState = HomingState.NOT_HOMED;
-    motor.set(TalonFXControlMode.PercentOutput, 0);
+    motor.set(0);
   }
 
   public HomingState getHomingState() {
@@ -81,26 +95,26 @@ public class WristSubsystem extends LifecycleSubsystem {
 
   @Override
   public void enabledPeriodic() {
-    double rawCurrent = motor.getSupplyCurrent();
+
+    double rawCurrent = motor.getSupplyCurrent().getValue();
     double filteredCurrent = currentFilter.calculate(rawCurrent);
 
     Logger.getInstance().recordOutput("Wrist/FilteredCurrent", filteredCurrent);
     Logger.getInstance().recordOutput("Wrist/RawCurrent", rawCurrent);
 
     if (homingState == HomingState.HOMING) {
-      motor.set(TalonFXControlMode.PercentOutput, Config.WRIST_HOMING_VOLTAGE);
+      motor.set(Config.WRIST_HOMING_VOLTAGE);
 
       if (filteredCurrent > Config.WRIST_HOMED_CURRENT) {
-        motor.set(TalonFXControlMode.PercentOutput, 0);
-        motor.setSelectedSensorPosition(
-            Config.WRIST_HOMED_ANGLE.getRotations() * 2048.0 * Config.WRIST_GEARING);
+        motor.set(0);
+        motor.setRotorPosition(Config.WRIST_HOMED_ANGLE.getRotations() * Config.WRIST_GEARING);
         setAngle(Positions.STOWED.angle);
         homingState = HomingState.HOMED;
       }
     } else if (homingState == HomingState.HOMED) {
-      motor.set(ControlMode.MotionMagic, goalAngle.getRotations() * 2048 * Config.WRIST_GEARING);
+      motor.set(goalAngle.getRotations() * 2048 * Config.WRIST_GEARING);
     } else {
-      motor.set(TalonFXControlMode.PercentOutput, 0);
+      motor.set(0);
     }
   }
 
@@ -110,10 +124,10 @@ public class WristSubsystem extends LifecycleSubsystem {
     Logger.getInstance().recordOutput("Wrist/GoalAngle", goalAngle.getDegrees());
     Logger.getInstance().recordOutput("Wrist/Homing", homingState.toString());
 
-    Logger.getInstance().recordOutput("Wrist/Voltage", motor.getMotorOutputVoltage());
+    Logger.getInstance().recordOutput("Wrist/Voltage", motor.getDutyCycle().getValue());
 
     if (Config.IS_DEVELOPMENT) {
-      Logger.getInstance().recordOutput("Wrist/RawAngle", motor.getSelectedSensorPosition());
+      Logger.getInstance().recordOutput("Wrist/RawAngle", motor.getPosition().getValue());
       Logger.getInstance().recordOutput("Wrist/ControlMode", motor.getControlMode().toString());
     }
   }

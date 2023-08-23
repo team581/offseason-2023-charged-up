@@ -4,16 +4,20 @@
 
 package frc.robot.swerve;
 
-import com.ctre.phoenix.sensors.CANCoder;
-import com.ctre.phoenixpro.StatusCode;
-import com.ctre.phoenixpro.StatusSignalValue;
-import com.ctre.phoenixpro.configs.ClosedLoopGeneralConfigs;
-import com.ctre.phoenixpro.configs.TalonFXConfiguration;
-import com.ctre.phoenixpro.controls.DutyCycleOut;
-import com.ctre.phoenixpro.controls.PositionVoltage;
-import com.ctre.phoenixpro.controls.VelocityVoltage;
-import com.ctre.phoenixpro.hardware.TalonFX;
-import com.ctre.phoenixpro.signals.InvertedValue;
+import com.ctre.phoenix6.StatusCode;
+import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -21,22 +25,15 @@ import edu.wpi.first.math.util.Units;
 import frc.robot.config.Config;
 import frc.robot.util.CircleConverter;
 import frc.robot.util.CtreModuleState;
-import frc.robot.util.GearingConverter;
 import org.littletonrobotics.junction.Logger;
 
 public class SwerveModule {
-  private static final GearingConverter STEER_MOTOR_GEARING_CONVERTER =
-      GearingConverter.fromReduction(Config.SWERVE_STEER_GEARING_REDUCTION);
-
-  private static final GearingConverter DRIVE_MOTOR_GEARING_CONVERTER =
-      GearingConverter.fromReduction(Config.SWERVE_DRIVE_GEARING_REDUCTION);
   private static final CircleConverter DRIVE_MOTOR_WHEEL_CONVERTER =
       CircleConverter.fromDiameter(Config.WHEEL_DIAMETER);
 
   private final SwerveModuleConstants constants;
   private final TalonFX driveMotor;
   private final TalonFX steerMotor;
-  private final CANCoder encoder;
   private final DutyCycleOut driveVoltageOpenLoopRequest =
       new DutyCycleOut(0, Config.SWERVE_USE_FOC, true);
   private final PositionVoltage steerMotorControl =
@@ -44,19 +41,23 @@ public class SwerveModule {
   private final VelocityVoltage driveVoltageClosedLoopRequest =
       new VelocityVoltage(0, Config.SWERVE_USE_FOC, 0, 0, false);
   private Rotation2d previousAngle = new Rotation2d();
-  private double commandedDriveVelocity = 0;
-  private boolean rotorPositionSet = false;
 
-  private StatusSignalValue<Double> driveMotorStatorCurrent;
+  private StatusSignal<Double> driveMotorStatorCurrent;
 
   public SwerveModule(
-      SwerveModuleConstants constants, TalonFX driveMotor, TalonFX steerMotor, CANCoder encoder) {
+      SwerveModuleConstants constants, TalonFX driveMotor, TalonFX steerMotor, CANcoder encoder) {
     this.constants = constants;
     this.driveMotor = driveMotor;
     this.steerMotor = steerMotor;
-    this.encoder = encoder;
 
-    com.ctre.phoenixpro.configs.TalonFXConfiguration driveMotorConfigs = new TalonFXConfiguration();
+    CANcoderConfiguration cancoderConfig = new CANcoderConfiguration();
+
+    cancoderConfig.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Signed_PlusMinusHalf;
+    cancoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
+    cancoderConfig.MagnetSensor.MagnetOffset = constants.angleOffset.getRotations();
+    encoder.getConfigurator().apply(cancoderConfig);
+
+    TalonFXConfiguration driveMotorConfigs = new TalonFXConfiguration();
 
     driveMotorConfigs.Slot0.kP = Config.SWERVE_DRIVE_KP;
     driveMotorConfigs.Slot0.kI = Config.SWERVE_DRIVE_KI;
@@ -64,11 +65,17 @@ public class SwerveModule {
     driveMotorConfigs.Slot0.kV = Config.SWERVE_DRIVE_KV;
     driveMotorConfigs.Slot0.kS = Config.SWERVE_DRIVE_KS;
 
+    driveMotorConfigs.Feedback.FeedbackRemoteSensorID = encoder.getDeviceID();
+    driveMotorConfigs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
+    driveMotorConfigs.Feedback.SensorToMechanismRatio = 1.0;
+    driveMotorConfigs.Feedback.RotorToSensorRatio = Config.SWERVE_DRIVE_GEARING_REDUCTION;
+
     driveMotorConfigs.Voltage.PeakForwardVoltage = 12;
     driveMotorConfigs.Voltage.PeakReverseVoltage = -12;
 
-    driveMotorConfigs.CurrentLimits.SupplyCurrentLimit = 35;
-    driveMotorConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
+    CurrentLimitsConfigs currentLimits = new CurrentLimitsConfigs();
+    currentLimits.SupplyCurrentLimit = 35;
+    currentLimits.SupplyCurrentLimitEnable = true;
 
     if (constants.driveInversion) {
       driveMotorConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
@@ -85,9 +92,8 @@ public class SwerveModule {
       System.out.println("Could not apply configs, error code: " + driveStatus.toString());
     }
 
-    com.ctre.phoenixpro.configs.TalonFXConfiguration steerMotorConfigs = new TalonFXConfiguration();
-    ClosedLoopGeneralConfigs steerMotorClosedLoopGeneralConfigs = new ClosedLoopGeneralConfigs();
-    steerMotorClosedLoopGeneralConfigs.ContinuousWrap = false;
+    TalonFXConfiguration steerMotorConfigs = new TalonFXConfiguration();
+    steerMotorConfigs.ClosedLoopGeneral.ContinuousWrap = true;
 
     steerMotorConfigs.Slot0.kV = Config.SWERVE_STEER_KV;
     steerMotorConfigs.Slot0.kP = Config.SWERVE_STEER_KP;
@@ -98,6 +104,8 @@ public class SwerveModule {
     steerMotorConfigs.CurrentLimits.SupplyCurrentLimit = 35;
     steerMotorConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
     steerMotorConfigs.MotorOutput.DutyCycleNeutralDeadband = 0;
+
+    steerMotorConfigs.Feedback.SensorToMechanismRatio = Config.SWERVE_STEER_GEARING_REDUCTION;
 
     if (constants.angleInversion) {
       steerMotorConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
@@ -129,9 +137,7 @@ public class SwerveModule {
     final var steerMotorPosition = getSteerMotorPosition();
     state = CtreModuleState.optimize(state, steerMotorPosition);
 
-    double commandedSteerPosition =
-        STEER_MOTOR_GEARING_CONVERTER.gearingToMotor(state.angle.getRotations());
-    steerMotor.setControl(steerMotorControl.withPosition(commandedSteerPosition));
+    steerMotor.setControl(steerMotorControl.withPosition(state.angle.getRotations()));
 
     boolean isStopped = Math.abs(state.speedMetersPerSecond) <= SwerveSubsystem.MAX_VELOCITY * 0.01;
     Rotation2d angle = isStopped && !skipJitterOptimization ? this.previousAngle : state.angle;
@@ -139,17 +145,13 @@ public class SwerveModule {
 
     var wheelRotationsPerSecond =
         DRIVE_MOTOR_WHEEL_CONVERTER.distanceToRotations(state.speedMetersPerSecond);
-    var motorRotationsPerSecond =
-        DRIVE_MOTOR_GEARING_CONVERTER.gearingToMotor(wheelRotationsPerSecond);
-
-    this.commandedDriveVelocity = Units.metersToInches(state.speedMetersPerSecond);
 
     if (openLoop) {
       driveMotor.setControl(
           driveVoltageOpenLoopRequest.withOutput(
               state.speedMetersPerSecond / SwerveSubsystem.MAX_VELOCITY));
     } else {
-      driveMotor.setControl(driveVoltageClosedLoopRequest.withVelocity(motorRotationsPerSecond));
+      driveMotor.setControl(driveVoltageClosedLoopRequest.withVelocity(wheelRotationsPerSecond));
     }
   }
 
@@ -168,46 +170,20 @@ public class SwerveModule {
   }
 
   private Rotation2d getSteerMotorPosition() {
-    double rotationsBeforeGearing = steerMotor.getPosition().getValue();
-    double rotations = STEER_MOTOR_GEARING_CONVERTER.beforeToAfterGearing(rotationsBeforeGearing);
+    double rotations = steerMotor.getPosition().getValue();
     return Rotation2d.fromRotations(rotations);
   }
 
   private double getDriveMotorPosition() {
-    final var rotationsBeforeGearing = driveMotor.getPosition().getValue();
-    final var rotations =
-        DRIVE_MOTOR_GEARING_CONVERTER.beforeToAfterGearing(rotationsBeforeGearing);
-
+    final var rotations = driveMotor.getPosition().getValue();
     final var meters = DRIVE_MOTOR_WHEEL_CONVERTER.rotationsToDistance(rotations);
     return meters;
   }
 
   private double getDriveMotorVelocity() {
-    final var rotationsPerSecondBeforeGearing = driveMotor.getVelocity().getValue();
-    final var rotationsPerSecond =
-        DRIVE_MOTOR_GEARING_CONVERTER.beforeToAfterGearing(rotationsPerSecondBeforeGearing);
+    final var rotationsPerSecond = driveMotor.getVelocity().getValue();
     final var metersPerSecond = DRIVE_MOTOR_WHEEL_CONVERTER.rotationsToDistance(rotationsPerSecond);
     final var inchesPerSecond = metersPerSecond * 39.37;
     return inchesPerSecond;
-  }
-
-  public void resetWheelAngle() {
-    if (!rotorPositionSet) {
-      final var absolutePosition = getCancoderPosition();
-      double rotations = absolutePosition.getRotations();
-      double rotationsBeforeGearing = STEER_MOTOR_GEARING_CONVERTER.gearingToMotor(rotations);
-      StatusCode status = steerMotor.setRotorPosition(rotationsBeforeGearing);
-      if (!status.isError()) {
-        rotorPositionSet = true;
-      }
-    }
-  }
-
-  private final Rotation2d getCancoderPosition() {
-    return getRawCancoderPosition().minus(constants.angleOffset);
-  }
-
-  private Rotation2d getRawCancoderPosition() {
-    return Rotation2d.fromDegrees(encoder.getAbsolutePosition());
   }
 }

@@ -33,10 +33,12 @@ import frc.robot.managers.Autobalance;
 import frc.robot.managers.SuperstructureManager;
 import frc.robot.managers.SuperstructureMotionManager;
 import frc.robot.managers.vision.AutoScoreLocation;
+import frc.robot.managers.vision.VisionManager;
 import frc.robot.swerve.SwerveModule;
 import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.util.scheduling.LifecycleSubsystemManager;
 import frc.robot.vision.JacksonLagUtil;
+import frc.robot.vision.LimelightSubsystem;
 import frc.robot.wrist.WristSubsystem;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -118,6 +120,10 @@ public class Robot extends LoggedRobot {
           localization, swerve, imu, superstructureManager, elevator, wrist, intake, autobalance);
 
   private Command autoCommand;
+
+  private final LimelightSubsystem limelight = new LimelightSubsystem("");
+
+  private final VisionManager visionManager = new VisionManager(limelight, swerve);
 
   public Robot() {
     // Log to a USB stick
@@ -244,6 +250,7 @@ public class Robot extends LoggedRobot {
     operatorController.back().onTrue(superstructureManager.getHomeCommand());
     // Stow unsafe
     operatorController.start().onTrue(superstructureManager.getCommand(States.STOWED_UNSAFE));
+    operatorController.povUp().whileTrue(visionManager.getAutoScoreMidCone());
   }
 
   @Override

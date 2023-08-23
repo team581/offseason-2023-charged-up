@@ -24,7 +24,7 @@ public class VisionManager extends LifecycleSubsystem {
   private final SwerveSubsystem swerve;
   private final SuperstructureManager superstructure;
 
-  private double xP = 0.01;
+  private double xP = -0.01;
   private double yP = 0.01;
   // tune setpoint value
   private double ySetpoint = 0;

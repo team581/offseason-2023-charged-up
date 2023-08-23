@@ -22,7 +22,6 @@ import org.littletonrobotics.junction.Logger;
 
 public class IntakeSubsystem extends LifecycleSubsystem {
 
-
   private HeldGamePiece gamePiece = HeldGamePiece.NOTHING;
 
   private IntakeMode mode = IntakeMode.STOPPED;

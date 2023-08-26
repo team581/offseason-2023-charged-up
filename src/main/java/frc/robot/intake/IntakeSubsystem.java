@@ -4,9 +4,11 @@
 
 package frc.robot.intake;
 
-import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
-import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.ForwardLimitValue;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.ReverseLimitValue;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -17,8 +19,6 @@ import frc.robot.util.scheduling.SubsystemPriority;
 import org.littletonrobotics.junction.Logger;
 
 public class IntakeSubsystem extends LifecycleSubsystem {
-  private static final SupplyCurrentLimitConfiguration CURRENT_LIMIT =
-      new SupplyCurrentLimitConfiguration(true, 15, 25, 0.2);
 
   private HeldGamePiece gamePiece = HeldGamePiece.NOTHING;
 
@@ -33,25 +33,36 @@ public class IntakeSubsystem extends LifecycleSubsystem {
     super(SubsystemPriority.INTAKE);
 
     this.motor = motor;
-    motor.setInverted(Config.INVERTED_INTAKE);
-    motor.configSupplyCurrentLimit(CURRENT_LIMIT);
-    motor.overrideLimitSwitchesEnable(false);
+
+    TalonFXConfiguration motorConfig = new TalonFXConfiguration();
+    motorConfig.MotorOutput.Inverted =
+        Config.INVERTED_INTAKE
+            ? InvertedValue.Clockwise_Positive
+            : InvertedValue.CounterClockwise_Positive;
+
+    motorConfig.CurrentLimits.SupplyCurrentLimit = 15;
+    motorConfig.CurrentLimits.SupplyCurrentThreshold = 25;
+    motorConfig.CurrentLimits.SupplyTimeThreshold = 0.2;
+    motorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+
+    motorConfig.HardwareLimitSwitch.ForwardLimitEnable = false;
+    motorConfig.HardwareLimitSwitch.ReverseLimitEnable = false;
   }
 
   private boolean sensorHasCube() {
-    return motor.isFwdLimitSwitchClosed() == 1;
+    return motor.getForwardLimit().getValue() == ForwardLimitValue.ClosedToGround;
   }
 
   private boolean sensorHasCone() {
-    return motor.isRevLimitSwitchClosed() == 1;
+    return motor.getReverseLimit().getValue() == ReverseLimitValue.Open;
   }
 
   @Override
   public void robotPeriodic() {
     Logger.getInstance().recordOutput("Intake/Mode", mode.toString());
     Logger.getInstance().recordOutput("Intake/HeldGamePiece", gamePiece.toString());
-    Logger.getInstance().recordOutput("Intake/Current", motor.getStatorCurrent());
-    Logger.getInstance().recordOutput("Intake/Voltage", motor.getMotorOutputVoltage());
+    Logger.getInstance().recordOutput("Intake/Current", motor.getStatorCurrent().getValue());
+    Logger.getInstance().recordOutput("Intake/AppliedDutyCycle", motor.getDutyCycle().getValue());
     Logger.getInstance().recordOutput("Intake/ConeIntakeSensor", sensorHasCone());
     Logger.getInstance().recordOutput("Intake/CubeIntakeSensor", sensorHasCube());
   }
@@ -83,27 +94,27 @@ public class IntakeSubsystem extends LifecycleSubsystem {
     }
 
     if (mode == IntakeMode.MANUAL_INTAKE) {
-      motor.set(TalonFXControlMode.PercentOutput, 0.5);
+      motor.set(0.5);
     } else if (mode == IntakeMode.MANUAL_OUTTAKE) {
-      motor.set(TalonFXControlMode.PercentOutput, -0.5);
+      motor.set(-0.5);
     } else if (mode == IntakeMode.OUTTAKE_CUBE_SLOW) {
-      motor.set(TalonFXControlMode.PercentOutput, -0.3);
+      motor.set(-0.3);
     } else if (mode == IntakeMode.OUTTAKE_CUBE_FAST) {
-      motor.set(TalonFXControlMode.PercentOutput, -0.5);
+      motor.set(-0.5);
     } else if (mode == IntakeMode.OUTTAKE_CONE) {
-      motor.set(TalonFXControlMode.PercentOutput, 0.6);
+      motor.set(0.6);
     } else if (mode == IntakeMode.SHOOT_CONE) {
-      motor.set(TalonFXControlMode.PercentOutput, 1);
+      motor.set(1);
     } else if (gamePiece == HeldGamePiece.CUBE) {
-      motor.set(TalonFXControlMode.PercentOutput, 0.15);
+      motor.set(0.15);
     } else if (gamePiece == HeldGamePiece.CONE) {
-      motor.set(TalonFXControlMode.PercentOutput, -0.1);
+      motor.set(-0.1);
     } else if (mode == IntakeMode.INTAKE_CUBE) {
-      motor.set(TalonFXControlMode.PercentOutput, 0.75);
+      motor.set(0.75);
     } else if (mode == IntakeMode.INTAKE_CONE) {
-      motor.set(TalonFXControlMode.PercentOutput, -1);
+      motor.set(-1);
     } else {
-      motor.set(TalonFXControlMode.PercentOutput, 0);
+      motor.disable();
     }
   }
 

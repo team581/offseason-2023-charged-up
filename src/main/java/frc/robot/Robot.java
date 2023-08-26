@@ -5,9 +5,9 @@
 package frc.robot;
 
 import com.ctre.phoenix.led.CANdle;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import com.ctre.phoenix.sensors.CANCoder;
-import com.ctre.phoenix.sensors.Pigeon2;
+import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.Pigeon2;
+import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -55,35 +55,35 @@ public class Robot extends LoggedRobot {
   private final SwerveModule frontLeft =
       new SwerveModule(
           Config.SWERVE_FL_CONSTANTS,
-          new com.ctre.phoenixpro.hardware.TalonFX(
+          new com.ctre.phoenix6.hardware.TalonFX(
               Config.SWERVE_FL_DRIVE_MOTOR_ID, Config.CANIVORE_ID),
-          new com.ctre.phoenixpro.hardware.TalonFX(
+          new com.ctre.phoenix6.hardware.TalonFX(
               Config.SWERVE_FL_STEER_MOTOR_ID, Config.CANIVORE_ID),
-          new CANCoder(Config.SWERVE_FL_CANCODER_ID, Config.CANIVORE_ID));
+          new CANcoder(Config.SWERVE_FL_CANCODER_ID, Config.CANIVORE_ID));
   private final SwerveModule frontRight =
       new SwerveModule(
           Config.SWERVE_FR_CONSTANTS,
-          new com.ctre.phoenixpro.hardware.TalonFX(
+          new com.ctre.phoenix6.hardware.TalonFX(
               Config.SWERVE_FR_DRIVE_MOTOR_ID, Config.CANIVORE_ID),
-          new com.ctre.phoenixpro.hardware.TalonFX(
+          new com.ctre.phoenix6.hardware.TalonFX(
               Config.SWERVE_FR_STEER_MOTOR_ID, Config.CANIVORE_ID),
-          new CANCoder(Config.SWERVE_FR_CANCODER_ID, Config.CANIVORE_ID));
+          new CANcoder(Config.SWERVE_FR_CANCODER_ID, Config.CANIVORE_ID));
   private final SwerveModule backLeft =
       new SwerveModule(
           Config.SWERVE_BL_CONSTANTS,
-          new com.ctre.phoenixpro.hardware.TalonFX(
+          new com.ctre.phoenix6.hardware.TalonFX(
               Config.SWERVE_BL_DRIVE_MOTOR_ID, Config.CANIVORE_ID),
-          new com.ctre.phoenixpro.hardware.TalonFX(
+          new com.ctre.phoenix6.hardware.TalonFX(
               Config.SWERVE_BL_STEER_MOTOR_ID, Config.CANIVORE_ID),
-          new CANCoder(Config.SWERVE_BL_CANCODER_ID, Config.CANIVORE_ID));
+          new CANcoder(Config.SWERVE_BL_CANCODER_ID, Config.CANIVORE_ID));
   private final SwerveModule backRight =
       new SwerveModule(
           Config.SWERVE_BR_CONSTANTS,
-          new com.ctre.phoenixpro.hardware.TalonFX(
+          new com.ctre.phoenix6.hardware.TalonFX(
               Config.SWERVE_BR_DRIVE_MOTOR_ID, Config.CANIVORE_ID),
-          new com.ctre.phoenixpro.hardware.TalonFX(
+          new com.ctre.phoenix6.hardware.TalonFX(
               Config.SWERVE_BR_STEER_MOTOR_ID, Config.CANIVORE_ID),
-          new CANCoder(Config.SWERVE_BR_CANCODER_ID, Config.CANIVORE_ID));
+          new CANcoder(Config.SWERVE_BR_CANCODER_ID, Config.CANIVORE_ID));
 
   private final DriveController driveController = new DriveController(Config.DRIVE_CONTROLLER_PORT);
   private final CommandXboxController operatorController =

@@ -112,14 +112,6 @@ public class SwerveSubsystem extends LifecycleSubsystem {
   }
 
   @Override
-  public void disabledPeriodic() {
-    frontRight.resetWheelAngle();
-    frontLeft.resetWheelAngle();
-    backRight.resetWheelAngle();
-    backLeft.resetWheelAngle();
-  }
-
-  @Override
   public void robotPeriodic() {
     frontLeft.log();
     frontRight.log();

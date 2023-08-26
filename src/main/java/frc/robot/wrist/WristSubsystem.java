@@ -107,7 +107,7 @@ public class WristSubsystem extends LifecycleSubsystem {
       motor.set(Config.WRIST_HOMING_VOLTAGE);
 
       if (filteredCurrent > Config.WRIST_HOMED_CURRENT) {
-        // motor.disable();
+        motor.disable();
         motor.setRotorPosition(Config.WRIST_HOMED_ANGLE.getRotations() * Config.WRIST_GEARING);
         setAngle(Positions.STOWED.angle);
         homingState = HomingState.HOMED;
@@ -128,7 +128,6 @@ public class WristSubsystem extends LifecycleSubsystem {
     Logger.getInstance().recordOutput("Wrist/Voltage", motor.getDutyCycle().getValue());
 
     if (Config.IS_DEVELOPMENT) {
-      Logger.getInstance().recordOutput("Wrist/RawAngle", motor.getPosition().getValue());
       Logger.getInstance().recordOutput("Wrist/ControlMode", motor.getControlMode().toString());
     }
   }

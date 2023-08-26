@@ -127,7 +127,7 @@ public class ElevatorSubsystem extends LifecycleSubsystem {
       double goalPosition = goalPositionInInches * ROTATIONS_PER_ELEVATOR_INCH;
       motor.setControl(motionMagic.withPosition(goalPosition));
     } else {
-      motor.set(0);
+      motor.disable();
     }
   }
 

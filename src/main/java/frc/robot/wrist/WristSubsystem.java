@@ -4,8 +4,14 @@
 
 package frc.robot.wrist;
 
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.ControlRequest;
+import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.MotionMagicDutyCycle;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.ControlModeValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -21,8 +27,10 @@ import org.littletonrobotics.junction.Logger;
 public class WristSubsystem extends LifecycleSubsystem {
   private static final Rotation2d TOLERANCE = Rotation2d.fromDegrees(2);
   private final TalonFX motor;
-  private Rotation2d goalAngle = Positions.STOWED.angle;
   private final LinearFilter currentFilter = LinearFilter.movingAverage(5);
+  private final MotionMagicVoltage motionMagic = new MotionMagicVoltage(0);
+
+  private Rotation2d goalAngle = Positions.STOWED.angle;
 
   private HomingState homingState = HomingState.NOT_HOMED;
 
@@ -74,7 +82,7 @@ public class WristSubsystem extends LifecycleSubsystem {
 
   public void resetHoming() {
     homingState = HomingState.NOT_HOMED;
-    motor.set(0);
+    motor.disable();
   }
 
   public HomingState getHomingState() {
@@ -99,15 +107,15 @@ public class WristSubsystem extends LifecycleSubsystem {
       motor.set(Config.WRIST_HOMING_VOLTAGE);
 
       if (filteredCurrent > Config.WRIST_HOMED_CURRENT) {
-        motor.set(0);
+        // motor.disable();
         motor.setRotorPosition(Config.WRIST_HOMED_ANGLE.getRotations() * Config.WRIST_GEARING);
         setAngle(Positions.STOWED.angle);
         homingState = HomingState.HOMED;
       }
     } else if (homingState == HomingState.HOMED) {
-      motor.set(goalAngle.getRotations() * 2048 * Config.WRIST_GEARING);
+      motor.setControl(motionMagic.withPosition(goalAngle.getRotations()));
     } else {
-      motor.set(0);
+      motor.disable();
     }
   }
 

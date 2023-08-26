@@ -41,7 +41,6 @@ public class IntakeSubsystem extends LifecycleSubsystem {
             : InvertedValue.CounterClockwise_Positive;
 
     motorConfig.CurrentLimits.SupplyCurrentLimit = 15;
-    motorConfig.CurrentLimits.SupplyCurrentLimit = 15;
     motorConfig.CurrentLimits.SupplyCurrentThreshold = 25;
     motorConfig.CurrentLimits.SupplyTimeThreshold = 0.2;
     motorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
@@ -115,7 +114,7 @@ public class IntakeSubsystem extends LifecycleSubsystem {
     } else if (mode == IntakeMode.INTAKE_CONE) {
       motor.set(-1);
     } else {
-      motor.set(0);
+      motor.disable();
     }
   }
 

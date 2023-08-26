@@ -10,6 +10,7 @@ import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
@@ -65,11 +66,6 @@ public class SwerveModule {
     driveMotorConfigs.Slot0.kV = Config.SWERVE_DRIVE_KV;
     driveMotorConfigs.Slot0.kS = Config.SWERVE_DRIVE_KS;
 
-    driveMotorConfigs.Feedback.FeedbackRemoteSensorID = encoder.getDeviceID();
-    driveMotorConfigs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
-    driveMotorConfigs.Feedback.SensorToMechanismRatio = 1.0;
-    driveMotorConfigs.Feedback.RotorToSensorRatio = Config.SWERVE_DRIVE_GEARING_REDUCTION;
-
     driveMotorConfigs.Voltage.PeakForwardVoltage = 12;
     driveMotorConfigs.Voltage.PeakReverseVoltage = -12;
 
@@ -100,6 +96,11 @@ public class SwerveModule {
     steerMotorConfigs.Slot0.kI = Config.SWERVE_STEER_KI;
     steerMotorConfigs.Slot0.kD = Config.SWERVE_STEER_KD;
     steerMotorConfigs.Slot0.kS = Config.SWERVE_STEER_KS;
+
+    steerMotorConfigs.Feedback.FeedbackRemoteSensorID = encoder.getDeviceID();
+    steerMotorConfigs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
+    steerMotorConfigs.Feedback.SensorToMechanismRatio= 1.0;
+    steerMotorConfigs.Feedback.RotorToSensorRatio = Config.SWERVE_STEER_GEARING_REDUCTION;
 
     steerMotorConfigs.CurrentLimits.SupplyCurrentLimit = 35;
     steerMotorConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;

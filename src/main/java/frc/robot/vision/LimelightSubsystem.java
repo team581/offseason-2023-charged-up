@@ -5,20 +5,24 @@
 package frc.robot.vision;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.util.scheduling.LifecycleSubsystem;
 import frc.robot.util.scheduling.SubsystemPriority;
 import frc.robot.vision.LimelightHelpers.LimelightResults;
 import frc.robot.vision.LimelightHelpers.LimelightTarget_Retro;
+import org.littletonrobotics.junction.Logger;
 
 public class LimelightSubsystem extends LifecycleSubsystem {
   public final String limelightName;
-  public final int retroPipeline =2;
+  public final int retroPipeline = 2;
+  private SwerveSubsystem swerve;
 
-  public LimelightSubsystem(String limelightName) {
+  public LimelightSubsystem(String limelightName, SwerveSubsystem swerve) {
     super(SubsystemPriority.VISION, "LimelightSubsystem_" + limelightName);
 
     /* Constructor method. */
     this.limelightName = limelightName;
+    this.swerve = swerve;
   }
 
   public void turnOnLights() {
@@ -34,7 +38,6 @@ public class LimelightSubsystem extends LifecycleSubsystem {
   public void setPipeline(int index) {
     /* Set the Pipeline to use on the limelight. */
     LimelightHelpers.setPipelineIndex(limelightName, index);
-
   }
 
   public VisionTarget getClosestMiddleConeTarget() {
@@ -42,7 +45,6 @@ public class LimelightSubsystem extends LifecycleSubsystem {
      *
      * This is done by isolating the largest target on the screen.
      */
-
 
     // Get results from Limelight.
     LimelightResults results = LimelightHelpers.getLatestResults(limelightName);
@@ -58,7 +60,7 @@ public class LimelightSubsystem extends LifecycleSubsystem {
     }
 
     // Return the largest (closest) target as object VisionTarget.
-    return new VisionTarget(biggestTarget.tx_pixels, biggestTarget.ty_pixels, 0, 0);
+    return new VisionTarget(biggestTarget.tx, biggestTarget.ty, 0, 0);
   }
 
   public VisionTarget getClosestConeTarget() {
@@ -83,7 +85,14 @@ public class LimelightSubsystem extends LifecycleSubsystem {
           } else {
             turnOffLights();
           }
-
         });
+  }
+
+  @Override
+  public void robotPeriodic() {
+    Logger.getInstance().recordOutput("Vision/LimelightX", getClosestMiddleConeTarget().x);
+    Logger.getInstance().recordOutput("Vision/LimelightY", getClosestMiddleConeTarget().y);
+    Logger.getInstance().recordOutput("Vision/XSpeed", swerve.getChassisSpeeds().vxMetersPerSecond);
+    Logger.getInstance().recordOutput("Vision/YSpeed", swerve.getChassisSpeeds().vyMetersPerSecond);
   }
 }

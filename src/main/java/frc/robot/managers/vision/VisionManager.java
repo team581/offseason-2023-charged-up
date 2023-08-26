@@ -4,13 +4,11 @@
 
 package frc.robot.managers.vision;
 
-import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.NodeHeight;
-import frc.robot.States;
 import frc.robot.managers.SuperstructureManager;
 import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.util.scheduling.LifecycleSubsystem;
@@ -24,13 +22,14 @@ public class VisionManager extends LifecycleSubsystem {
   private final SwerveSubsystem swerve;
   private final SuperstructureManager superstructure;
 
-  private double xP = -0.01;
-  private double yP = 0.01;
+  private double xP = -0.5;
+  private double yP = 0.5;
   // tune setpoint value
-  private double ySetpoint = 0;
-  private double pixelRange = 20;
+  private double ySetpoint = 5.5;
+  private double angleRange = 1.3;
 
-  public VisionManager(LimelightSubsystem limelight, SwerveSubsystem swerve, SuperstructureManager superstructure) {
+  public VisionManager(
+      LimelightSubsystem limelight, SwerveSubsystem swerve, SuperstructureManager superstructure) {
     super(SubsystemPriority.VISION_MANAGER);
 
     this.limelight = limelight;
@@ -51,14 +50,11 @@ public class VisionManager extends LifecycleSubsystem {
         .finallyDo(
             (boolean interrupted) -> {
 
-
               // Set drive speeds to 0.
-              swerve.setChassisSpeeds(new ChassisSpeeds(0,0,0), false);
+              swerve.setChassisSpeeds(new ChassisSpeeds(0, 0, 0), false);
               // Turn off LEDs.
-              limelight.turnOffLights();
+              // limelight.turnOffLights();
             });
-
-
   }
 
   private CommandBase alignWithVisionTargetCommand() {
@@ -75,10 +71,10 @@ public class VisionManager extends LifecycleSubsystem {
   private boolean atLocation() {
     // Return true once at location
     VisionTarget closestNode = limelight.getClosestMiddleConeTarget();
-    return  closestNode.x >= -pixelRange &&
-            closestNode.x <= pixelRange &&
-            closestNode.y >= ySetpoint - pixelRange &&
-            closestNode.y <= ySetpoint + pixelRange;
+    return closestNode.x >= -angleRange
+        && closestNode.x <= angleRange
+        && closestNode.y >= ySetpoint - angleRange
+        && closestNode.y <= ySetpoint + angleRange;
   }
 
   private ChassisSpeeds calculateSwerveSpeeds() {
@@ -87,13 +83,12 @@ public class VisionManager extends LifecycleSubsystem {
     // Calculate X and Y speeds
     double ySpeed = closestNode.x * xP;
     double xSpeed = (closestNode.y - ySetpoint) * yP;
-    Logger.getInstance().recordOutput("Vision/LimelightX", closestNode.x);
-    Logger.getInstance().recordOutput("Vision/LimelightY", closestNode.y);
-    Logger.getInstance().recordOutput("Vision/XSpeed", swerve.getChassisSpeeds().vxMetersPerSecond);
-    Logger.getInstance().recordOutput("Vision/YSpeed", swerve.getChassisSpeeds().vyMetersPerSecond);
-    return new ChassisSpeeds(xSpeed, ySpeed,0);
-
-
-
+    // Logger.getInstance().recordOutput("Vision/LimelightX", closestNode.x);
+    // Logger.getInstance().recordOutput("Vision/LimelightY", closestNode.y);
+    // Logger.getInstance().recordOutput("Vision/XSpeed",
+    // swerve.getChassisSpeeds().vxMetersPerSecond);
+    // Logger.getInstance().recordOutput("Vision/YSpeed",
+    // swerve.getChassisSpeeds().vyMetersPerSecond);
+    return new ChassisSpeeds(xSpeed, ySpeed, 0);
   }
 }

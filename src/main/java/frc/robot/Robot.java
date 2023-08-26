@@ -121,9 +121,10 @@ public class Robot extends LoggedRobot {
 
   private Command autoCommand;
 
-  private final LimelightSubsystem limelight = new LimelightSubsystem("");
+  private final LimelightSubsystem limelight = new LimelightSubsystem("", swerve);
 
-  private final VisionManager visionManager = new VisionManager(limelight, swerve, superstructureManager);
+  private final VisionManager visionManager =
+      new VisionManager(limelight, swerve, superstructureManager);
 
   public Robot() {
     // Log to a USB stick

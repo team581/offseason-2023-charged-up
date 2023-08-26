@@ -5,10 +5,10 @@
 package frc.robot.vision;
 
 public class VisionTarget {
-  public final double x;
-  public final double y;
-  public final double width;
-  public final double height;
+  public double x;
+  public double y;
+  public double width;
+  public double height;
 
   public VisionTarget(double x, double y, double width, double height) {
     this.x = x;

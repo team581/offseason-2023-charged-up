@@ -96,7 +96,7 @@ public class Config {
   public static final double ELEVATOR_MIN_HEIGHT = IS_SPIKE ? 0 : 0;
   public static final double ELEVATOR_MAX_HEIGHT = IS_SPIKE ? 27 : 12;
   public static final double ELEVATOR_KF = IS_SPIKE ? 0 : 0;
-  public static final double ELEVATOR_KP = IS_SPIKE ? 0.7 : 0.8;
+  public static final double ELEVATOR_KP = IS_SPIKE ? 0.4 : 0.8;
   public static final double ELEVATOR_KI = IS_SPIKE ? 0 : 0;
   public static final double ELEVATOR_KD = IS_SPIKE ? 0.1 : 0;
   public static final double ELEVATOR_ARB_F = IS_SPIKE ? 0.08 : 0;

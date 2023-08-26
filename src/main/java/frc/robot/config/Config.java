@@ -131,7 +131,7 @@ public class Config {
 
   public static final int SWERVE_DRIVE_VOLTAGE_PEAK_FORWARD_VOLTAGE = IS_SPIKE ? 12 : 0;
   public static final int SWERVE_DRIVE_VOLTAGE_PEAK_REVERSE_VOLTAGE = IS_SPIKE ? -12 : 0;
-  public static final double SWERVE_DRIVE_CURRENT_LIMIT = IS_SPIKE ? 35 : 0;
+  public static final double SWERVE_DRIVE_CURRENT_LIMIT = IS_SPIKE ? 45 : 0;
   public static final boolean SWERVE_DRIVE_LIMITS_ENABLE = IS_SPIKE ? true : true;
 
   public static final double SWERVE_DRIVE_KP = IS_SPIKE ? 0.24 : 0.1;

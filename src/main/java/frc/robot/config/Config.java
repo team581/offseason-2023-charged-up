@@ -109,10 +109,10 @@ public class Config {
 
   public static final int WRIST_MOTOR_ID = 16;
   public static final double WRIST_GEARING = IS_SPIKE ? 25.0 * 2 : 48.0 * 2;
-  public static final int WRIST_KF = IS_SPIKE ? 0 : 0;
-  public static final double WRIST_KP = IS_SPIKE ? 0.5 : 0.1;
-  public static final int WRIST_KI = IS_SPIKE ? 0 : 0;
-  public static final int WRIST_KD = IS_SPIKE ? 0 : 0;
+  public static final double WRIST_KF = IS_SPIKE ? 0 : 0;
+  public static final double WRIST_KP = IS_SPIKE ? 0.15 : 0.1;
+  public static final double WRIST_KI = IS_SPIKE ? 0 : 0;
+  public static final double WRIST_KD = IS_SPIKE ? 0 : 0;
   public static final int WRIST_MOTION_CRUISE_VELOCITY = IS_SPIKE ? 7500 : 20000;
   public static final int WRIST_MOTION_ACCELERATION = IS_SPIKE ? 60000 : 50000;
   public static final double WRIST_HOMED_CURRENT = IS_SPIKE ? 1.3 : 5;
@@ -131,7 +131,7 @@ public class Config {
 
   public static final int SWERVE_DRIVE_VOLTAGE_PEAK_FORWARD_VOLTAGE = IS_SPIKE ? 12 : 0;
   public static final int SWERVE_DRIVE_VOLTAGE_PEAK_REVERSE_VOLTAGE = IS_SPIKE ? -12 : 0;
-  public static final double SWERVE_DRIVE_CURRENT_LIMIT = IS_SPIKE ? 45 : 0;
+  public static final double SWERVE_DRIVE_CURRENT_LIMIT = IS_SPIKE ? 50 : 0;
   public static final boolean SWERVE_DRIVE_LIMITS_ENABLE = IS_SPIKE ? true : true;
 
   public static final double SWERVE_DRIVE_KP = IS_SPIKE ? 0.24 : 0.1;

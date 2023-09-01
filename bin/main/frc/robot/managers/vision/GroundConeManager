@@ -16,19 +16,16 @@ import frc.robot.util.scheduling.SubsystemPriority;
 import frc.robot.vision.LimelightSubsystem;
 import frc.robot.vision.VisionTarget;
 
-public class VisionManager extends LifecycleSubsystem {
+public class GroundConeManager extends LifecycleSubsystem {
   /* Aggregates vision based actions into commands for the robot. */
   private final LimelightSubsystem limelight;
   private final SwerveSubsystem swerve;
   private final SuperstructureManager superstructure;
 
-  private double xP = -0.5;
-  private double yP = 0.5;
-  // tune setpoint value
-  private double ySetpoint = 5.5;
-  private double angleRange = 1.3;
+  private double yP = 0.25;
 
-  public VisionManager(
+
+  public GroundConeManager(
       LimelightSubsystem limelight, SwerveSubsystem swerve, SuperstructureManager superstructure) {
     super(SubsystemPriority.VISION_MANAGER);
 
@@ -37,16 +34,19 @@ public class VisionManager extends LifecycleSubsystem {
     this.superstructure = superstructure;
   }
 
-  public Command getAutoScoreMidCone() {
+  public Command getGroundCone() {
     // Return full command to auto score cone mid.
 
     // TODO(Simon): Finish command.
     // Do we drive to position, raise up, then score? Do we raise up, drive to position, then raise
     // up?
     return limelight
-        .setPipelineCommand(limelight.retroPipeline)
-        .andThen(alignWithVisionTargetCommand().until(() -> atLocation()))
-        .andThen(superstructure.getScoreCommand(NodeHeight.MID, 0))
+        .setPipelineCommand(limelight.setPipeline(0))
+        .andThen(superstructure.getFloorIntakeSpinningCommand())
+        .andThen(Commands.run(() -> {
+          swerve.setChassisSpeeds(calculateSwerveSpeeds)
+        }, swerve))
+        .until(() -> intake.sensorHasCone())
         .finallyDo(
             (boolean interrupted) -> {
 
@@ -57,38 +57,30 @@ public class VisionManager extends LifecycleSubsystem {
             });
   }
 
-  private CommandBase alignWithVisionTargetCommand() {
+  private CommandBase alignWithClosestConeCommand() {
     return Commands.run(
         () -> {
           // TODO(Simon): Fill in.
-          swerve.setChassisSpeeds(calculateSwerveSpeeds(), false);
+
           // Set swerve speeds with calculateSwerveSpeeds()
         },
         limelight,
         swerve);
   }
 
-  private boolean atLocation() {
-    // Return true once at location
-    VisionTarget closestNode = limelight.getClosestMiddleConeTarget();
-    return closestNode.x >= -angleRange
-        && closestNode.x <= angleRange
-        && closestNode.y >= ySetpoint - angleRange
-        && closestNode.y <= ySetpoint + angleRange;
-  }
+
 
   private ChassisSpeeds calculateSwerveSpeeds() {
     // Get closest middle cone target.
-    VisionTarget closestNode = limelight.getClosestMiddleConeTarget();
-    // Calculate X and Y speeds
-    double ySpeed = closestNode.x * xP;
-    double xSpeed = (closestNode.y - ySetpoint) * yP;
+    VisionTarget closestCone = limelight.getClosestConeTarget();
+
+    double thetaSpeed = closestCone.getThetaPercentage * yP;
     // Logger.getInstance().recordOutput("Vision/LimelightX", closestNode.x);
     // Logger.getInstance().recordOutput("Vision/LimelightY", closestNode.y);
     // Logger.getInstance().recordOutput("Vision/XSpeed",
     // swerve.getChassisSpeeds().vxMetersPerSecond);
     // Logger.getInstance().recordOutput("Vision/YSpeed",
     // swerve.getChassisSpeeds().vyMetersPerSecond);
-    return new ChassisSpeeds(xSpeed, ySpeed, 0);
+    return new ChassisSpeeds(0.5, 0, thetaSpeed);
   }
 }

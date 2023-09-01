@@ -33,7 +33,8 @@ import frc.robot.managers.Autobalance;
 import frc.robot.managers.SuperstructureManager;
 import frc.robot.managers.SuperstructureMotionManager;
 import frc.robot.managers.vision.AutoScoreLocation;
-import frc.robot.managers.vision.VisionManager;
+import frc.robot.managers.vision.AutoScoreManager;
+import frc.robot.managers.vision.GroundConeManager;
 import frc.robot.swerve.SwerveModule;
 import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.util.scheduling.LifecycleSubsystemManager;
@@ -123,8 +124,11 @@ public class Robot extends LoggedRobot {
 
   private final LimelightSubsystem limelight = new LimelightSubsystem("", swerve);
 
-  private final VisionManager visionManager =
-      new VisionManager(limelight, swerve, superstructureManager);
+  private final AutoScoreManager visionManager =
+      new AutoScoreManager(limelight, swerve, superstructureManager);
+
+  private final GroundConeManager groundManager =
+      new GroundConeManager(limelight, swerve, superstructureManager);
 
   public Robot() {
     // Log to a USB stick
@@ -252,6 +256,7 @@ public class Robot extends LoggedRobot {
     // Stow unsafe
     operatorController.start().onTrue(superstructureManager.getCommand(States.STOWED_UNSAFE));
     operatorController.povUp().whileTrue(visionManager.getAutoScoreMidCone());
+    operatorController.povDown().whileTrue(groundManager.getGroundCone());
   }
 
   @Override

@@ -9,12 +9,14 @@ import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.util.scheduling.LifecycleSubsystem;
 import frc.robot.util.scheduling.SubsystemPriority;
 import frc.robot.vision.LimelightHelpers.LimelightResults;
+import frc.robot.vision.LimelightHelpers.LimelightTarget_Detector;
 import frc.robot.vision.LimelightHelpers.LimelightTarget_Retro;
 import org.littletonrobotics.junction.Logger;
 
 public class LimelightSubsystem extends LifecycleSubsystem {
   public final String limelightName;
-  public final int retroPipeline = 2;
+  public final int retroPipeline = 1;
+  public final int coralPipeline = 3;
   private SwerveSubsystem swerve;
 
   public LimelightSubsystem(String limelightName, SwerveSubsystem swerve) {
@@ -69,9 +71,18 @@ public class LimelightSubsystem extends LifecycleSubsystem {
      * This is done by isolating the largest target on the screen.
      */
     // TODO(Simon): Fill in the code to get the closest cone target.
+    LimelightResults results = LimelightHelpers.getLatestResults(limelightName);
+    LimelightTarget_Detector biggestTarget = new LimelightTarget_Detector();
 
+    for (int i = 0; i < results.targetingResults.targets_Detector.length; i++) {
+      LimelightTarget_Detector currentTarget = results.targetingResults.targets_Detector[i];
+
+      if (currentTarget.ta > biggestTarget.ta) {
+        biggestTarget = currentTarget;
+      }
+    }
     // Get results */
-    return new VisionTarget(0, 0, 0, 0);
+    return new VisionTarget(biggestTarget.tx, biggestTarget.ty, 0, 0);
   }
 
   public CommandBase setPipelineCommand(int pipeline) {

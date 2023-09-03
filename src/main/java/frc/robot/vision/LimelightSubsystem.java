@@ -16,7 +16,6 @@ import org.littletonrobotics.junction.Logger;
 public class LimelightSubsystem extends LifecycleSubsystem {
   public final String limelightName;
   public final int retroPipeline = 1;
-  public final int coralPipeline = 3;
   private SwerveSubsystem swerve;
 
   public LimelightSubsystem(String limelightName, SwerveSubsystem swerve) {

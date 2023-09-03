@@ -26,7 +26,7 @@ public class AutoScoreManager extends LifecycleSubsystem {
   private double xP = -0.1;
   private double yP = 0.25;
   // tune setpoint value
-  private double ySetpoint = 5.5;
+  private double ySetpoint = 6;
   private double angleRange = 1.3;
 
   public AutoScoreManager(
@@ -47,14 +47,14 @@ public class AutoScoreManager extends LifecycleSubsystem {
     return limelight
         .setPipelineCommand(limelight.retroPipeline)
         .andThen(alignWithVisionTargetCommand().until(() -> atLocation()))
-        .andThen(superstructure.getScoreCommand(NodeHeight.MID, 0))
+        .andThen(superstructure.getScoreCommand(NodeHeight.MID, 0.3))
         .finallyDo(
             (boolean interrupted) -> {
 
               // Set drive speeds to 0.
               swerve.setChassisSpeeds(new ChassisSpeeds(0, 0, 0), false);
               // Turn off LEDs.
-              // limelight.turnOffLights();
+              limelight.turnOffLights();
             });
   }
 

@@ -6,32 +6,38 @@ package frc.robot.managers.vision;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.NodeHeight;
+import frc.robot.States;
+import frc.robot.intake.HeldGamePiece;
+import frc.robot.intake.IntakeSubsystem;
 import frc.robot.managers.SuperstructureManager;
 import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.util.scheduling.LifecycleSubsystem;
 import frc.robot.util.scheduling.SubsystemPriority;
 import frc.robot.vision.LimelightSubsystem;
 import frc.robot.vision.VisionTarget;
+import org.littletonrobotics.junction.Logger;
 
 public class GroundConeManager extends LifecycleSubsystem {
   /* Aggregates vision based actions into commands for the robot. */
   private final LimelightSubsystem limelight;
   private final SwerveSubsystem swerve;
   private final SuperstructureManager superstructure;
+  private final IntakeSubsystem intake;
 
-  private double yP = 0.25;
-
+  private double yP = -0.1;
 
   public GroundConeManager(
-      LimelightSubsystem limelight, SwerveSubsystem swerve, SuperstructureManager superstructure) {
+      LimelightSubsystem limelight,
+      SwerveSubsystem swerve,
+      SuperstructureManager superstructure,
+      IntakeSubsystem intake) {
     super(SubsystemPriority.VISION_MANAGER);
 
     this.limelight = limelight;
     this.swerve = swerve;
     this.superstructure = superstructure;
+    this.intake = intake;
   }
 
   public Command getGroundCone() {
@@ -41,46 +47,27 @@ public class GroundConeManager extends LifecycleSubsystem {
     // Do we drive to position, raise up, then score? Do we raise up, drive to position, then raise
     // up?
     return limelight
-        .setPipelineCommand(limelight.setPipeline(0))
+        .setPipelineCommand(0)
+        .andThen(() -> superstructure.setIntakeMode(HeldGamePiece.CONE))
         .andThen(superstructure.getFloorIntakeSpinningCommand())
-        .andThen(Commands.run(() -> {
-          swerve.setChassisSpeeds(calculateSwerveSpeeds)
-        }, swerve))
-        .until(() -> intake.sensorHasCone())
-        .finallyDo(
-            (boolean interrupted) -> {
-
-              // Set drive speeds to 0.
-              swerve.setChassisSpeeds(new ChassisSpeeds(0, 0, 0), false);
-              // Turn off LEDs.
-              // limelight.turnOffLights();
-            });
+        .alongWith(
+            Commands.run(() -> swerve.setChassisSpeeds(calculateSwerveSpeeds(), false), swerve)
+                .until(() -> intake.getGamePiece() == HeldGamePiece.CONE))
+        .andThen(
+            superstructure
+                .getCommand(States.STOWED)
+                .alongWith(
+                    Commands.runOnce(
+                        () -> swerve.setChassisSpeeds(new ChassisSpeeds(), false), swerve)));
   }
-
-  private CommandBase alignWithClosestConeCommand() {
-    return Commands.run(
-        () -> {
-          // TODO(Simon): Fill in.
-
-          // Set swerve speeds with calculateSwerveSpeeds()
-        },
-        limelight,
-        swerve);
-  }
-
-
 
   private ChassisSpeeds calculateSwerveSpeeds() {
     // Get closest middle cone target.
     VisionTarget closestCone = limelight.getClosestConeTarget();
 
-    double thetaSpeed = closestCone.getThetaPercentage * yP;
-    // Logger.getInstance().recordOutput("Vision/LimelightX", closestNode.x);
-    // Logger.getInstance().recordOutput("Vision/LimelightY", closestNode.y);
-    // Logger.getInstance().recordOutput("Vision/XSpeed",
-    // swerve.getChassisSpeeds().vxMetersPerSecond);
-    // Logger.getInstance().recordOutput("Vision/YSpeed",
-    // swerve.getChassisSpeeds().vyMetersPerSecond);
-    return new ChassisSpeeds(0.5, 0, thetaSpeed);
+    double thetaSpeed = closestCone.x * yP;
+    Logger.getInstance().recordOutput("Vision/LimelightX", closestCone.x);
+    Logger.getInstance().recordOutput("Vision/ThetaSpeed", thetaSpeed);
+    return new ChassisSpeeds(1.0, 0, thetaSpeed);
   }
 }

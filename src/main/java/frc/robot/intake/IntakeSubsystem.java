@@ -42,7 +42,7 @@ public class IntakeSubsystem extends LifecycleSubsystem {
     return motor.isFwdLimitSwitchClosed() == 1;
   }
 
-  public boolean sensorHasCone() {
+  private boolean sensorHasCone() {
     return motor.isRevLimitSwitchClosed() == 1;
   }
 

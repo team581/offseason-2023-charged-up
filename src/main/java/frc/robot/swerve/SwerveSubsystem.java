@@ -198,7 +198,7 @@ public class SwerveSubsystem extends LifecycleSubsystem {
     Logger.getInstance().recordOutput("Swerve/CommandedSpeeds/Omega", speeds.omegaRadiansPerSecond);
 
     // Twist computation.
-    double lookAheadSeconds = 0.1;
+    double lookAheadSeconds = 0.02;
     Pose2d target_pose =
         new Pose2d(
             lookAheadSeconds * speeds.vxMetersPerSecond,

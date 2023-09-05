@@ -56,40 +56,36 @@ public class Config {
   public static final SwerveModuleConstants SWERVE_FL_CONSTANTS =
       IS_SPIKE
           ? new SwerveModuleConstants(
-              Rotation2d.fromDegrees(182.021484375), SwerveCorner.FRONT_LEFT, true, true)
+              Rotation2d.fromDegrees(5.625), SwerveCorner.FRONT_LEFT, true, true)
           : new SwerveModuleConstants(
               Rotation2d.fromDegrees(117.19), SwerveCorner.FRONT_LEFT, false, false);
-  // -62.84
   public static final int SWERVE_FR_DRIVE_MOTOR_ID = 6;
   public static final int SWERVE_FR_STEER_MOTOR_ID = 7;
   public static final int SWERVE_FR_CANCODER_ID = 12;
   public static final SwerveModuleConstants SWERVE_FR_CONSTANTS =
       IS_SPIKE
           ? new SwerveModuleConstants(
-              Rotation2d.fromDegrees(159.521484375), SwerveCorner.FRONT_RIGHT, true, true)
+              Rotation2d.fromDegrees(2.285 + 90.0), SwerveCorner.FRONT_RIGHT, true, true)
           : new SwerveModuleConstants(
               Rotation2d.fromDegrees(32.2), SwerveCorner.FRONT_RIGHT, false, false);
-  // -147.8
   public static final int SWERVE_BL_DRIVE_MOTOR_ID = 4;
   public static final int SWERVE_BL_STEER_MOTOR_ID = 5;
   public static final int SWERVE_BL_CANCODER_ID = 11;
   public static final SwerveModuleConstants SWERVE_BL_CONSTANTS =
       IS_SPIKE
           ? new SwerveModuleConstants(
-              Rotation2d.fromDegrees(2.548828125), SwerveCorner.BACK_LEFT, true, true)
+              Rotation2d.fromDegrees(9.581), SwerveCorner.BACK_LEFT, true, true)
           : new SwerveModuleConstants(
               Rotation2d.fromDegrees(-101.25), SwerveCorner.BACK_LEFT, false, false);
-  // 78.75
   public static final int SWERVE_BR_DRIVE_MOTOR_ID = 2;
   public static final int SWERVE_BR_STEER_MOTOR_ID = 3;
   public static final int SWERVE_BR_CANCODER_ID = 10;
   public static final SwerveModuleConstants SWERVE_BR_CONSTANTS =
       IS_SPIKE
           ? new SwerveModuleConstants(
-              Rotation2d.fromDegrees(110.390625), SwerveCorner.BACK_RIGHT, true, true)
+              Rotation2d.fromDegrees(-7.20 + 90.0 + 180.0), SwerveCorner.BACK_RIGHT, true, true)
           : new SwerveModuleConstants(
               Rotation2d.fromDegrees(-75.42), SwerveCorner.BACK_RIGHT, false, false);
-  // 104.58
   public static final int ELEVATOR_MOTOR_ID = 14;
 
   public static final double ELEVATOR_GEARING = IS_SPIKE ? 7.2 : 16.0;
@@ -127,7 +123,7 @@ public class Config {
   public static final boolean INVERTED_INTAKE = IS_SPIKE ? false : true;
 
   public static final double SWERVE_STEER_KV = IS_SPIKE ? 0.0 : 0.0;
-  public static final double SWERVE_STEER_KP = IS_SPIKE ? 5.0 : 3.0;
+  public static final double SWERVE_STEER_KP = IS_SPIKE ? 30.0 : 3.0;
   public static final double SWERVE_STEER_KI = IS_SPIKE ? 0.0 : 0.0;
   public static final double SWERVE_STEER_KD = IS_SPIKE ? 0.0 : 0.0;
   public static final double SWERVE_STEER_KS = IS_SPIKE ? 0.0 : 0.0;

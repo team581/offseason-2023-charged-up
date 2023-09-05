@@ -10,7 +10,6 @@ import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
@@ -35,6 +34,7 @@ public class SwerveModule {
   private final SwerveModuleConstants constants;
   private final TalonFX driveMotor;
   private final TalonFX steerMotor;
+  private CANcoder encoder;
   private final DutyCycleOut driveVoltageOpenLoopRequest =
       new DutyCycleOut(0, Config.SWERVE_USE_FOC, true);
   private final PositionVoltage steerMotorControl =
@@ -43,6 +43,7 @@ public class SwerveModule {
       new VelocityVoltage(0, Config.SWERVE_USE_FOC, 0, 0, false);
   private Rotation2d previousAngle = new Rotation2d();
 
+  private SwerveModuleState goalState = new SwerveModuleState();
   private StatusSignal<Double> driveMotorStatorCurrent;
 
   public SwerveModule(
@@ -50,6 +51,7 @@ public class SwerveModule {
     this.constants = constants;
     this.driveMotor = driveMotor;
     this.steerMotor = steerMotor;
+    this.encoder = encoder;
 
     CANcoderConfiguration cancoderConfig = new CANcoderConfiguration();
 
@@ -99,14 +101,12 @@ public class SwerveModule {
 
     steerMotorConfigs.Feedback.FeedbackRemoteSensorID = encoder.getDeviceID();
     steerMotorConfigs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
-    steerMotorConfigs.Feedback.SensorToMechanismRatio= 1.0;
+    steerMotorConfigs.Feedback.SensorToMechanismRatio = 1.0;
     steerMotorConfigs.Feedback.RotorToSensorRatio = Config.SWERVE_STEER_GEARING_REDUCTION;
 
     steerMotorConfigs.CurrentLimits.SupplyCurrentLimit = 35;
     steerMotorConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
     steerMotorConfigs.MotorOutput.DutyCycleNeutralDeadband = 0;
-
-    steerMotorConfigs.Feedback.SensorToMechanismRatio = Config.SWERVE_STEER_GEARING_REDUCTION;
 
     if (constants.angleInversion) {
       steerMotorConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
@@ -131,12 +131,22 @@ public class SwerveModule {
         .recordOutput(
             "Swerve/" + constants.corner.toString() + "/DriveMotorStatorCurrent",
             driveMotorStatorCurrent.refresh().getValue());
+    Logger.getInstance()
+        .recordOutput(
+            "Swerve/" + constants.corner.toString() + "/SteerMotorAngle",
+            getSteerMotorPosition().getDegrees());
+    Logger.getInstance()
+        .recordOutput(
+            "Swerve/" + constants.corner.toString() + "/CancoderAngle",
+            Units.rotationsToDegrees(encoder.getAbsolutePosition().getValue()));
+    Logger.getInstance().recordOutput("Swerve/" + constants.corner.toString() + "/GoalAngle", goalState.angle.getDegrees());
   }
 
   public void setDesiredState(
       SwerveModuleState state, boolean openLoop, boolean skipJitterOptimization) {
     final var steerMotorPosition = getSteerMotorPosition();
-    state = CtreModuleState.optimize(state, steerMotorPosition);
+    state = SwerveModuleState.optimize(state, steerMotorPosition);
+    goalState = state;
 
     steerMotor.setControl(steerMotorControl.withPosition(state.angle.getRotations()));
 

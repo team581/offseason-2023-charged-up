@@ -128,7 +128,7 @@ public class Robot extends LoggedRobot {
       new AutoScoreManager(limelight, swerve, superstructureManager);
 
   private final GroundConeManager groundManager =
-      new GroundConeManager(limelight, swerve, superstructureManager, intake);
+      new GroundConeManager(limelight, swerve, superstructureManager, intake, imu);
 
   public Robot() {
     // Log to a USB stick

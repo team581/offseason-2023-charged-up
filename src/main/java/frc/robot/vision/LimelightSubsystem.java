@@ -50,6 +50,12 @@ public class LimelightSubsystem extends LifecycleSubsystem {
     // Get results from Limelight.
     LimelightResults results = LimelightHelpers.getLatestResults(limelightName);
     LimelightTarget_Retro biggestTarget = new LimelightTarget_Retro();
+
+    if (results.targetingResults.targets_Retro.length == 0) {
+      VisionTarget.valid = false;
+    } else {
+      VisionTarget.valid = true;
+    }
     // Iterate through the list of retro-reflective targets.
     for (int i = 0; i < results.targetingResults.targets_Retro.length; i++) {
       // Get the current target.
@@ -72,6 +78,12 @@ public class LimelightSubsystem extends LifecycleSubsystem {
     // TODO(Simon): Fill in the code to get the closest cone target.
     LimelightResults results = LimelightHelpers.getLatestResults(limelightName);
     LimelightTarget_Detector biggestTarget = new LimelightTarget_Detector();
+
+    if (results.targetingResults.targets_Detector.length == 0) {
+      VisionTarget.valid = false;
+    } else {
+      VisionTarget.valid = true;
+    }
 
     for (int i = 0; i < results.targetingResults.targets_Detector.length; i++) {
       LimelightTarget_Detector currentTarget = results.targetingResults.targets_Detector[i];

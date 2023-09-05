@@ -9,6 +9,7 @@ public class VisionTarget {
   public double y;
   public double width;
   public double height;
+  public static boolean valid = true;
 
   public VisionTarget(double x, double y, double width, double height) {
     this.x = x;

@@ -16,6 +16,7 @@ import frc.robot.util.scheduling.LifecycleSubsystem;
 import frc.robot.util.scheduling.SubsystemPriority;
 import frc.robot.vision.LimelightSubsystem;
 import frc.robot.vision.VisionTarget;
+import org.littletonrobotics.junction.Logger;
 
 public class AutoScoreManager extends LifecycleSubsystem {
   /* Aggregates vision based actions into commands for the robot. */
@@ -47,6 +48,11 @@ public class AutoScoreManager extends LifecycleSubsystem {
     return limelight
         .setPipelineCommand(limelight.retroPipeline)
         .andThen(alignWithVisionTargetCommand().until(() -> atLocation()))
+        .andThen(
+            Commands.run(
+                () -> {
+                  swerve.setChassisSpeeds(new ChassisSpeeds(0, 0, 0), false);
+                }))
         .andThen(superstructure.getScoreCommand(NodeHeight.MID, 0.3))
         .finallyDo(
             (boolean interrupted) -> {
@@ -85,12 +91,13 @@ public class AutoScoreManager extends LifecycleSubsystem {
     // Calculate X and Y speeds
     double ySpeed = closestNode.x * xP;
     double xSpeed = (closestNode.y - ySetpoint) * yP;
-    // Logger.getInstance().recordOutput("Vision/LimelightX", closestNode.x);
-    // Logger.getInstance().recordOutput("Vision/LimelightY", closestNode.y);
-    // Logger.getInstance().recordOutput("Vision/XSpeed",
-    // swerve.getChassisSpeeds().vxMetersPerSecond);
-    // Logger.getInstance().recordOutput("Vision/YSpeed",
-    // swerve.getChassisSpeeds().vyMetersPerSecond);
-    return new ChassisSpeeds(xSpeed, ySpeed, 0);
+    Logger.getInstance().recordOutput("Vision/LimelightX", closestNode.x);
+    Logger.getInstance().recordOutput("Vision/LimelightY", closestNode.y);
+
+    if (VisionTarget.valid = true) {
+      return new ChassisSpeeds(xSpeed, ySpeed, 0);
+    } else {
+      return new ChassisSpeeds(0, 0, 0);
+    }
   }
 }

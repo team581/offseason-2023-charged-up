@@ -8,6 +8,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.States;
+import frc.robot.imu.ImuSubsystem;
 import frc.robot.intake.HeldGamePiece;
 import frc.robot.intake.IntakeSubsystem;
 import frc.robot.managers.SuperstructureManager;
@@ -24,6 +25,7 @@ public class GroundConeManager extends LifecycleSubsystem {
   private final SwerveSubsystem swerve;
   private final SuperstructureManager superstructure;
   private final IntakeSubsystem intake;
+  private final ImuSubsystem imu;
 
   private double yP = -0.1;
 
@@ -31,13 +33,15 @@ public class GroundConeManager extends LifecycleSubsystem {
       LimelightSubsystem limelight,
       SwerveSubsystem swerve,
       SuperstructureManager superstructure,
-      IntakeSubsystem intake) {
+      IntakeSubsystem intake,
+      ImuSubsystem imu) {
     super(SubsystemPriority.VISION_MANAGER);
 
     this.limelight = limelight;
     this.swerve = swerve;
     this.superstructure = superstructure;
     this.intake = intake;
+    this.imu = imu;
   }
 
   public Command getGroundCone() {
@@ -68,6 +72,18 @@ public class GroundConeManager extends LifecycleSubsystem {
     double thetaSpeed = closestCone.x * yP;
     Logger.getInstance().recordOutput("Vision/LimelightX", closestCone.x);
     Logger.getInstance().recordOutput("Vision/ThetaSpeed", thetaSpeed);
-    return new ChassisSpeeds(1.0, 0, thetaSpeed);
+    Logger.getInstance()
+        .recordOutput("Vision/RealThetaSpeed", swerve.getChassisSpeeds().omegaRadiansPerSecond);
+    Logger.getInstance().recordOutput("Vision/Angle", imu.getRobotHeading().getDegrees());
+    Logger.getInstance()
+        .recordOutput("Vision/RealThetaSpeed", swerve.getChassisSpeeds().vxMetersPerSecond);
+    Logger.getInstance()
+        .recordOutput("Vision/RealThetaSpeed", swerve.getChassisSpeeds().vyMetersPerSecond);
+
+    if (VisionTarget.valid = true) {
+      return new ChassisSpeeds(1.0, 0, thetaSpeed);
+    } else {
+      return new ChassisSpeeds(0, 0, 0);
+    }
   }
 }

@@ -17,10 +17,12 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.config.Config;
 import frc.robot.fms.FmsSubsystem;
 import frc.robot.imu.ImuSubsystem;
-import frc.robot.localization.LimelightHelpers.LimelightResults;
 import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.util.scheduling.LifecycleSubsystem;
 import frc.robot.util.scheduling.SubsystemPriority;
+import frc.robot.vision.LimelightHelpers;
+import frc.robot.vision.LimelightHelpers.LimelightResults;
+import frc.robot.vision.VisionMode;
 import org.littletonrobotics.junction.Logger;
 
 public class LocalizationSubsystem extends LifecycleSubsystem {
@@ -93,7 +95,7 @@ public class LocalizationSubsystem extends LifecycleSubsystem {
           new Pose2d(ntCurrentVisionPose.getTranslation(), imu.getRobotHeading());
       Logger.getInstance().recordOutput("Localization/VisionPose", angleAdjustedVisionPose);
       visionWorking = false;
-    } else if (LimelightHelpers.getTV("") == 1) {
+    } else if (LimelightHelpers.getTV("")) {
       Pose2d ntCurrentVisionPose = LimelightHelpers.getBotPose2d_wpiBlue("");
       if (previousPose.getX() != ntCurrentVisionPose.getX()
           && previousPose.getY() != ntCurrentVisionPose.getY()) {
@@ -114,7 +116,7 @@ public class LocalizationSubsystem extends LifecycleSubsystem {
         double fiducialTagCount = 0;
 
         // Calculate average distance of each tag seen.
-        if (results.targetingResults.valid == 1
+        if (results.targetingResults.valid
             && ntCurrentVisionPose.getX() != 0.0
             && ntCurrentVisionPose.getY() != 0.0) {
           for (int i = 0; i < results.targetingResults.targets_Fiducials.length; ++i) {

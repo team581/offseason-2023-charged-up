@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.autos.Autos;
-import frc.robot.autoscore.AutoScoreLocation;
 import frc.robot.config.Config;
 import frc.robot.controller.DriveController;
 import frc.robot.controller.RumbleControllerSubsystem;
@@ -28,15 +27,19 @@ import frc.robot.intake.HeldGamePiece;
 import frc.robot.intake.IntakeMode;
 import frc.robot.intake.IntakeSubsystem;
 import frc.robot.lights.LightsSubsystem;
-import frc.robot.localization.JacksonLagUtil;
 import frc.robot.localization.LocalizationSubsystem;
 import frc.robot.managers.AutoRotate;
 import frc.robot.managers.Autobalance;
 import frc.robot.managers.SuperstructureManager;
 import frc.robot.managers.SuperstructureMotionManager;
+import frc.robot.managers.vision.AutoScoreLocation;
+import frc.robot.managers.vision.AutoScoreManager;
+import frc.robot.managers.vision.GroundConeManager;
 import frc.robot.swerve.SwerveModule;
 import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.util.scheduling.LifecycleSubsystemManager;
+import frc.robot.vision.JacksonLagUtil;
+import frc.robot.vision.LimelightSubsystem;
 import frc.robot.wrist.WristSubsystem;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -118,6 +121,14 @@ public class Robot extends LoggedRobot {
           localization, swerve, imu, superstructureManager, elevator, wrist, intake, autobalance);
 
   private Command autoCommand;
+
+  private final LimelightSubsystem limelight = new LimelightSubsystem("", swerve);
+
+  private final AutoScoreManager visionManager =
+      new AutoScoreManager(limelight, swerve, superstructureManager);
+
+  private final GroundConeManager groundManager =
+      new GroundConeManager(limelight, swerve, superstructureManager, intake, imu);
 
   public Robot() {
     // Log to a USB stick
@@ -244,6 +255,8 @@ public class Robot extends LoggedRobot {
     operatorController.back().onTrue(superstructureManager.getHomeCommand());
     // Stow unsafe
     operatorController.start().onTrue(superstructureManager.getCommand(States.STOWED_UNSAFE));
+    operatorController.povUp().whileTrue(visionManager.getAutoScoreMidCone());
+    operatorController.povDown().whileTrue(groundManager.getGroundCone());
   }
 
   @Override

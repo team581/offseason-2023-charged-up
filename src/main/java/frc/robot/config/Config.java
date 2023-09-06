@@ -9,9 +9,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
-import frc.robot.localization.VisionMode;
 import frc.robot.swerve.SwerveCorner;
 import frc.robot.swerve.SwerveModuleConstants;
+import frc.robot.vision.VisionMode;
 
 public class Config {
   private static final String TYKE_SERIAL_NUMBER = "031617f6";

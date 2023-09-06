@@ -22,12 +22,19 @@ public class LifecycleSubsystem extends SubsystemBase {
   private LifecycleStage previousStage = null;
 
   public LifecycleSubsystem(SubsystemPriority priority) {
+    this(priority, null);
+  }
+
+  public LifecycleSubsystem(SubsystemPriority priority, String name) {
     this.priority = priority;
 
     LifecycleSubsystemManager.getInstance().registerSubsystem(this);
 
-    String name = this.getClass().getSimpleName();
-    name = name.substring(name.lastIndexOf('.') + 1);
+    if (name == null) {
+      name = this.getClass().getSimpleName();
+      name = name.substring(name.lastIndexOf('.') + 1);
+    }
+
     // First string concat causes lag spike. This shifts lag spike to code init.
     loggerName = "Scheduler/LifecycleSubsystem/" + name + ".periodic()ms";
 

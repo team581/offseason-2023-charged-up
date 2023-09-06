@@ -33,6 +33,7 @@ import frc.robot.wrist.WristSubsystem;
 import java.lang.ref.WeakReference;
 import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -180,13 +181,15 @@ public class Autos {
     autoChooser.addOption("Do nothing", AutoKindWithoutTeam.DO_NOTHING);
     autoChooser.addOption("Test", AutoKindWithoutTeam.TEST);
 
+
+    autoChooser.addDefaultOption("Mid 1.5 balance", AutoKindWithoutTeam.MID_1_5_BALANCE); //
+
     autoChooser.addOption("Long side 2", AutoKindWithoutTeam.LONG_SIDE_2);
-    autoChooser.addOption("Long side 2 balance", AutoKindWithoutTeam.LONG_SIDE_2_BALANCE);
+    autoChooser.addOption("Short side 2 balance", AutoKindWithoutTeam.SHORT_SIDE_2_BALANCE); //
+    autoChooser.addOption("Long side 2 balance", AutoKindWithoutTeam.LONG_SIDE_2_BALANCE); //
 
-    autoChooser.addDefaultOption("Mid 1.5 balance", AutoKindWithoutTeam.MID_1_5_BALANCE);
-
-    autoChooser.addOption("Short side 2 balance", AutoKindWithoutTeam.SHORT_SIDE_2_BALANCE);
-    autoChooser.addOption("Short side 3", AutoKindWithoutTeam.SHORT_SIDE_3);
+    autoChooser.addOption("Short side 3", AutoKindWithoutTeam.SHORT_SIDE_3); //
+    autoChooser.addOption("Long side 3", AutoKindWithoutTeam.LONG_SIDE_3); //
 
     if (Config.IS_DEVELOPMENT) {
       PathPlannerServer.startServer(5811);
@@ -255,7 +258,21 @@ public class Autos {
           .withName(autoName);
     }
 
-    autoCommand = autoCommand.andThen(autoBuilder.fullAuto(Paths.getInstance().getPath(auto)));
+    List<PathPlannerTrajectory> pathGroup = Paths.getInstance().getPath(auto);
+
+    if (auto == AutoKind.BLUE_SHORT_SIDE_3 || auto == AutoKind.RED_LONG_SIDE_3) {
+      autoCommand = autoCommand.andThen(getBlueShortSide3Auto(pathGroup));
+    } else  if (auto == AutoKind.BLUE_LONG_SIDE_3 || auto == AutoKind.RED_SHORT_SIDE_3) {
+      autoCommand = autoCommand.andThen(getBlueLongSide3Auto(pathGroup));
+    } else if (auto == AutoKind.BLUE_SHORT_SIDE_2_BALANCE || auto == AutoKind.RED_LONG_SIDE_2_BALANCE) {
+      autoCommand = autoCommand.andThen(getBlueShortSide2Balance(pathGroup));
+    } else if (auto == AutoKind.BLUE_LONG_SIDE_2_BALANCE || auto == AutoKind.RED_SHORT_SIDE_2_BALANCE) {
+      autoCommand = autoCommand.andThen(getBlueLongSide2Balance(pathGroup));
+    } else if (auto == AutoKind.BLUE_MID_1_5_BALANCE || auto == AutoKind.RED_MID_1_5_BALANCE) {
+      autoCommand = autoCommand.andThen(getBlueMid15Balance(pathGroup));
+    } else {
+      autoCommand = autoCommand.andThen(autoBuilder.fullAuto(pathGroup));
+    }
 
     if (auto.autoBalance) {
       autoCommand = autoCommand.andThen(this.autoBalance.getCommand());
@@ -266,6 +283,64 @@ public class Autos {
     autosCache.put(auto, new WeakReference<>(autoCommand));
 
     return autoCommand;
+  }
+
+  // each time you add a stop point in pathplanner, that corresponds to a new element in the
+  // pathGroup arraylist
+  // if you have no stop points, the pathGroup arraylist is going to just have a single element
+  // if you have one stop point in the middle, it will have two items
+  // etc
+
+  private Command getBlueShortSide3Auto(List<PathPlannerTrajectory> pathGroup) {
+    return Commands.sequence(
+        autoBuilder.followPathWithEvents(pathGroup.get(0)),
+        // AUTO INTAKE
+        autoBuilder.followPathWithEvents(pathGroup.get(1)),
+        // AUTO SCORE
+        autoBuilder.followPath(pathGroup.get(2)),
+        // AUTO INTAKE
+        autoBuilder.followPath(pathGroup.get(3))
+        // AUTO SCORE
+        );
+  }
+
+  private Command getBlueLongSide3Auto(List<PathPlannerTrajectory> pathGroup) {
+    return Commands.sequence(
+        autoBuilder.followPathWithEvents(pathGroup.get(0)),
+        // AUTO INTAKE
+        autoBuilder.followPathWithEvents(pathGroup.get(1)),
+        // AUTO SCORE
+        autoBuilder.followPath(pathGroup.get(2)),
+        // AUTO INTAKE
+        autoBuilder.followPath(pathGroup.get(3))
+        // AUTO SCORE
+        );
+  }
+
+  private Command getBlueShortSide2Balance(List<PathPlannerTrajectory> pathGroup) {
+    return Commands.sequence(
+      autoBuilder.followPathWithEvents(pathGroup.get(0)),
+      // AUTO INTAKE
+      autoBuilder.followPathWithEvents(pathGroup.get(1))
+      // AUTO SCORE
+    );
+  }
+
+  private Command getBlueLongSide2Balance(List<PathPlannerTrajectory> pathGroup) {
+    return Commands.sequence(
+      autoBuilder.followPathWithEvents(pathGroup.get(0)),
+      // AUTO INTAKE
+      autoBuilder.followPathWithEvents(pathGroup.get(1))
+      // AUTO SCORE
+    );
+  }
+
+  private Command getBlueMid15Balance(List<PathPlannerTrajectory> pathGroup) {
+    return Commands.sequence(
+      autoBuilder.followPathWithEvents(pathGroup.get(0)),
+      // AUTO INTAKE
+      autoBuilder.followPathWithEvents(pathGroup.get(1))
+    );
   }
 
   public void clearCache() {

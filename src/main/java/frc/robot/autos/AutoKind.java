@@ -15,12 +15,14 @@ public enum AutoKind {
   BLUE_MID_1_5_BALANCE("BlueMid1.5Balance", 2, 3, true),
   BLUE_SHORT_SIDE_2_BALANCE("BlueShortSide2Balance", 4, 4, true),
   BLUE_SHORT_SIDE_3("BlueShortSide3", 5, 4, false),
+  BLUE_LONG_SIDE_3("BlueLongSide3", 5, 4, false),
 
   RED_LONG_SIDE_2("RedLongSide2", 4, 3, false),
   RED_LONG_SIDE_2_BALANCE("RedLongSide2Balance", 4, 4, true),
   RED_MID_1_5_BALANCE("RedMid1.5Balance", 2, 3, true),
   RED_SHORT_SIDE_2_BALANCE("RedShortSide2Balance", 4, 4, true),
-  RED_SHORT_SIDE_3("RedShortSide3", 5, 4, false);
+  RED_SHORT_SIDE_3("RedShortSide3", 5, 4, false),
+  RED_LONG_SIDE_3("RedLongSide3", 5, 4, false);
 
   public final String pathName;
   public final PathConstraints constraints;

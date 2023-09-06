@@ -14,7 +14,8 @@ public enum AutoKindWithoutTeam {
   MID_1_5_BALANCE(AutoKind.RED_MID_1_5_BALANCE, AutoKind.BLUE_MID_1_5_BALANCE),
 
   SHORT_SIDE_2_BALANCE(AutoKind.RED_SHORT_SIDE_2_BALANCE, AutoKind.BLUE_SHORT_SIDE_2_BALANCE),
-  SHORT_SIDE_3(AutoKind.RED_SHORT_SIDE_3, AutoKind.BLUE_SHORT_SIDE_3);
+  SHORT_SIDE_3(AutoKind.RED_SHORT_SIDE_3, AutoKind.BLUE_SHORT_SIDE_3),
+  LONG_SIDE_3(AutoKind.RED_LONG_SIDE_3, AutoKind.BLUE_LONG_SIDE_3);
 
   public final AutoKind redVersion;
   public final AutoKind blueVersion;

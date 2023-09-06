@@ -49,7 +49,7 @@ public class AutoScoreManager extends LifecycleSubsystem {
         .setPipelineCommand(limelight.retroPipeline)
         .andThen(alignWithVisionTargetCommand().until(() -> atLocation()))
         .andThen(
-            Commands.run(
+            Commands.runOnce(
                 () -> {
                   swerve.setChassisSpeeds(new ChassisSpeeds(0, 0, 0), false);
                 }))
@@ -94,7 +94,7 @@ public class AutoScoreManager extends LifecycleSubsystem {
     Logger.getInstance().recordOutput("Vision/LimelightX", closestNode.x);
     Logger.getInstance().recordOutput("Vision/LimelightY", closestNode.y);
 
-    if (VisionTarget.valid = true) {
+    if (closestNode.valid) {
       return new ChassisSpeeds(xSpeed, ySpeed, 0);
     } else {
       return new ChassisSpeeds(0, 0, 0);

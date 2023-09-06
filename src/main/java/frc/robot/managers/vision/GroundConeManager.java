@@ -67,7 +67,7 @@ public class GroundConeManager extends LifecycleSubsystem {
 
   private ChassisSpeeds calculateSwerveSpeeds() {
     // Get closest middle cone target.
-    VisionTarget closestCone = limelight.getClosestConeTarget();
+    VisionTarget closestCone = limelight.getClosestCone();
 
     double thetaSpeed = closestCone.x * yP;
     Logger.getInstance().recordOutput("Vision/LimelightX", closestCone.x);
@@ -80,7 +80,7 @@ public class GroundConeManager extends LifecycleSubsystem {
     Logger.getInstance()
         .recordOutput("Vision/RealThetaSpeed", swerve.getChassisSpeeds().vyMetersPerSecond);
 
-    if (VisionTarget.valid = true) {
+    if (closestCone.valid) {
       return new ChassisSpeeds(1.0, 0, thetaSpeed);
     } else {
       return new ChassisSpeeds(0, 0, 0);

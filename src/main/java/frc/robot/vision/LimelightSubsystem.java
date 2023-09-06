@@ -66,8 +66,12 @@ public class LimelightSubsystem extends LifecycleSubsystem {
       }
     }
 
-    // Return the largest (closest) target as object VisionTarget.
-    return new VisionTarget(biggestTarget.tx, biggestTarget.ty, 0, 0);
+    return new VisionTarget(
+        biggestTarget.tx,
+        biggestTarget.ty,
+        0,
+        0,
+        results.targetingResults.targets_Retro.length > 0);
   }
 
   public VisionTarget getClosestConeTarget() {
@@ -93,7 +97,12 @@ public class LimelightSubsystem extends LifecycleSubsystem {
       }
     }
     // Get results */
-    return new VisionTarget(biggestTarget.tx, biggestTarget.ty, 0, 0);
+    return new VisionTarget(
+        biggestTarget.tx,
+        biggestTarget.ty,
+        0,
+        0,
+        results.targetingResults.targets_Detector.length > 0);
   }
 
   public CommandBase setPipelineCommand(int pipeline) {

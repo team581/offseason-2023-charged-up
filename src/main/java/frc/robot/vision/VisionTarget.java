@@ -9,12 +9,13 @@ public class VisionTarget {
   public double y;
   public double width;
   public double height;
-  public static boolean valid = true;
+  public boolean valid;
 
-  public VisionTarget(double x, double y, double width, double height) {
+  public VisionTarget(double x, double y, double width, double height, boolean valid) {
     this.x = x;
     this.y = y;
     this.width = width;
     this.height = height;
+    this.valid = valid;
   }
 }

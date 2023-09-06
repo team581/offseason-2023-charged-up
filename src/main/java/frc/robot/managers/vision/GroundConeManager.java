@@ -7,7 +7,6 @@ package frc.robot.managers.vision;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.States;
 import frc.robot.imu.ImuSubsystem;
 import frc.robot.intake.HeldGamePiece;
 import frc.robot.intake.IntakeSubsystem;
@@ -56,21 +55,19 @@ public class GroundConeManager extends LifecycleSubsystem {
         .setPipelineCommand(0)
         .andThen(() -> firstConeDetected = false)
         .andThen(() -> superstructure.setIntakeMode(HeldGamePiece.CONE))
-        .andThen(superstructure.getFloorIntakeSpinningCommand())
-        .alongWith(
-            Commands.run(() -> swerve.setChassisSpeeds(calculateSwerveSpeeds(), false), swerve)
-                .until(() -> intake.getGamePiece() == HeldGamePiece.CONE))
-        .andThen(
-            Commands.runOnce(
-                () -> {
-                  swerve.setChassisSpeeds(new ChassisSpeeds(0, 0, 0), false);
-                }))
+        .andThen(superstructure.getFloorIntakeIdleCommand())
         .andThen(
             superstructure
-                .getCommand(States.STOWED)
+                .getFloorIntakeSpinningCommand()
                 .alongWith(
-                    Commands.runOnce(
-                        () -> swerve.setChassisSpeeds(new ChassisSpeeds(), false), swerve)));
+                    Commands.run(
+                            () -> swerve.setChassisSpeeds(calculateSwerveSpeeds(), false), swerve)
+                        .until(() -> intake.getGamePiece() == HeldGamePiece.CONE)
+                        .andThen(
+                            Commands.runOnce(
+                                () -> {
+                                  swerve.setChassisSpeeds(new ChassisSpeeds(), false);
+                                }))));
   }
 
   private ChassisSpeeds calculateSwerveSpeeds() {
@@ -84,7 +81,7 @@ public class GroundConeManager extends LifecycleSubsystem {
       // If valid, get angle
       if (closestCone.valid) {
         firstConeDetected = true;
-        goalAngle = imu.getRobotHeading().getDegrees() - closestCone.x;
+        goalAngle = imu.getRobotHeading().getDegrees() - (closestCone.x * 1.4);
       }
       // Save angle + current robot angle
     }

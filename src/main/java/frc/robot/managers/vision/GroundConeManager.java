@@ -27,6 +27,8 @@ public class GroundConeManager extends LifecycleSubsystem {
   private final IntakeSubsystem intake;
   private final ImuSubsystem imu;
 
+  private boolean firstConeDetected = false;
+  private double goalAngle = 0;
   private double yP = -0.1;
 
   public GroundConeManager(
@@ -52,11 +54,17 @@ public class GroundConeManager extends LifecycleSubsystem {
     // up?
     return limelight
         .setPipelineCommand(0)
+        .andThen(() -> firstConeDetected = false)
         .andThen(() -> superstructure.setIntakeMode(HeldGamePiece.CONE))
         .andThen(superstructure.getFloorIntakeSpinningCommand())
         .alongWith(
             Commands.run(() -> swerve.setChassisSpeeds(calculateSwerveSpeeds(), false), swerve)
                 .until(() -> intake.getGamePiece() == HeldGamePiece.CONE))
+        .andThen(
+            Commands.runOnce(
+                () -> {
+                  swerve.setChassisSpeeds(new ChassisSpeeds(0, 0, 0), false);
+                }))
         .andThen(
             superstructure
                 .getCommand(States.STOWED)
@@ -67,11 +75,34 @@ public class GroundConeManager extends LifecycleSubsystem {
 
   private ChassisSpeeds calculateSwerveSpeeds() {
     // Get closest middle cone target.
+
+    if (!firstConeDetected) {
+      // Get closest cone.
+      VisionTarget closestCone = limelight.getClosestCone();
+
+      Logger.getInstance().recordOutput("Vision/LimelightX", closestCone.x);
+      // If valid, get angle
+      if (closestCone.valid) {
+        firstConeDetected = true;
+        goalAngle = imu.getRobotHeading().getDegrees() - closestCone.x;
+      }
+      // Save angle + current robot angle
+    }
+    if (firstConeDetected) {
+      double thetaSpeed = (imu.getRobotHeading().getDegrees() - goalAngle) * yP;
+      // PID to the saved angle, using the current angle as your process
+      Logger.getInstance().recordOutput("Vision/ThetaSpeed", thetaSpeed);
+      return new ChassisSpeeds(2.0, 0, thetaSpeed);
+    } else {
+      return new ChassisSpeeds(2.0, 0, 0);
+    }
+  }
+
+  private void logging() {
     VisionTarget closestCone = limelight.getClosestCone();
 
-    double thetaSpeed = closestCone.x * yP;
     Logger.getInstance().recordOutput("Vision/LimelightX", closestCone.x);
-    Logger.getInstance().recordOutput("Vision/ThetaSpeed", thetaSpeed);
+    Logger.getInstance().recordOutput("Vision/ThetaSpeed", closestCone.x * yP);
     Logger.getInstance()
         .recordOutput("Vision/RealThetaSpeed", swerve.getChassisSpeeds().omegaRadiansPerSecond);
     Logger.getInstance().recordOutput("Vision/Angle", imu.getRobotHeading().getDegrees());
@@ -79,11 +110,7 @@ public class GroundConeManager extends LifecycleSubsystem {
         .recordOutput("Vision/RealThetaSpeed", swerve.getChassisSpeeds().vxMetersPerSecond);
     Logger.getInstance()
         .recordOutput("Vision/RealThetaSpeed", swerve.getChassisSpeeds().vyMetersPerSecond);
-
-    if (closestCone.valid) {
-      return new ChassisSpeeds(1.0, 0, thetaSpeed);
-    } else {
-      return new ChassisSpeeds(0, 0, 0);
-    }
+    Logger.getInstance()
+        .recordOutput("Vision/AngularError", swerve.getChassisSpeeds().vyMetersPerSecond);
   }
 }

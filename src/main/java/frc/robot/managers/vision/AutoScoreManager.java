@@ -24,10 +24,10 @@ public class AutoScoreManager extends LifecycleSubsystem {
   private final SwerveSubsystem swerve;
   private final SuperstructureManager superstructure;
 
-  private double xP = -0.1;
-  private double yP = 0.25;
+  private double xP = -0.15;
+  private double yP = 0.3;
   // tune setpoint value
-  private double ySetpoint = 6;
+  private double ySetpoint = 5.5;
   private double angleRange = 1.3;
 
   public AutoScoreManager(
@@ -99,5 +99,12 @@ public class AutoScoreManager extends LifecycleSubsystem {
     } else {
       return new ChassisSpeeds(0, 0, 0);
     }
+  }
+
+  private void logging() {
+    VisionTarget closestNode = limelight.getClosestMiddleConeTarget();
+    Logger.getInstance().recordOutput("Vision/LimelightX", closestNode.x);
+    Logger.getInstance().recordOutput("Vision/LimelightY", closestNode.y);
+    Logger.getInstance().recordOutput("Vision/Valid", closestNode.valid);
   }
 }

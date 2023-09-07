@@ -20,7 +20,7 @@ public class Positions {
 
   public static final SuperstructurePosition INTAKING_CUBE_FLOOR =
       Config.IS_SPIKE
-          ? new SuperstructurePosition(0, Rotation2d.fromDegrees(68), -1)
+          ? new SuperstructurePosition(1, Rotation2d.fromDegrees(72.5), -1)
           : new SuperstructurePosition(0, Rotation2d.fromDegrees(154), -1);
   public static final SuperstructurePosition INTAKING_CUBE_SHELF =
       Config.IS_SPIKE
@@ -41,7 +41,7 @@ public class Positions {
 
   public static final SuperstructurePosition INTAKING_CONE_FLOOR =
       Config.IS_SPIKE
-          ? new SuperstructurePosition(4.5, Rotation2d.fromDegrees(86), -1, true)
+          ? new SuperstructurePosition(5, Rotation2d.fromDegrees(86), -1, true)
           : new SuperstructurePosition(3.39, Rotation2d.fromDegrees(161), -1);
   public static final SuperstructurePosition INTAKING_CONE_SHELF =
       Config.IS_SPIKE

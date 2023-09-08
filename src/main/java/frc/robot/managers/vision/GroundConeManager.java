@@ -81,7 +81,7 @@ public class GroundConeManager extends LifecycleSubsystem {
       // If valid, get angle
       if (closestCone.valid) {
         firstConeDetected = true;
-        goalAngle = imu.getRobotHeading().getDegrees() - (closestCone.x * 1.4);
+        goalAngle = imu.getRobotHeading().getDegrees() - (closestCone.x * 1.0);
       }
       // Save angle + current robot angle
     }

@@ -182,14 +182,13 @@ public class Autos {
     autoChooser.addOption("Test", AutoKindWithoutTeam.TEST);
 
 
-    autoChooser.addDefaultOption("Mid 1.5 balance", AutoKindWithoutTeam.MID_1_5_BALANCE); //
+    autoChooser.addDefaultOption("Mid 1.5 balance", AutoKindWithoutTeam.MID_1_5_BALANCE); // GOOD
+    // autoChooser.addOption("Long side 2", AutoKindWithoutTeam.LONG_SIDE_2);
+    autoChooser.addOption("Short side 2 balance", AutoKindWithoutTeam.SHORT_SIDE_2_BALANCE); // GOOD
+    autoChooser.addOption("Long side 2 balance", AutoKindWithoutTeam.LONG_SIDE_2_BALANCE); // GOOD
 
-    autoChooser.addOption("Long side 2", AutoKindWithoutTeam.LONG_SIDE_2);
-    autoChooser.addOption("Short side 2 balance", AutoKindWithoutTeam.SHORT_SIDE_2_BALANCE); //
-    autoChooser.addOption("Long side 2 balance", AutoKindWithoutTeam.LONG_SIDE_2_BALANCE); //
-
-    autoChooser.addOption("Short side 3", AutoKindWithoutTeam.SHORT_SIDE_3); //
-    autoChooser.addOption("Long side 3", AutoKindWithoutTeam.LONG_SIDE_3); //
+    autoChooser.addOption("Short side 3", AutoKindWithoutTeam.SHORT_SIDE_3); // GOOD
+    autoChooser.addOption("Long side 3", AutoKindWithoutTeam.LONG_SIDE_3); // GOOD
 
     if (Config.IS_DEVELOPMENT) {
       PathPlannerServer.startServer(5811);

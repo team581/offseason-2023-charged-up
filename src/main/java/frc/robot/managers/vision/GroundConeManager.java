@@ -7,6 +7,7 @@ package frc.robot.managers.vision;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.States;
 import frc.robot.imu.ImuSubsystem;
 import frc.robot.intake.HeldGamePiece;
 import frc.robot.intake.IntakeSubsystem;
@@ -45,47 +46,53 @@ public class GroundConeManager extends LifecycleSubsystem {
     this.imu = imu;
   }
 
-  public Command getGroundCone() {
-    // Return full command to auto score cone mid.
+  private void resetCone(){
+    firstConeDetected = false;
+  }
 
-    // TODO(Simon): Finish command.
-    // Do we drive to position, raise up, then score? Do we raise up, drive to position, then raise
-    // up?
+  public Command getGroundCone() {
+    // Return full command to intake from ground
     return limelight
         .setPipelineCommand(0)
-        .andThen(() -> firstConeDetected = false)
+        .andThen(() -> resetCone())
         .andThen(() -> superstructure.setIntakeMode(HeldGamePiece.CONE))
         .andThen(superstructure.getFloorIntakeIdleCommand())
         .andThen(
-            superstructure
-                .getFloorIntakeSpinningCommand()
-                .alongWith(
-                    Commands.run(
-                            () -> swerve.setChassisSpeeds(calculateSwerveSpeeds(), false), swerve)
-                        .until(() -> intake.getGamePiece() == HeldGamePiece.CONE)
-                        .andThen(
-                            Commands.runOnce(
-                                () -> {
-                                  swerve.setChassisSpeeds(new ChassisSpeeds(), false);
-                                }))));
+            Commands.run(() -> swerve.setChassisSpeeds(calculateSwerveSpeeds(), false), swerve)
+                .raceWith((superstructure.getFloorIntakeSpinningCommand()))
+                .withTimeout(1))
+        .andThen(
+            Commands.runOnce(
+                () -> {
+                  swerve.setChassisSpeeds(new ChassisSpeeds(), false);
+                }))
+        .andThen(superstructure.getCommand(() -> States.STOWED))
+        .andThen(limelight.setPipelineCommand(limelight.retroPipeline));
   }
 
   private ChassisSpeeds calculateSwerveSpeeds() {
-    // Get closest middle cone target.
+    swerve.disableSnapToAngle();
 
+    // Get closest middle cone target.
+    Logger.getInstance()
+        .recordOutput("Vision/FirstCone", firstConeDetected);
     if (!firstConeDetected) {
       // Get closest cone.
       VisionTarget closestCone = limelight.getClosestCone();
 
       Logger.getInstance().recordOutput("Vision/LimelightX", closestCone.x);
       // If valid, get angle
-      if (closestCone.valid) {
+      if (closestCone.valid && closestCone.x != 0.0) {
         firstConeDetected = true;
         goalAngle = imu.getRobotHeading().getDegrees() - (closestCone.x * 1.0);
       }
       // Save angle + current robot angle
     }
     if (firstConeDetected) {
+      Logger.getInstance()
+        .recordOutput("Vision/GoalAngle", goalAngle);
+        Logger.getInstance()
+        .recordOutput("Vision/Robot Heading", imu.getRobotHeading().getDegrees());
       double thetaSpeed = (imu.getRobotHeading().getDegrees() - goalAngle) * yP;
       // PID to the saved angle, using the current angle as your process
       Logger.getInstance().recordOutput("Vision/ThetaSpeed", thetaSpeed);

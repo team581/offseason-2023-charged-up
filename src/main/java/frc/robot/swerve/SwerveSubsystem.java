@@ -251,6 +251,10 @@ public class SwerveSubsystem extends LifecycleSubsystem {
     return runOnce(() -> setXSwerve(false));
   }
 
+  public Command stopSwerveCommand() {
+    return runOnce(() -> setChassisSpeeds(new ChassisSpeeds(), true));
+  }
+
   public void driveTeleop(
       double sidewaysPercentage,
       double forwardPercentage,

@@ -58,9 +58,11 @@ public class AutoScoreManager extends LifecycleSubsystem {
             (boolean interrupted) -> {
 
               // Set drive speeds to 0.
-              swerve.setChassisSpeeds(new ChassisSpeeds(0, 0, 0), false);
+              swerve.setChassisSpeeds(new ChassisSpeeds(), false);
+              swerve.disableSnapToAngle();
               // Turn off LEDs.
               limelight.turnOffLights();
+              limelight.setPipeline(0);
             });
   }
 

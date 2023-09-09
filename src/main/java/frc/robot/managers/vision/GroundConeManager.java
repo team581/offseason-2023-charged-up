@@ -46,7 +46,7 @@ public class GroundConeManager extends LifecycleSubsystem {
     this.imu = imu;
   }
 
-  private void resetCone(){
+  private void resetCone() {
     firstConeDetected = false;
   }
 
@@ -74,8 +74,7 @@ public class GroundConeManager extends LifecycleSubsystem {
     swerve.disableSnapToAngle();
 
     // Get closest middle cone target.
-    Logger.getInstance()
-        .recordOutput("Vision/FirstCone", firstConeDetected);
+    Logger.getInstance().recordOutput("Vision/FirstCone", firstConeDetected);
     if (!firstConeDetected) {
       // Get closest cone.
       VisionTarget closestCone = limelight.getClosestCone();
@@ -89,10 +88,8 @@ public class GroundConeManager extends LifecycleSubsystem {
       // Save angle + current robot angle
     }
     if (firstConeDetected) {
-      Logger.getInstance()
-        .recordOutput("Vision/GoalAngle", goalAngle);
-        Logger.getInstance()
-        .recordOutput("Vision/Robot Heading", imu.getRobotHeading().getDegrees());
+      Logger.getInstance().recordOutput("Vision/GoalAngle", goalAngle);
+      Logger.getInstance().recordOutput("Vision/Robot Heading", imu.getRobotHeading().getDegrees());
       double thetaSpeed = (imu.getRobotHeading().getDegrees() - goalAngle) * yP;
       // PID to the saved angle, using the current angle as your process
       Logger.getInstance().recordOutput("Vision/ThetaSpeed", thetaSpeed);

@@ -328,8 +328,7 @@ public class Autos {
         followPathWithEvents(pathGroup, 2),
         groundManager.getGroundCone(),
         followPathWithEvents(pathGroup, 3),
-        visionManager.getAutoScoreMidCone()
-       );
+        visionManager.getAutoScoreMidCone());
   }
 
   private Command followPathWithEvents(List<PathPlannerTrajectory> pathGroup, int index) {

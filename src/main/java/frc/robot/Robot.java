@@ -121,14 +121,23 @@ public class Robot extends LoggedRobot {
   private final LimelightSubsystem limelight = new LimelightSubsystem("", swerve);
 
   private final AutoScoreManager visionManager =
-  new AutoScoreManager(limelight, swerve, superstructureManager);
+      new AutoScoreManager(limelight, swerve, superstructureManager);
 
   private final GroundConeManager groundManager =
-  new GroundConeManager(limelight, swerve, superstructureManager, intake, imu);
+      new GroundConeManager(limelight, swerve, superstructureManager, intake, imu);
 
-    private final Autos autos =
-        new Autos(
-            localization, swerve, imu, superstructureManager, elevator, wrist, intake, autobalance, groundManager, visionManager);
+  private final Autos autos =
+      new Autos(
+          localization,
+          swerve,
+          imu,
+          superstructureManager,
+          elevator,
+          wrist,
+          intake,
+          autobalance,
+          groundManager,
+          visionManager);
 
   public Robot() {
     // Log to a USB stick

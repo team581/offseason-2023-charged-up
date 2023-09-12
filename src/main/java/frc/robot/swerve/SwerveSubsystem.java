@@ -10,14 +10,20 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
+import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.config.Config;
@@ -25,8 +31,10 @@ import frc.robot.controller.DriveController;
 import frc.robot.fms.FmsSubsystem;
 import frc.robot.imu.ImuSubsystem;
 import frc.robot.localization.LocalizationSubsystem;
+import frc.robot.localization.VisionMode;
 import frc.robot.util.scheduling.LifecycleSubsystem;
 import frc.robot.util.scheduling.SubsystemPriority;
+import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
 public class SwerveSubsystem extends LifecycleSubsystem {
@@ -90,6 +98,7 @@ public class SwerveSubsystem extends LifecycleSubsystem {
           Config.SWERVE_ROTATION_PID.kI,
           Config.SWERVE_ROTATION_PID.kD,
           new TrapezoidProfile.Constraints(Math.PI * 2.0, Math.PI * 0.75));
+
   private Rotation2d goalAngle = new Rotation2d();
 
   public SwerveSubsystem(
@@ -344,5 +353,138 @@ public class SwerveSubsystem extends LifecycleSubsystem {
               }
             })
         .withName("SwerveGoToPose");
+  }
+
+  public Command followPathOriginalPurePursuitCommand(
+      Trajectory traj, LocalizationSubsystem localization) {
+    double trackWidthMeters = Math.abs(Config.SWERVE_FRONT_LEFT_LOCATION.getX()) * 2;
+    DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(trackWidthMeters);
+
+    Supplier<Pose2d> getPose =
+        Config.VISION_MODE == VisionMode.FULLY_ENABLED
+            ? localization::getPose
+            : localization::getOdometryPose;
+
+    OriginalPurePursuitController pp =
+        new OriginalPurePursuitController(
+            traj,
+            getPose,
+            trackWidthMeters,
+            (leftVelocity, rightVelocity) -> {
+              Logger.getInstance().recordOutput("PurePursuit/LeftVelocity", leftVelocity);
+              Logger.getInstance().recordOutput("PurePursuit/RightVelocity", rightVelocity);
+              ChassisSpeeds speeds =
+                  kinematics.toChassisSpeeds(
+                      new DifferentialDriveWheelSpeeds(leftVelocity, rightVelocity));
+              Logger.getInstance().recordOutput("PurePursuit/Speeds/X", speeds.vxMetersPerSecond);
+              Logger.getInstance().recordOutput("PurePursuit/Speeds/Y", speeds.vyMetersPerSecond);
+              Logger.getInstance()
+                  .recordOutput("PurePursuit/Speeds/Omega", speeds.omegaRadiansPerSecond);
+
+              // We mock the chassis' movement by taking our current pose and transforming it by the
+              // expected movement in this loop cycle
+              // TODO: This is wrong, the chassis speeds are in the chassis' frame of reference, not
+              // field relative
+              Pose2d currentPose = getPose.get();
+              Pose2d expectedMovement =
+                  new Pose2d(
+                      speeds.vxMetersPerSecond * 0.02,
+                      speeds.vyMetersPerSecond * 0.02,
+                      new Rotation2d(speeds.omegaRadiansPerSecond * 0.02));
+              Pose2d newPose =
+                  new Pose2d(
+                      currentPose.getTranslation().plus(expectedMovement.getTranslation()),
+                      currentPose.getRotation().plus(expectedMovement.getRotation()));
+              localization.resetPose(newPose);
+            },
+            0.1);
+
+    return runOnce(() -> localization.resetPose(traj.getInitialPose()))
+        .andThen(Commands.waitUntil(pp::isFinished))
+        .withName("FollowPathOriginalPurePursuit");
+  }
+
+  public Command followPathAdaptivePurePursuitCommand(
+      Trajectory traj, LocalizationSubsystem localization) {
+    AdaptivePurePursuit pp =
+        new AdaptivePurePursuit(
+            traj,
+            Config.VISION_MODE == VisionMode.FULLY_ENABLED
+                ? localization::getPose
+                : localization::getOdometryPose,
+            error -> 0.1 /* + Math.pow(error, 2) */);
+
+    Timer timer = new Timer();
+
+    return runOnce(
+            () -> {
+              Logger.getInstance().recordOutput("PurePursuit/Trajectory", traj);
+              localization.resetPose(traj.getInitialPose());
+              if (RobotBase.isSimulation()) {
+
+                timer.reset();
+                timer.start();
+              }
+            })
+        .andThen(
+            run(
+                () -> {
+                  if (RobotBase.isSimulation()) {
+                    // Simulate movement
+                    // Introduce some error from 1s-1.5s
+
+                    Pose2d expectedPose = traj.sample(timer.get()).poseMeters;
+                    if (timer.get() > 1 && timer.get() < 1.5) {
+                      Pose2d errorPose =
+                          expectedPose.transformBy(
+                              new Transform2d(
+                                  new Translation2d(
+                                      expectedPose.getX() - 0.5, expectedPose.getY() + 1),
+                                  expectedPose.getRotation().plus(Rotation2d.fromDegrees(40))));
+                      localization.resetPose(errorPose);
+                    } else {
+                      localization.resetPose(expectedPose);
+                    }
+
+                    Logger.getInstance().recordOutput("PurePursuit/ExpectedPose", expectedPose);
+                  }
+                  // TODO: This is never returning a real value - need to try setting up the
+                  // original implementation. Once the original is running, make sure it's behaving
+                  // as expected. From there, try debugging the math they use to calculate the
+                  // lookahead point.
+                  Pose2d nextPose = pp.findLookAheadPoint().orElseThrow();
+                  Logger.getInstance().recordOutput("PurePursuit/NextPose", nextPose);
+
+                  double xVelocity =
+                      xController.calculate(localization.getPose().getX(), nextPose.getX());
+                  double yVelocity =
+                      yController.calculate(localization.getPose().getY(), nextPose.getY());
+                  double thetaVelocity =
+                      thetaController.calculate(
+                          localization.getPose().getRotation().getRadians(),
+                          nextPose.getRotation().getRadians());
+
+                  ChassisSpeeds chassisSpeeds =
+                      ChassisSpeeds.fromFieldRelativeSpeeds(
+                          xVelocity,
+                          yVelocity,
+                          thetaVelocity,
+                          localization.getPose().getRotation());
+                  Logger.getInstance()
+                      .recordOutput("PurePursuit/Speeds/X", chassisSpeeds.vxMetersPerSecond);
+                  Logger.getInstance()
+                      .recordOutput("PurePursuit/Speeds/Y", chassisSpeeds.vyMetersPerSecond);
+                  Logger.getInstance()
+                      .recordOutput(
+                          "PurePursuit/Speeds/Omega", chassisSpeeds.omegaRadiansPerSecond);
+
+                  setChassisSpeeds(chassisSpeeds, false);
+                }))
+        .withTimeout(5)
+        .andThen(
+            () -> {
+              timer.stop();
+            })
+        .withName("FollowPathPurePursuit");
   }
 }

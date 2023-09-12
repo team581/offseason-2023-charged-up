@@ -5,8 +5,6 @@
 package frc.robot.autos;
 
 import com.pathplanner.lib.PathPlannerTrajectory;
-import com.pathplanner.lib.auto.SwerveAutoBuilder;
-import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 import com.pathplanner.lib.server.PathPlannerServer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -20,13 +18,14 @@ import frc.robot.NodeHeight;
 import frc.robot.States;
 import frc.robot.config.Config;
 import frc.robot.elevator.ElevatorSubsystem;
-import frc.robot.fms.FmsSubsystem;
 import frc.robot.imu.ImuSubsystem;
 import frc.robot.intake.HeldGamePiece;
 import frc.robot.intake.IntakeSubsystem;
 import frc.robot.localization.LocalizationSubsystem;
 import frc.robot.managers.Autobalance;
 import frc.robot.managers.SuperstructureManager;
+import frc.robot.swerve.FollowerStrategy;
+import frc.robot.swerve.PPSwerveControllerCommand;
 import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.vision.VisionMode;
 import frc.robot.wrist.WristSubsystem;
@@ -165,6 +164,7 @@ public class Autos {
             (states) -> swerve.setModuleStates(states, false, false),
             eventMap,
             false,
+            FollowerStrategy.TIME_PURE_PURSUIT,
             swerve);
 
     CommandScheduler.getInstance()
@@ -224,15 +224,18 @@ public class Autos {
   }
 
   public Command getAutoCommand() {
-    AutoKindWithoutTeam rawAuto = autoChooser.get();
+    return swerve.followPathAdaptivePurePursuitCommand(
+        Paths.getInstance().getPath(AutoKind.BLUE_SHORT_SIDE_3).get(0), localization);
 
-    if (rawAuto == null) {
-      rawAuto = AutoKindWithoutTeam.MID_1_5_BALANCE;
-    }
+    // AutoKindWithoutTeam rawAuto = autoChooser.get();
 
-    AutoKind auto = FmsSubsystem.isRedAlliance() ? rawAuto.redVersion : rawAuto.blueVersion;
+    // if (rawAuto == null) {
+    //   rawAuto = AutoKindWithoutTeam.MID_1_5_BALANCE;
+    // }
 
-    return buildAutoCommand(auto);
+    // AutoKind auto = FmsSubsystem.isRedAlliance() ? rawAuto.redVersion : rawAuto.blueVersion;
+
+    // return buildAutoCommand(auto);
   }
 
   private Command buildAutoCommand(AutoKind auto) {

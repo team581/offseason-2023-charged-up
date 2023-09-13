@@ -34,8 +34,8 @@ public class SwerveSubsystem extends LifecycleSubsystem {
   private static final Translation2d FRONT_RIGHT_LOCATION = Config.SWERVE_FRONT_RIGHT_LOCATION;
   private static final Translation2d BACK_LEFT_LOCATION = Config.SWERVE_BACK_LEFT_LOCATION;
   private static final Translation2d BACK_RIGHT_LOCATION = Config.SWERVE_BACK_RIGHT_LOCATION;
-  public static final SwerveDriveKinematics KINEMATICS =
-      new SwerveDriveKinematics(
+  public static final SwerveKinematics2 KINEMATICS =
+      new SwerveKinematics2(
           FRONT_LEFT_LOCATION, FRONT_RIGHT_LOCATION, BACK_LEFT_LOCATION, BACK_RIGHT_LOCATION);
   public static final double MAX_VELOCITY =
       ((6080.0 / 60.0) / Config.SWERVE_DRIVE_GEARING_REDUCTION) * (Config.WHEEL_DIAMETER * Math.PI);

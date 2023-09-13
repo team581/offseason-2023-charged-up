@@ -12,6 +12,14 @@ public class SuperstructurePosition {
   public final double earlyTransitionHeight;
   public final boolean skipCollisionAvoidance;
 
+  public SuperstructurePosition(double height, Rotation2d angle) {
+    this(height, angle, -1, false);
+  }
+
+  public SuperstructurePosition(double height, Rotation2d angle, boolean skipCollisionAvoidance) {
+    this(height, angle, -1, skipCollisionAvoidance);
+  }
+
   public SuperstructurePosition(double height, Rotation2d angle, double earlyTransitionHeight) {
     this(height, angle, earlyTransitionHeight, false);
   }

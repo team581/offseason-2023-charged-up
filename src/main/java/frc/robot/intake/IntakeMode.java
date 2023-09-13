@@ -7,11 +7,16 @@ package frc.robot.intake;
 public enum IntakeMode {
   INTAKE_CUBE,
   INTAKE_CONE,
+
   MANUAL_INTAKE,
   MANUAL_OUTTAKE,
+
   OUTTAKE_CUBE_FAST,
   OUTTAKE_CUBE_SLOW,
+  YEET_CUBE,
+
   OUTTAKE_CONE,
   SHOOT_CONE,
+
   STOPPED;
 }

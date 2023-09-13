@@ -130,6 +130,12 @@ public class Autos {
                     .withTimeout(3)
                     .andThen(Commands.runOnce(() -> intake.setGamePiece(HeldGamePiece.NOTHING)))),
             Map.entry("scoreHigh", getScoreHighCommand()),
+            Map.entry(
+              "yeetMid",
+              superstructure
+                  .getCommand(States.YEET_CUBE_MID)
+                  .withTimeout(1.5)
+                  .andThen(Commands.runOnce(() -> intake.setGamePiece(HeldGamePiece.NOTHING)))),
             Map.entry("superstructureLow", superstructure.getManualScoreCommand(NodeHeight.LOW)),
             Map.entry(
                 "superstructureMid",

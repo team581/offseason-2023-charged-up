@@ -38,6 +38,8 @@ public class Positions {
       Config.IS_SPIKE
           ? new SuperstructurePosition(25, Rotation2d.fromDegrees(50))
           : new SuperstructurePosition(28, Rotation2d.fromDegrees(157));
+  public static final SuperstructurePosition YEET_CUBE_MID =
+      new SuperstructurePosition(3, Rotation2d.fromDegrees(20));
 
   public static final SuperstructurePosition INTAKING_CONE_FLOOR =
       Config.IS_SPIKE

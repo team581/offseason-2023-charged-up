@@ -50,7 +50,7 @@ public class LimelightSubsystem extends LifecycleSubsystem {
     // Get results from Limelight.
     LimelightResults results = LimelightHelpers.getLatestResults(limelightName);
     LimelightTarget_Retro closestTarget = new LimelightTarget_Retro();
-    double closestDistance = 1000; // Some large number to evict once we have real results.
+    double closestDistance = 10000; // Some large number to evict once we have real results.
 
     // Iterate through the list of retro-reflective targets.
     for (int i = 0; i < results.targetingResults.targets_Retro.length; i++) {
@@ -62,7 +62,7 @@ public class LimelightSubsystem extends LifecycleSubsystem {
       // If distance is less than the closestDistance, reassign closestTarget and closestDistance.
       if (distance < closestDistance) {
         closestDistance = distance;
-        closestTarget = results.targetingResults.targets_Retro[i];
+        closestTarget = currentTarget;
       }
     }
     Logger.getInstance().recordOutput("Vision/NodeDistance", closestDistance);

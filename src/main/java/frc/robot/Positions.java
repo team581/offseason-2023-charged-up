@@ -20,7 +20,7 @@ public class Positions {
 
   public static final SuperstructurePosition INTAKING_CUBE_FLOOR =
       Config.IS_SPIKE
-          ? new SuperstructurePosition(1, Rotation2d.fromDegrees(72.5), true)
+          ? new SuperstructurePosition(1, Rotation2d.fromDegrees(80), true)
           : new SuperstructurePosition(0, Rotation2d.fromDegrees(154));
   public static final SuperstructurePosition INTAKING_CUBE_SHELF =
       Config.IS_SPIKE
@@ -36,7 +36,7 @@ public class Positions {
           : new SuperstructurePosition(17, Rotation2d.fromDegrees(146));
   public static final SuperstructurePosition CUBE_NODE_HIGH =
       Config.IS_SPIKE
-          ? new SuperstructurePosition(25, Rotation2d.fromDegrees(50))
+          ? new SuperstructurePosition(23, Rotation2d.fromDegrees(50))
           : new SuperstructurePosition(28, Rotation2d.fromDegrees(157));
   public static final SuperstructurePosition YEET_CUBE_MID =
       new SuperstructurePosition(3, Rotation2d.fromDegrees(20));

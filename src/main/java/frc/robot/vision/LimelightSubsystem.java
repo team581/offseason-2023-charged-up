@@ -44,33 +44,42 @@ public class LimelightSubsystem extends LifecycleSubsystem {
   public VisionTarget getClosestMiddleConeTarget() {
     /* Return the closest middle cone target, as detected using retroreflective tape.
      *
-     * This is done by isolating the largest target on the screen.
+     * This is done by isolating the closest target to (0°, -24.85°).
      */
 
     // Get results from Limelight.
     LimelightResults results = LimelightHelpers.getLatestResults(limelightName);
-    LimelightTarget_Retro biggestTarget = new LimelightTarget_Retro();
+    LimelightTarget_Retro closestTarget = new LimelightTarget_Retro();
+    double closestDistance = 1000; // Some large number to evict once we have real results.
 
     // Iterate through the list of retro-reflective targets.
     for (int i = 0; i < results.targetingResults.targets_Retro.length; i++) {
       // Get the current target.
       LimelightTarget_Retro currentTarget = results.targetingResults.targets_Retro[i];
-      // See if the current target is larger than the previous target.
-      if (currentTarget.ta > biggestTarget.ta) {
-        biggestTarget = currentTarget;
+      // Calculate distance from currentTarget to  (0°, -24.85°)
+      double distance = Math.pow(0 - currentTarget.tx, 2) + Math.pow(-24.85 - currentTarget.ty, 2);
+
+      // If distance is less than the closestDistance, reassign closestTarget and closestDistance.
+      if (distance < closestDistance) {
+        closestDistance = distance;
+        closestTarget = results.targetingResults.targets_Retro[i];
       }
     }
-
+    Logger.getInstance().recordOutput("Vision/NodeDistance", closestDistance);
+    Logger.getInstance().recordOutput("Vision/NodeX", closestTarget.tx_pixels);
+    Logger.getInstance().recordOutput("Vision/NodeY", closestTarget.ty_pixels);
+    Logger.getInstance()
+        .recordOutput("Vision/NodeLength", results.targetingResults.targets_Retro.length);
     return new VisionTarget(
-        biggestTarget.tx,
-        biggestTarget.ty,
+        closestTarget.tx,
+        closestTarget.ty,
         0,
         0,
         results.targetingResults.targets_Retro.length > 0);
   }
 
-  public VisionTarget getClosestCone() {
-    /* Return the closest cone target, as detected with the Coral.
+  public VisionTarget getClosestGroundCone() {
+    /* Return the closest middle cone target, as detected using retroreflective tape.
      *
      * This is done by isolating the largest target on the screen.
      */
@@ -114,5 +123,7 @@ public class LimelightSubsystem extends LifecycleSubsystem {
     Logger.getInstance().recordOutput("Vision/LimelightY", getClosestMiddleConeTarget().y);
     Logger.getInstance().recordOutput("Vision/XSpeed", swerve.getChassisSpeeds().vxMetersPerSecond);
     Logger.getInstance().recordOutput("Vision/YSpeed", swerve.getChassisSpeeds().vyMetersPerSecond);
+    Logger.getInstance().recordOutput("Vision/NodeX", getClosestGroundCone().x);
+    Logger.getInstance().recordOutput("Vision/NodeY", getClosestGroundCone().y);
   }
 }

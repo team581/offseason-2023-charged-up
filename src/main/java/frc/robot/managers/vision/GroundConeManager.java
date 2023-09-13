@@ -77,7 +77,7 @@ public class GroundConeManager extends LifecycleSubsystem {
     Logger.getInstance().recordOutput("Vision/FirstCone", firstConeDetected);
     if (!firstConeDetected) {
       // Get closest cone.
-      VisionTarget closestCone = limelight.getClosestCone();
+      VisionTarget closestCone = limelight.getClosestGroundCone();
 
       Logger.getInstance().recordOutput("Vision/LimelightX", closestCone.x);
       // If valid, get angle
@@ -100,7 +100,7 @@ public class GroundConeManager extends LifecycleSubsystem {
   }
 
   private void logging() {
-    VisionTarget closestCone = limelight.getClosestCone();
+    VisionTarget closestCone = limelight.getClosestGroundCone();
 
     Logger.getInstance().recordOutput("Vision/LimelightX", closestCone.x);
     Logger.getInstance().recordOutput("Vision/ThetaSpeed", closestCone.x * yP);

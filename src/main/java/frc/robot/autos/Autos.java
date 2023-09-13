@@ -188,13 +188,14 @@ public class Autos {
     autoChooser.addOption("Do nothing", AutoKindWithoutTeam.DO_NOTHING);
     autoChooser.addOption("Test", AutoKindWithoutTeam.TEST);
 
-    autoChooser.addDefaultOption("Mid 1.5 balance", AutoKindWithoutTeam.MID_1_5_BALANCE); // GOOD
+    autoChooser.addDefaultOption("Mid 1.5 balance", AutoKindWithoutTeam.MID_1_5_BALANCE);
+    autoChooser.addDefaultOption("Mid 2 balance", AutoKindWithoutTeam.MID_2_BALANCE);
     // autoChooser.addOption("Long side 2", AutoKindWithoutTeam.LONG_SIDE_2);
-    autoChooser.addOption("Short side 2 balance", AutoKindWithoutTeam.SHORT_SIDE_2_BALANCE); // GOOD
-    autoChooser.addOption("Long side 2 balance", AutoKindWithoutTeam.LONG_SIDE_2_BALANCE); // GOOD
+    autoChooser.addOption("Short side 2 balance", AutoKindWithoutTeam.SHORT_SIDE_2_BALANCE);
+    autoChooser.addOption("Long side 2 balance", AutoKindWithoutTeam.LONG_SIDE_2_BALANCE);
 
-    autoChooser.addOption("Short side 3", AutoKindWithoutTeam.SHORT_SIDE_3); // GOOD
-    autoChooser.addOption("Long side 3", AutoKindWithoutTeam.LONG_SIDE_3); // GOOD
+    autoChooser.addOption("Short side 3", AutoKindWithoutTeam.SHORT_SIDE_3);
+    autoChooser.addOption("Long side 3", AutoKindWithoutTeam.LONG_SIDE_3);
 
     if (Config.IS_DEVELOPMENT) {
       PathPlannerServer.startServer(5811);
@@ -378,7 +379,8 @@ public class Autos {
         followPathWithEvents(pathGroup, 0),
         groundManager.getGroundCone(),
         autoBuilder.followPathWithEvents(pathGroup.get(1)),
-        visionManager.getAutoScoreMidCone());
+        visionManager.getAutoScoreMidCone(),
+        autoBuilder.followPathWithEvents(pathGroup.get(2)));
   }
 
   private Command getBlueLongSide2Balance(List<PathPlannerTrajectory> pathGroup) {

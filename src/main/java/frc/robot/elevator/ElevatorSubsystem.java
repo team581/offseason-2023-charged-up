@@ -11,6 +11,7 @@ import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Positions;
@@ -21,6 +22,8 @@ import frc.robot.util.scheduling.SubsystemPriority;
 import org.littletonrobotics.junction.Logger;
 
 public class ElevatorSubsystem extends LifecycleSubsystem {
+  private static final StatorCurrentLimitConfiguration STATOR_CURRENT_LIMIT_SAFE = new StatorCurrentLimitConfiguration(true, 80, 100, 1);
+  private static final StatorCurrentLimitConfiguration STATOR_CURRENT_LIMIT_UNSAFE = new StatorCurrentLimitConfiguration(false, 80, 100, 1);
   private static final double HOMING_CURRENT = 5;
   private final TalonFX motor;
   private double goalPositionInInches = Positions.STOWED.height;
@@ -43,7 +46,7 @@ public class ElevatorSubsystem extends LifecycleSubsystem {
     this.motor.configMotionCruiseVelocity(Config.ELEVATOR_CRUISE_VELOCITY);
     this.motor.configMotionAcceleration(Config.ELEVATOR_ACCELERATION);
     // Set current limiting
-    this.motor.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, 80, 100, 1));
+    this.motor.configStatorCurrentLimit(STATOR_CURRENT_LIMIT_SAFE);
     this.motor.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 20, 30, 0.5));
   }
 
@@ -121,5 +124,17 @@ public class ElevatorSubsystem extends LifecycleSubsystem {
   public Command getHomeCommand() {
     return runOnce(() -> startHoming())
         .andThen(Commands.waitUntil(() -> homingState == HomingState.HOMED));
+  }
+
+  @Override
+  public void disabledInit() {
+    if (DriverStation.isAutonomous()) {
+      this.motor.configStatorCurrentLimit(STATOR_CURRENT_LIMIT_UNSAFE);
+    }
+  }
+
+  @Override
+  public void teleopInit() {
+    this.motor.configStatorCurrentLimit(STATOR_CURRENT_LIMIT_SAFE);
   }
 }

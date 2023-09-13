@@ -66,7 +66,7 @@ public class GroundConeManager extends LifecycleSubsystem {
                 () -> {
                   swerve.setChassisSpeeds(new ChassisSpeeds(), false);
                 }))
-        .andThen(superstructure.getCommand(() -> States.STOWED))
+        .andThen(Commands.runOnce(() -> superstructure.set(States.STOWED)))
         .andThen(limelight.setPipelineCommand(limelight.retroPipeline));
   }
 

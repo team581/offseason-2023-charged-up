@@ -154,20 +154,45 @@
     },
     {
       "anchorPoint": {
-        "x": 7.239147844201799,
-        "y": 2.14
+        "x": 6.520081636654502,
+        "y": 2.14006568364014
       },
       "prevControl": {
-        "x": 7.170600286679129,
-        "y": 2.136191802359851
+        "x": 6.451534079131831,
+        "y": 2.136257485999991
       },
       "nextControl": {
-        "x": 7.300103901112362,
-        "y": 2.1433864476061433
+        "x": 6.581037693565065,
+        "y": 2.143452131246283
       },
       "holonomicAngle": 0,
       "isReversal": false,
-      "velOverride": 0.05,
+      "velOverride": 1.0,
+      "isLocked": false,
+      "isStopPoint": true,
+      "stopEvent": {
+        "names": [],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 6.520081636654502,
+        "y": 2.1491339473907023
+      },
+      "prevControl": {
+        "x": 6.550559665109784,
+        "y": 2.141758907443211
+      },
+      "nextControl": {
+        "x": 6.4896036081992206,
+        "y": 2.1565089873381935
+      },
+      "holonomicAngle": 0,
+      "isReversal": false,
+      "velOverride": null,
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
@@ -230,15 +255,9 @@
   "isReversed": null,
   "markers": [
     {
-      "position": 4.2,
+      "position": 4.5,
       "names": [
         "intakeCone"
-      ]
-    },
-    {
-      "position": 6.52,
-      "names": [
-        "stow"
       ]
     }
   ]

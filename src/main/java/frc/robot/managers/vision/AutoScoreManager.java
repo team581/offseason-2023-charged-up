@@ -25,7 +25,7 @@ public class AutoScoreManager extends LifecycleSubsystem {
   private final SuperstructureManager superstructure;
 
   private double xP = -0.15;
-  private double yP = 0.3;
+  private double yP = 0.4;
   // tune setpoint value
   private double ySetpoint = 5.5;
   private double angleRange = 1.3;
@@ -68,8 +68,8 @@ public class AutoScoreManager extends LifecycleSubsystem {
     return Commands.run(
         () -> {
           // TODO(Simon): Fill in.
-          swerve.setChassisSpeeds(calculateSwerveSpeeds(), false);
           swerve.setSnapToAngle(AutoRotate.getBackwardsAngle());
+          swerve.setChassisSpeeds(calculateSwerveSpeeds(), false);
           // Set swerve speeds with calculateSwerveSpeeds()
         },
         limelight,

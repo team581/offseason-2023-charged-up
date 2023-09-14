@@ -140,7 +140,7 @@
         "x": 6.426733658320032,
         "y": 2.1420652436543857
       },
-      "holonomicAngle": 0,
+      "holonomicAngle": 0.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
@@ -154,47 +154,22 @@
     },
     {
       "anchorPoint": {
-        "x": 6.520081636654502,
-        "y": 2.14006568364014
+        "x": 6.221788516682152,
+        "y": 2.140850403542738
       },
       "prevControl": {
-        "x": 6.451534079131831,
-        "y": 2.136257485999991
+        "x": 6.153240959159482,
+        "y": 2.137042205902589
       },
       "nextControl": {
-        "x": 6.581037693565065,
-        "y": 2.143452131246283
+        "x": 6.282744573592716,
+        "y": 2.144236851148881
       },
       "holonomicAngle": 0,
       "isReversal": false,
-      "velOverride": 1.0,
+      "velOverride": null,
       "isLocked": false,
       "isStopPoint": true,
-      "stopEvent": {
-        "names": [],
-        "executionBehavior": "parallel",
-        "waitBehavior": "none",
-        "waitTime": 0
-      }
-    },
-    {
-      "anchorPoint": {
-        "x": 6.520081636654502,
-        "y": 2.1491339473907023
-      },
-      "prevControl": {
-        "x": 6.550559665109784,
-        "y": 2.141758907443211
-      },
-      "nextControl": {
-        "x": 6.48960360819922,
-        "y": 2.1565089873381935
-      },
-      "holonomicAngle": 0,
-      "isReversal": false,
-      "velOverride": null,
-      "isLocked": false,
-      "isStopPoint": false,
       "stopEvent": {
         "names": [],
         "executionBehavior": "parallel",
@@ -244,7 +219,7 @@
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
-      "isStopPoint": false,
+      "isStopPoint": true,
       "stopEvent": {
         "names": [],
         "executionBehavior": "parallel",
@@ -269,7 +244,7 @@
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
-      "isStopPoint": false,
+      "isStopPoint": true,
       "stopEvent": {
         "names": [],
         "executionBehavior": "parallel",
@@ -308,6 +283,12 @@
       "position": 4.5,
       "names": [
         "intakeCone"
+      ]
+    },
+    {
+      "position": 7.040000000000319,
+      "names": [
+        "stow"
       ]
     }
   ]

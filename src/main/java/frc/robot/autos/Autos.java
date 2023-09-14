@@ -297,7 +297,7 @@ public class Autos {
     } else if (auto == AutoKind.BLUE_LONG_SIDE_2_BALANCE
         || auto == AutoKind.RED_SHORT_SIDE_2_BALANCE) {
       autoCommand = autoCommand.andThen(getBlueLongSide2Balance(pathGroup));
-    } else if (auto == AutoKind.BLUE_MID_1_5_BALANCE || auto == AutoKind.RED_MID_1_5_BALANCE) {
+    } else if (auto == AutoKind.BLUE_MID_2_BALANCE || auto == AutoKind.RED_MID_2_BALANCE) {
       autoCommand = autoCommand.andThen(getBlueMid15Balance(pathGroup));
     } else {
       autoCommand = autoCommand.andThen(autoBuilder.fullAuto(pathGroup));
@@ -392,11 +392,13 @@ public class Autos {
   }
 
   private Command getBlueMid15Balance(List<PathPlannerTrajectory> pathGroup) {
-    return Commands.none();
-    // return Commands.sequence(
-    //     autoBuilder.followPathWithEvents(pathGroup.get(0)),
-    //     groundManager.getGroundCone(),
-    //     autoBuilder.followPathWithEvents(pathGroup.get(1)));
+    return Commands.sequence(
+        followPathWithEvents(pathGroup, 0),
+        groundManager.getGroundCone(),
+        autoBuilder.followPathWithEvents(pathGroup.get(1)),
+        visionManager.getAutoScoreMidCone(),
+        autoBuilder.followPathWithEvents(pathGroup.get(2))
+        );
   }
 
   public void clearCache() {

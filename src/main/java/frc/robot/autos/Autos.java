@@ -190,6 +190,8 @@ public class Autos {
 
     autoChooser.addDefaultOption("Mid 1.5 balance", AutoKindWithoutTeam.MID_1_5_BALANCE);
     autoChooser.addDefaultOption("Mid 2 balance", AutoKindWithoutTeam.MID_2_BALANCE);
+    autoChooser.addDefaultOption("Mid 2 balance test", AutoKindWithoutTeam.MID_2_BALANCE_TEST);
+
     // autoChooser.addOption("Long side 2", AutoKindWithoutTeam.LONG_SIDE_2);
     autoChooser.addOption("Short side 2 balance", AutoKindWithoutTeam.SHORT_SIDE_2_BALANCE);
     autoChooser.addOption("Long side 2 balance", AutoKindWithoutTeam.LONG_SIDE_2_BALANCE);

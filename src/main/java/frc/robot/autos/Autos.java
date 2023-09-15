@@ -72,9 +72,6 @@ public class Autos {
 
   private final LocalizationSubsystem localization;
   private final SwerveSubsystem swerve;
-  private final ImuSubsystem imu;
-  private final ElevatorSubsystem elevator;
-  private final WristSubsystem wrist;
   private final IntakeSubsystem intake;
 
   private final SwerveAutoBuilder autoBuilder;
@@ -97,10 +94,7 @@ public class Autos {
       AutoScoreManager visionManager) {
     this.localization = localization;
     this.swerve = swerve;
-    this.imu = imu;
     this.superstructure = superstructure;
-    this.elevator = elevator;
-    this.wrist = wrist;
     this.intake = intake;
     this.autoBalance = autoBalance;
     this.groundManager = groundManager;
@@ -329,12 +323,6 @@ public class Autos {
 
     return autoCommand;
   }
-
-  // each time you add a stop point in pathplanner, that corresponds to a new element in the
-  // pathGroup arraylist
-  // if you have no stop points, the pathGroup arraylist is going to just have a single element
-  // if you have one stop point in the middle, it will have two items
-  // etc
 
   private Command getBlueShortSide3Auto(List<PathPlannerTrajectory> pathGroup) {
     System.out.println("Markers array:");

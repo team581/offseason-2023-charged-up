@@ -243,6 +243,20 @@ public class Autos {
         .andThen(Commands.runOnce(() -> intake.setGamePiece(HeldGamePiece.NOTHING)));
   }
 
+  private SequentialCommandGroup getScoreMidCommand() {
+    return superstructure
+    .getScoreCommand(Config.IS_SPIKE ? NodeHeight.MID : NodeHeight.LOW, 0, false)
+    .withTimeout(3)
+    .andThen(Commands.runOnce(() -> intake.setGamePiece(HeldGamePiece.NOTHING)));
+  }
+
+  private SequentialCommandGroup getScoreLowCommand() {
+    return superstructure
+    .getScoreCommand(NodeHeight.LOW, 0, false)
+    .withTimeout(3)
+    .andThen(Commands.runOnce(() -> intake.setGamePiece(HeldGamePiece.NOTHING)));
+  }
+
   private Command getPreloadConeCommand() {
     return superstructure
         .setIntakeModeCommand(HeldGamePiece.CONE)

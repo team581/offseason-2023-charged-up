@@ -340,10 +340,11 @@ public class Autos {
     System.out.println("Markers array:");
     System.out.println(pathGroup.get(0).getMarkers());
     return Commands.sequence(
-        // superstructure.getHomeCommand(),
-        // getPreloadConeCommand(),
-        // getScoreHighCommand(),
-        // getStowFastCommand(),
+        superstructure.getHomeCommand(),
+        getPreloadConeCommand(),
+        getScoreHighCommand(),
+        // getScoreMidCommand(),
+        getStowFastCommand(),
         followPathWithEvents(pathGroup, 0),
         groundManager.getGroundCone(),
         followPathWithEvents(pathGroup, 1),

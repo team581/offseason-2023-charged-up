@@ -13,7 +13,7 @@ public enum AutoKind {
   BLUE_LONG_SIDE_2("BlueLongSide2", 4, 3, false),
   BLUE_LONG_SIDE_2_BALANCE("BlueLongSide2Balance", 4, 4, true),
   BLUE_MID_1_5_BALANCE("BlueMid1.5Balance", 2, 3, true),
-  BLUE_MID_2_BALANCE("BlueMid2BalanceTest", 2, 3, true),
+  BLUE_MID_2_BALANCE("BlueMid2Balance", 2, 3, true),
 
   BLUE_SHORT_SIDE_2_BALANCE("BlueShortSide2Balance", 4, 4, true),
   BLUE_SHORT_SIDE_3("BlueShortSide3", 4.5, 4, false),

@@ -36,6 +36,7 @@ import frc.robot.vision.VisionMode;
 import frc.robot.wrist.WristSubsystem;
 import java.lang.ref.WeakReference;
 import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -179,20 +180,9 @@ public class Autos {
         .onCommandFinish(
             command -> System.out.println("[COMMANDS] Finished command " + command.getName()));
 
-    autoChooser.addOption("Do nothing", AutoKindWithoutTeam.DO_NOTHING);
-    autoChooser.addOption("Test", AutoKindWithoutTeam.TEST);
-
-    autoChooser.addDefaultOption("Mid 1.5 balance", AutoKindWithoutTeam.MID_1_5_BALANCE);
-    autoChooser.addDefaultOption("Mid 2 balance", AutoKindWithoutTeam.MID_2_BALANCE);
-    autoChooser.addDefaultOption("Mid 2 balance test", AutoKindWithoutTeam.MID_2_BALANCE_TEST);
-
-    // autoChooser.addOption("Long side 2", AutoKindWithoutTeam.LONG_SIDE_2);
-    autoChooser.addOption("Short side 2 balance", AutoKindWithoutTeam.SHORT_SIDE_2_BALANCE);
-    autoChooser.addOption("Long side 2 balance", AutoKindWithoutTeam.LONG_SIDE_2_BALANCE);
-
-    autoChooser.addOption("Short side 3", AutoKindWithoutTeam.SHORT_SIDE_3);
-    autoChooser.addOption("Long side 3", AutoKindWithoutTeam.LONG_SIDE_3);
-    autoChooser.addOption("Long side 3 worn", AutoKindWithoutTeam.LONG_SIDE_3_WARN);
+    for (AutoKindWithoutTeam autoKind : EnumSet.allOf(AutoKindWithoutTeam.class)) {
+      autoChooser.addOption(autoKind.toString(), autoKind);
+    }
 
     if (Config.IS_DEVELOPMENT) {
       PathPlannerServer.startServer(5811);
@@ -236,20 +226,6 @@ public class Autos {
   private SequentialCommandGroup getScoreHighCommand() {
     return superstructure
         .getScoreCommand(Config.IS_SPIKE ? NodeHeight.HIGH : NodeHeight.LOW, 0, false)
-        .withTimeout(3)
-        .andThen(Commands.runOnce(() -> intake.setGamePiece(HeldGamePiece.NOTHING)));
-  }
-
-  private SequentialCommandGroup getScoreMidCommand() {
-    return superstructure
-        .getScoreCommand(Config.IS_SPIKE ? NodeHeight.MID : NodeHeight.LOW, 0, false)
-        .withTimeout(3)
-        .andThen(Commands.runOnce(() -> intake.setGamePiece(HeldGamePiece.NOTHING)));
-  }
-
-  private SequentialCommandGroup getScoreLowCommand() {
-    return superstructure
-        .getScoreCommand(NodeHeight.LOW, 0, false)
         .withTimeout(3)
         .andThen(Commands.runOnce(() -> intake.setGamePiece(HeldGamePiece.NOTHING)));
   }
@@ -298,21 +274,7 @@ public class Autos {
         autoCommand.andThen(
             () -> localization.resetPose(pathGroup.get(0).getInitialHolonomicPose()));
 
-    if (auto == AutoKind.BLUE_SHORT_SIDE_3 || auto == AutoKind.RED_LONG_SIDE_3) {
-      autoCommand = autoCommand.andThen(getBlueShortSide3Auto(pathGroup));
-    } else if (auto == AutoKind.BLUE_LONG_SIDE_3 || auto == AutoKind.RED_SHORT_SIDE_3) {
-      autoCommand = autoCommand.andThen(getBlueLongSide3Auto(pathGroup));
-    } else if (auto == AutoKind.BLUE_LONG_SIDE_3_WORN || auto == AutoKind.RED_LONG_SIDE_3_WORN) {
-      autoCommand = autoCommand.andThen(getBlueLongSide3Auto(pathGroup));
-    } else if (auto == AutoKind.BLUE_SHORT_SIDE_2_BALANCE|| auto == AutoKind.RED_LONG_SIDE_2_BALANCE) {
-      autoCommand = autoCommand.andThen(getBlueShortSide2Balance(pathGroup));
-    } else if (auto == AutoKind.BLUE_LONG_SIDE_2_BALANCE|| auto == AutoKind.RED_SHORT_SIDE_2_BALANCE) {
-      autoCommand = autoCommand.andThen(getBlueLongSide2Balance(pathGroup));
-    } else if (auto == AutoKind.BLUE_MID_2_BALANCE || auto == AutoKind.RED_MID_2_BALANCE) {
-      autoCommand = autoCommand.andThen(getBlueMid15Balance(pathGroup));
-    } else {
       autoCommand = autoCommand.andThen(autoBuilder.fullAuto(pathGroup));
-    }
 
     if (auto.autoBalance) {
       autoCommand = autoCommand.andThen(this.autoBalance.getCommand());
@@ -366,46 +328,6 @@ public class Autos {
     }
 
     return command;
-  }
-
-  private Command getBlueLongSide3Auto(List<PathPlannerTrajectory> pathGroup) {
-    return autoBuilder.fullAuto(pathGroup);
-
-    // return Commands.sequence(
-    //     followPathWithEvents(pathGroup, 0),
-    //     followPathWithEvents(pathGroup, 1),
-    //     // groundManager.getGroundCone(),
-    //     followPathWithEvents(pathGroup, 2)
-    //     // visionManager.getAutoScoreMidCone()
-    //     // followPathWithEvents(pathGroup, 3),
-    //     // visionManager.getAutoScoreMidCone()
-    // );
-  }
-
-  private Command getBlueShortSide2Balance(List<PathPlannerTrajectory> pathGroup) {
-    return Commands.sequence(
-        followPathWithEvents(pathGroup, 0),
-        groundManager.getGroundCone(),
-        autoBuilder.followPathWithEvents(pathGroup.get(1)),
-        visionManager.getAutoScoreMidCone(),
-        autoBuilder.followPathWithEvents(pathGroup.get(2)));
-  }
-
-  private Command getBlueLongSide2Balance(List<PathPlannerTrajectory> pathGroup) {
-    return Commands.sequence(
-        followPathWithEvents(pathGroup, 0),
-        groundManager.getGroundCone(),
-        autoBuilder.followPathWithEvents(pathGroup.get(1)),
-        visionManager.getAutoScoreMidCone());
-  }
-
-  private Command getBlueMid15Balance(List<PathPlannerTrajectory> pathGroup) {
-    return Commands.sequence(
-        followPathWithEvents(pathGroup, 0),
-        groundManager.getGroundCone(),
-        autoBuilder.followPathWithEvents(pathGroup.get(1)),
-        visionManager.getAutoScoreMidCone(),
-        autoBuilder.followPathWithEvents(pathGroup.get(2)));
   }
 
   public void clearCache() {

@@ -224,11 +224,15 @@ public class SwerveSubsystem extends LifecycleSubsystem {
     // speeds.omegaRadiansPerSecond = twist.dtheta / lookAheadSeconds; // omega should stay the same.
     // Kinematics to convert target chassis speeds to module states.
     final var secondOrderModuleStates = SECOND_ORDER_KINEMATICS.toSwerveModuleStates(speeds);
+    Logger.getInstance().recordOutput("Swerve/SecondOrderGoalModuleStates", secondOrderModuleStates);
     setModuleStates(secondOrderModuleStates, openLoop, false);
+    //desiredState = SwerveMath.optimize(desiredState, getState().angle,
+   // Units.radiansToDegrees(lastState.omegaRadPerSecond * configuration.angleKV) *
+   // 0.065);       Change omega based off of this
 
     final var firstOrderModuleStates = FIRST_ORDER_KINEMATICS.toSwerveModuleStates(speeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(firstOrderModuleStates, MAX_VELOCITY);
-    Logger.getInstance().recordOutput("Swerve/GoalModuleStates", firstOrderModuleStates);
+    Logger.getInstance().recordOutput("Swerve/FirstOrderGoalModuleStates", firstOrderModuleStates);
   }
 
   public void setModuleStates(

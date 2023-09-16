@@ -4,6 +4,8 @@
 
 package frc.robot.vision;
 
+import frc.robot.vision.LimelightHelpers.LimelightTarget_Retro;
+
 public class VisionTarget {
   public double x;
   public double y;
@@ -17,5 +19,9 @@ public class VisionTarget {
     this.width = width;
     this.height = height;
     this.valid = valid;
+  }
+
+  public VisionTarget(LimelightTarget_Retro retroTarget, boolean valid) {
+    this(retroTarget.tx, retroTarget.ty, 0, 0, valid);
   }
 }

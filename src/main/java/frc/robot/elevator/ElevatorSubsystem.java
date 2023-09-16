@@ -22,8 +22,10 @@ import frc.robot.util.scheduling.SubsystemPriority;
 import org.littletonrobotics.junction.Logger;
 
 public class ElevatorSubsystem extends LifecycleSubsystem {
-  private static final StatorCurrentLimitConfiguration STATOR_CURRENT_LIMIT_SAFE = new StatorCurrentLimitConfiguration(true, 80, 100, 1);
-  private static final StatorCurrentLimitConfiguration STATOR_CURRENT_LIMIT_UNSAFE = new StatorCurrentLimitConfiguration(false, 80, 100, 1);
+  private static final StatorCurrentLimitConfiguration STATOR_CURRENT_LIMIT_SAFE =
+      new StatorCurrentLimitConfiguration(true, 80, 100, 1);
+  private static final StatorCurrentLimitConfiguration STATOR_CURRENT_LIMIT_UNSAFE =
+      new StatorCurrentLimitConfiguration(false, 80, 100, 1);
   private static final double HOMING_CURRENT = 5;
   private final TalonFX motor;
   private double goalPositionInInches = Positions.STOWED.height;

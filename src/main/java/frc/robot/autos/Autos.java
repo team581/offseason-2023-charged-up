@@ -125,11 +125,11 @@ public class Autos {
                     .andThen(Commands.runOnce(() -> intake.setGamePiece(HeldGamePiece.NOTHING)))),
             Map.entry("scoreHigh", getScoreHighCommand()),
             Map.entry(
-              "yeetMid",
-              superstructure
-                  .getCommand(States.YEET_CUBE_MID)
-                  .withTimeout(1.5)
-                  .andThen(Commands.runOnce(() -> intake.setGamePiece(HeldGamePiece.NOTHING)))),
+                "yeetMid",
+                superstructure
+                    .getCommand(States.YEET_CUBE_MID)
+                    .withTimeout(1.5)
+                    .andThen(Commands.runOnce(() -> intake.setGamePiece(HeldGamePiece.NOTHING)))),
             Map.entry("superstructureLow", superstructure.getManualScoreCommand(NodeHeight.LOW)),
             Map.entry(
                 "superstructureMid",
@@ -242,16 +242,16 @@ public class Autos {
 
   private SequentialCommandGroup getScoreMidCommand() {
     return superstructure
-    .getScoreCommand(Config.IS_SPIKE ? NodeHeight.MID : NodeHeight.LOW, 0, false)
-    .withTimeout(3)
-    .andThen(Commands.runOnce(() -> intake.setGamePiece(HeldGamePiece.NOTHING)));
+        .getScoreCommand(Config.IS_SPIKE ? NodeHeight.MID : NodeHeight.LOW, 0, false)
+        .withTimeout(3)
+        .andThen(Commands.runOnce(() -> intake.setGamePiece(HeldGamePiece.NOTHING)));
   }
 
   private SequentialCommandGroup getScoreLowCommand() {
     return superstructure
-    .getScoreCommand(NodeHeight.LOW, 0, false)
-    .withTimeout(3)
-    .andThen(Commands.runOnce(() -> intake.setGamePiece(HeldGamePiece.NOTHING)));
+        .getScoreCommand(NodeHeight.LOW, 0, false)
+        .withTimeout(3)
+        .andThen(Commands.runOnce(() -> intake.setGamePiece(HeldGamePiece.NOTHING)));
   }
 
   private Command getPreloadConeCommand() {
@@ -405,8 +405,7 @@ public class Autos {
         groundManager.getGroundCone(),
         autoBuilder.followPathWithEvents(pathGroup.get(1)),
         visionManager.getAutoScoreMidCone(),
-        autoBuilder.followPathWithEvents(pathGroup.get(2))
-        );
+        autoBuilder.followPathWithEvents(pathGroup.get(2)));
   }
 
   public void clearCache() {

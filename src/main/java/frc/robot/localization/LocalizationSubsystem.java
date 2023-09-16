@@ -46,7 +46,7 @@ public class LocalizationSubsystem extends LifecycleSubsystem {
     this.imu = imu;
     poseEstimator =
         new SwerveDrivePoseEstimator(
-            SwerveSubsystem.KINEMATICS,
+            SwerveSubsystem.SECOND_ORDER_KINEMATICS,
             imu.getRobotHeading(),
             swerve.getModulePositions(),
             new Pose2d(),
@@ -55,7 +55,7 @@ public class LocalizationSubsystem extends LifecycleSubsystem {
 
     odometry =
         new SwerveDriveOdometry(
-            SwerveSubsystem.KINEMATICS, imu.getRobotHeading(), swerve.getModulePositions());
+            SwerveSubsystem.SECOND_ORDER_KINEMATICS, imu.getRobotHeading(), swerve.getModulePositions());
 
     visionStdLookup.put(0.1, 0.8);
     visionStdLookup.put(0.5, 1.0);

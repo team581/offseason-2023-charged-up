@@ -92,8 +92,8 @@ public class AutoScoreManager extends LifecycleSubsystem {
   private boolean atLocation() {
     // Return true once at location
     VisionTarget closestNode = limelight.getClosestMiddleConeTarget();
-    return closestNode.x >= -angleRange
-        && closestNode.x <= angleRange
+    return closestNode.x >= xOffset - angleRange
+        && closestNode.x <= xOffset + angleRange
         && closestNode.y >= ySetpoint - angleRange
         && closestNode.y <= ySetpoint + angleRange;
   }

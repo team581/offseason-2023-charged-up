@@ -25,11 +25,12 @@ public class AutoScoreManager extends LifecycleSubsystem {
   private final SwerveSubsystem swerve;
   private final SuperstructureManager superstructure;
 
-  private double xP = -0.15;
-  private double yP = 0.3;
+  private static final double xP = -0.15;
+  private static final double yP = 0.3;
+  private double xOffset = 0;
   // tune setpoint value
-  private double ySetpoint = 5.5;
-  private double angleRange = .5;
+  private static final double ySetpoint = 5.5;
+  private static final double angleRange = .5;
 
   public AutoScoreManager(
       LimelightSubsystem limelight, SwerveSubsystem swerve, SuperstructureManager superstructure) {
@@ -46,19 +47,18 @@ public class AutoScoreManager extends LifecycleSubsystem {
     // TODO(Simon): Finish command.
     // Do we drive to position, raise up, then score? Do we raise up, drive to position, then raise
     // up?
-    return limelight
-        .setPipelineCommand(limelight.retroPipeline)
+    return storeConeOffsetCommand()
+        .andThen(limelight.setPipelineCommand(limelight.retroPipeline))
         .andThen(alignWithVisionTargetCommand().until(() -> atLocation()))
         .andThen(
             Commands.runOnce(
                 () -> {
-                  swerve.setChassisSpeeds(new ChassisSpeeds(0, 0, 0), false);
+                  swerve.setChassisSpeeds(new ChassisSpeeds(), false);
                 }))
         .andThen(superstructure.getScoreCommand(NodeHeight.MID, 0.15))
         .andThen(Commands.runOnce(() -> superstructure.set(States.STOWED)))
         .finallyDo(
             (boolean interrupted) -> {
-
               // Set drive speeds to 0.
               swerve.setChassisSpeeds(new ChassisSpeeds(), false);
               swerve.disableSnapToAngle();
@@ -66,6 +66,15 @@ public class AutoScoreManager extends LifecycleSubsystem {
               limelight.turnOffLights();
               limelight.setPipeline(0);
             });
+  }
+
+  private Command storeConeOffsetCommand() {
+    return limelight
+        .setPipelineCommand(LimelightSubsystem.HELD_CONE_PIPELINE)
+        // Short delay to ensure Limelight has the cone offset ready
+        .andThen(Commands.waitSeconds(0.1))
+        // Store cone offset for later
+        .andThen(Commands.runOnce(() -> xOffset = limelight.getHeldConeXOffset(), limelight));
   }
 
   private CommandBase alignWithVisionTargetCommand() {
@@ -93,15 +102,17 @@ public class AutoScoreManager extends LifecycleSubsystem {
     // Get closest middle cone target.
     VisionTarget closestNode = limelight.getClosestMiddleConeTarget();
     // Calculate X and Y speeds
-    double ySpeed = closestNode.x * xP;
-    double xSpeed = (closestNode.y - ySetpoint) * yP;
+    double sidewaysSpeed = (closestNode.x + xOffset) * xP;
+    double forwardSpeed = (closestNode.y - ySetpoint) * yP;
     Logger.getInstance().recordOutput("Vision/LimelightX", closestNode.x);
+    Logger.getInstance().recordOutput("Vision/LimelightXOffset", xOffset);
+    Logger.getInstance().recordOutput("Vision/LimelightXWithOffset", closestNode.x + xOffset);
     Logger.getInstance().recordOutput("Vision/LimelightY", closestNode.y);
 
     if (closestNode.valid) {
-      return new ChassisSpeeds(xSpeed, ySpeed, 0);
+      return new ChassisSpeeds(forwardSpeed, sidewaysSpeed, 0);
     } else {
-      return new ChassisSpeeds(0, 0, 0);
+      return new ChassisSpeeds();
     }
   }
 

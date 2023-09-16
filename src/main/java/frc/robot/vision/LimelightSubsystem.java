@@ -5,6 +5,7 @@
 package frc.robot.vision;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.util.scheduling.LifecycleSubsystem;
 import frc.robot.util.scheduling.SubsystemPriority;
@@ -16,7 +17,11 @@ import org.littletonrobotics.junction.Logger;
 public class LimelightSubsystem extends LifecycleSubsystem {
   public final String limelightName;
   public final int retroPipeline = 1;
-  private SwerveSubsystem swerve;
+  // TODO: Change this to the correct pipeline index
+  public static final int HELD_CONE_PIPELINE = 999;
+  // TODO: Tune this value to convert held cone angle (relative to Limelight) to robot angle
+  public static final double HELD_CONE_X_OFFSET_ANGLE_SCALAR = 1;
+  private final SwerveSubsystem swerve;
 
   public LimelightSubsystem(String limelightName, SwerveSubsystem swerve) {
     super(SubsystemPriority.VISION, "LimelightSubsystem_" + limelightName);
@@ -39,6 +44,23 @@ public class LimelightSubsystem extends LifecycleSubsystem {
   public void setPipeline(int index) {
     /* Set the Pipeline to use on the limelight. */
     LimelightHelpers.setPipelineIndex(limelightName, index);
+  }
+
+  /** Get the X offset for scoring a held cone. */
+  public double getHeldConeXOffset() {
+    setPipeline(HELD_CONE_PIPELINE);
+
+    LimelightResults results = LimelightHelpers.getLatestResults(limelightName);
+
+    if (results.targetingResults.targets_Retro.length == 0) {
+      return 0;
+    }
+
+    LimelightTarget_Retro rawTarget = results.targetingResults.targets_Retro[0];
+
+    VisionTarget visionTarget = new VisionTarget(rawTarget, true);
+
+    return visionTarget.x * HELD_CONE_X_OFFSET_ANGLE_SCALAR;
   }
 
   public VisionTarget getClosestMiddleConeTarget() {
@@ -105,16 +127,21 @@ public class LimelightSubsystem extends LifecycleSubsystem {
 
   public CommandBase setPipelineCommand(int pipeline) {
     return runOnce(
-        () -> {
-          // TODO(Simon): Set proper limelight pipeline and turn on LEDs.
-          setPipeline(pipeline);
+            () -> {
+              // TODO(Simon): Set proper limelight pipeline and turn on LEDs.
+              setPipeline(pipeline);
 
-          if (pipeline == retroPipeline) {
-            turnOnLights();
-          } else {
-            turnOffLights();
-          }
-        });
+              if (pipeline == retroPipeline) {
+                turnOnLights();
+              } else {
+                turnOffLights();
+              }
+            })
+        // Wait until Limelight has acknowleged the pipeline change
+        .andThen(
+            Commands.waitUntil(
+                () -> LimelightHelpers.getCurrentPipelineIndex(limelightName) == pipeline))
+        .withTimeout(0.25);
   }
 
   @Override

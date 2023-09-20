@@ -29,7 +29,7 @@ public class AutoScoreManager extends LifecycleSubsystem {
   private double yP = 0.3;
   // tune setpoint value
   private double ySetpoint = 5.5;
-  private double angleRange = .5;
+  private double angleRange = 1;
 
   public AutoScoreManager(
       LimelightSubsystem limelight, SwerveSubsystem swerve, SuperstructureManager superstructure) {
@@ -54,8 +54,7 @@ public class AutoScoreManager extends LifecycleSubsystem {
                 () -> {
                   swerve.setChassisSpeeds(new ChassisSpeeds(0, 0, 0), false);
                 }))
-        .andThen(superstructure.getScoreCommand(NodeHeight.MID, 0.15))
-        .andThen(Commands.runOnce(() -> superstructure.set(States.STOWED)))
+        .andThen(superstructure.getScoreCommand(NodeHeight.MID, 0.15, true))
         .finallyDo(
             (boolean interrupted) -> {
 

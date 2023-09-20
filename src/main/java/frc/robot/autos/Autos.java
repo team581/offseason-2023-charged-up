@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.NodeHeight;
 import frc.robot.States;
 import frc.robot.config.Config;
@@ -115,16 +114,21 @@ public class Autos {
             Map.entry(
                 "scoreLow",
                 superstructure
-                    .getScoreCommand(NodeHeight.LOW, 0, false)
+                    .getScoreCommand(NodeHeight.LOW, 0, true)
                     .withTimeout(3)
                     .andThen(Commands.runOnce(() -> intake.setGamePiece(HeldGamePiece.NOTHING)))),
             Map.entry(
                 "scoreMid",
                 superstructure
-                    .getScoreCommand(Config.IS_SPIKE ? NodeHeight.MID : NodeHeight.LOW, 0, false)
+                    .getScoreCommand(Config.IS_SPIKE ? NodeHeight.MID : NodeHeight.LOW, 0, true)
                     .withTimeout(3)
                     .andThen(Commands.runOnce(() -> intake.setGamePiece(HeldGamePiece.NOTHING)))),
-            Map.entry("scoreHigh", getScoreHighCommand()),
+            Map.entry(
+                "scoreHigh",
+                superstructure
+                    .getScoreCommand(Config.IS_SPIKE ? NodeHeight.HIGH : NodeHeight.LOW, 0, true)
+                    .withTimeout(3)
+                    .andThen(Commands.runOnce(() -> intake.setGamePiece(HeldGamePiece.NOTHING)))),
             Map.entry(
                 "yeetMid",
                 superstructure
@@ -223,13 +227,6 @@ public class Autos {
     return Commands.runOnce(() -> superstructure.set(States.STOWED));
   }
 
-  private SequentialCommandGroup getScoreHighCommand() {
-    return superstructure
-        .getScoreCommand(Config.IS_SPIKE ? NodeHeight.HIGH : NodeHeight.LOW, 0, false)
-        .withTimeout(3)
-        .andThen(Commands.runOnce(() -> intake.setGamePiece(HeldGamePiece.NOTHING)));
-  }
-
   private Command getPreloadConeCommand() {
     return superstructure
         .setIntakeModeCommand(HeldGamePiece.CONE)
@@ -273,8 +270,14 @@ public class Autos {
     autoCommand =
         autoCommand.andThen(
             () -> localization.resetPose(pathGroup.get(0).getInitialHolonomicPose()));
-
+    if (auto == AutoKind.BLUE_MID_2_BALANCE
+        || auto == AutoKind.BLUE_MID_2_BALANCE_WORN
+        || auto == AutoKind.RED_MID_2_BALANCE
+        || auto == AutoKind.RED_MID_2_BALANCE_WORN) {
+      autoCommand = getMid2BalanceAuto(pathGroup);
+    } else {
       autoCommand = autoCommand.andThen(autoBuilder.fullAuto(pathGroup));
+    }
 
     if (auto.autoBalance) {
       autoCommand = autoCommand.andThen(this.autoBalance.getCommand());
@@ -287,23 +290,13 @@ public class Autos {
     return autoCommand;
   }
 
-  private Command getBlueShortSide3Auto(List<PathPlannerTrajectory> pathGroup) {
-    System.out.println("Markers array:");
-    System.out.println(pathGroup.get(0).getMarkers());
+  private Command getMid2BalanceAuto(List<PathPlannerTrajectory> pathGroup) {
     return Commands.sequence(
-        superstructure.getHomeCommand(),
-        getPreloadConeCommand(),
-        getScoreHighCommand(),
-        // getScoreMidCommand(),
-        getStowFastCommand(),
         followPathWithEvents(pathGroup, 0),
-        followPathWithEvents(pathGroup, 1),
         groundManager.getGroundCone(),
-        followPathWithEvents(pathGroup, 2),
-        visionManager.getAutoScoreMidCone()
-        // followPathWithEvents(pathGroup, 3),
-        // visionManager.getAutoScoreMidCone()
-        );
+        followPathWithEvents(pathGroup, 1),
+        visionManager.getAutoScoreMidCone(),
+        followPathWithEvents(pathGroup, 2));
   }
 
   private Command followPathWithEvents(List<PathPlannerTrajectory> pathGroup, int index) {

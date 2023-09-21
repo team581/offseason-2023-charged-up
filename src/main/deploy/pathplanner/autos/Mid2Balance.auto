@@ -1,0 +1,60 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 1.76,
+      "y": 2.18
+    },
+    "rotation": 180.0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "home"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "preloadCone"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "scoreHigh"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "stowFast"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "MidIntake1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "MidScore2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "MidBalance2"
+          }
+        }
+      ]
+    }
+  },
+  "folder": "Mid"
+}

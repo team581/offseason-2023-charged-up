@@ -1,0 +1,67 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 1.76,
+        "y": 1.07
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 3.8275934917254455,
+        "y": 0.46610208326692115
+      },
+      "isLocked": false
+    },
+    {
+      "anchor": {
+        "x": 6.93,
+        "y": 1.888039249762711
+      },
+      "prevControl": {
+        "x": 6.141345164735364,
+        "y": 0.3820433829643617
+      },
+      "nextControl": null,
+      "isLocked": false
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.45,
+      "rotationDegrees": 90.0
+    }
+  ],
+  "constraintZones": [],
+  "eventMarkers": [
+    {
+      "name": "Intake cube",
+      "waypointRelativePos": 0.75,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "intakeCube"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3,
+    "maxAcceleration": 3,
+    "maxAngularVelocity": 540,
+    "maxAngularAcceleration": 720
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 60.08568745811323
+  },
+  "reversed": false,
+  "folder": "Bump"
+}

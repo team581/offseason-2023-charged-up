@@ -1,0 +1,101 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 6.93,
+        "y": 1.89
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 6.158027842877549,
+        "y": 0.33486428840266674
+      },
+      "isLocked": false
+    },
+    {
+      "anchor": {
+        "x": 1.76,
+        "y": 1.0706094602780272
+      },
+      "prevControl": {
+        "x": 2.8185938949384877,
+        "y": 1.070609460278027
+      },
+      "nextControl": null,
+      "isLocked": false
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.35,
+      "rotationDegrees": 180.0
+    }
+  ],
+  "constraintZones": [],
+  "eventMarkers": [
+    {
+      "name": "Raise early",
+      "waypointRelativePos": 0.55,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "superstructureHigh"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Score",
+      "waypointRelativePos": 1.0,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "scoreHigh"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Stow",
+      "waypointRelativePos": 0.15,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "stowFast"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3,
+    "maxAcceleration": 3,
+    "maxAngularVelocity": 540,
+    "maxAngularAcceleration": 720
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 180.0
+  },
+  "reversed": false,
+  "folder": "Bump"
+}

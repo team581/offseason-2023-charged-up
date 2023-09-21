@@ -1,0 +1,66 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 1.76,
+      "y": 0.48
+    },
+    "rotation": 180.0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "home"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "preloadCone"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "scoreHigh"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "stowFast"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "BumpIntake1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "BumpScore2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "BumpIntake2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "BumpScore3"
+          }
+        }
+      ]
+    }
+  },
+  "folder": "Bump"
+}

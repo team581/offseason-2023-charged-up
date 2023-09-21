@@ -1,0 +1,59 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 7.24,
+        "y": 0.92
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 5.012382971589426,
+        "y": 0.9076651215224412
+      },
+      "isLocked": false
+    },
+    {
+      "anchor": {
+        "x": 5.5,
+        "y": 2.9
+      },
+      "prevControl": {
+        "x": 6.048344529877139,
+        "y": 2.9
+      },
+      "nextControl": {
+        "x": 4.860110854530338,
+        "y": 2.9
+      },
+      "isLocked": false
+    },
+    {
+      "anchor": {
+        "x": 3.937682961815461,
+        "y": 2.9
+      },
+      "prevControl": {
+        "x": 4.751132132530102,
+        "y": 2.9
+      },
+      "nextControl": null,
+      "isLocked": false
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3,
+    "maxAcceleration": 3,
+    "maxAngularVelocity": 540,
+    "maxAngularAcceleration": 720
+  },
+  "goalEndState": {
+    "velocity": 2.0,
+    "rotation": 0.0
+  },
+  "reversed": false,
+  "folder": "Bump"
+}

@@ -1,0 +1,84 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 1.76,
+        "y": 4.42
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 4.423538841510882,
+        "y": 4.947076628971072
+      },
+      "isLocked": false
+    },
+    {
+      "anchor": {
+        "x": 7.033943774365282,
+        "y": 3.465453649277745
+      },
+      "prevControl": {
+        "x": 5.782443326779366,
+        "y": 4.791903656681808
+      },
+      "nextControl": null,
+      "isLocked": false
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.5,
+      "rotationDegrees": 0.01
+    }
+  ],
+  "constraintZones": [],
+  "eventMarkers": [
+    {
+      "name": "Intake cube",
+      "waypointRelativePos": 0.6,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "intakeCube"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Stow",
+      "waypointRelativePos": 1.0,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "stow"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3,
+    "maxAcceleration": 3,
+    "maxAngularVelocity": 540,
+    "maxAngularAcceleration": 720
+  },
+  "goalEndState": {
+    "velocity": 0.0,
+    "rotation": -48.66133534971654
+  },
+  "reversed": false,
+  "folder": "Smooth"
+}

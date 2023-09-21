@@ -42,19 +42,7 @@
     }
   ],
   "rotationTargets": [],
-  "constraintZones": [
-    {
-      "name": "Approach charge station straight",
-      "minWaypointRelativePos": 0.55,
-      "maxWaypointRelativePos": 1.1,
-      "constraints": {
-        "maxVelocity": 1.0,
-        "maxAcceleration": 3,
-        "maxAngularVelocity": 540,
-        "maxAngularAcceleration": 720
-      }
-    }
-  ],
+  "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3,

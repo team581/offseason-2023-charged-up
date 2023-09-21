@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.158994583108593,
-        "y": 0.9200000000000002
+        "x": 5.813503276298051,
+        "y": 0.5404431216251105
       },
       "isLocked": false
     },
@@ -19,8 +19,8 @@
         "y": 1.0706094602780272
       },
       "prevControl": {
-        "x": 1.464970576997849,
-        "y": 0.14007050531189752
+        "x": 2.8185938949384877,
+        "y": 1.070609460278027
       },
       "nextControl": null,
       "isLocked": false
@@ -32,19 +32,7 @@
       "rotationDegrees": 180.0
     }
   ],
-  "constraintZones": [
-    {
-      "name": "New Constraints Zone",
-      "minWaypointRelativePos": 0.8,
-      "maxWaypointRelativePos": 1.0,
-      "constraints": {
-        "maxVelocity": 2.0,
-        "maxAcceleration": 3,
-        "maxAngularVelocity": 540,
-        "maxAngularAcceleration": 720
-      }
-    }
-  ],
+  "constraintZones": [],
   "eventMarkers": [
     {
       "name": "Raise early",
@@ -74,6 +62,23 @@
               "type": "named",
               "data": {
                 "name": "scoreHigh"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Stow",
+      "waypointRelativePos": 0.15,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "stowFast"
               }
             }
           ]

@@ -4,12 +4,12 @@
     {
       "anchor": {
         "x": 1.76,
-        "y": 0.476675143635165
+        "y": 0.48
       },
       "prevControl": null,
       "nextControl": {
         "x": 3.31479768525185,
-        "y": 0.9942987105103775
+        "y": 0.9976235668752125
       },
       "isLocked": false
     },
@@ -40,19 +40,7 @@
       "rotationDegrees": 180.0
     }
   ],
-  "constraintZones": [
-    {
-      "name": "Preload1",
-      "minWaypointRelativePos": 0.8,
-      "maxWaypointRelativePos": 1.0,
-      "constraints": {
-        "maxVelocity": 2.0,
-        "maxAcceleration": 3,
-        "maxAngularVelocity": 540,
-        "maxAngularAcceleration": 720
-      }
-    }
-  ],
+  "constraintZones": [],
   "eventMarkers": [
     {
       "name": "Intake cube",
@@ -65,23 +53,6 @@
               "type": "named",
               "data": {
                 "name": "intakeCube"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "name": "Stow",
-      "waypointRelativePos": 1.0,
-      "command": {
-        "type": "parallel",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "stow"
               }
             }
           ]

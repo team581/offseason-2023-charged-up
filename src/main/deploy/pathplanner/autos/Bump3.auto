@@ -3,7 +3,7 @@
   "startingPose": {
     "position": {
       "x": 1.76,
-      "y": 4.98
+      "y": 0.48
     },
     "rotation": 180.0
   },
@@ -38,29 +38,29 @@
         {
           "type": "path",
           "data": {
-            "pathName": "SmoothIntake1"
+            "pathName": "BumpIntake1"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "SmoothScore2"
+            "pathName": "BumpScore2"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "SmoothIntake2"
+            "pathName": "BumpIntake2"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "SmoothScore3"
+            "pathName": "BumpScore3"
           }
         }
       ]
     }
   },
-  "folder": "Smooth"
+  "folder": "Bump"
 }

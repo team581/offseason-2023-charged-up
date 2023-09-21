@@ -8,23 +8,23 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.146592710442507,
-        "y": 5.200754012591021
+        "x": 5.352751110866595,
+        "y": 4.913937564464198
       },
       "isLocked": false
     },
     {
       "anchor": {
-        "x": 7.31538494959581,
-        "y": 3.381021296708586
+        "x": 6.8494857068155435,
+        "y": 3.6325435001578517
       },
       "prevControl": {
-        "x": 7.151579641499364,
-        "y": 4.70862984207748
+        "x": 6.685680398719097,
+        "y": 4.960152045526769
       },
       "nextControl": {
-        "x": 7.426435828067564,
-        "y": 2.480976622069472
+        "x": 6.960536585287298,
+        "y": 2.7324988255187375
       },
       "isLocked": false
     },
@@ -43,7 +43,7 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.3,
+      "waypointRelativePos": 0.35,
       "rotationDegrees": 0.01
     },
     {
@@ -51,19 +51,7 @@
       "rotationDegrees": -48.65999999999997
     }
   ],
-  "constraintZones": [
-    {
-      "name": "Intake cube",
-      "minWaypointRelativePos": 0.25,
-      "maxWaypointRelativePos": 1.0,
-      "constraints": {
-        "maxVelocity": 1.75,
-        "maxAcceleration": 3,
-        "maxAngularVelocity": 540,
-        "maxAngularAcceleration": 720
-      }
-    }
-  ],
+  "constraintZones": [],
   "eventMarkers": [
     {
       "name": "Intake cube",
@@ -101,7 +89,7 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 3,
+    "maxVelocity": 3.0,
     "maxAcceleration": 3,
     "maxAngularVelocity": 540,
     "maxAngularAcceleration": 720

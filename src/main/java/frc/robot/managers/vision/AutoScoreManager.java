@@ -54,7 +54,7 @@ public class AutoScoreManager extends LifecycleSubsystem {
                 () -> {
                   swerve.setChassisSpeeds(new ChassisSpeeds(0, 0, 0), false);
                 }))
-        .andThen(superstructure.getScoreCommand(NodeHeight.MID, 0.15, true))
+        .andThen(superstructure.getScoreCommand(NodeHeight.MID, 0.15, true)).withTimeout(2.5)
         .finallyDo(
             (boolean interrupted) -> {
 

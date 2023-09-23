@@ -236,16 +236,16 @@
         "y": 1.2730984124582236
       },
       "prevControl": {
-        "x": 4.943641764613481,
-        "y": 0.7775190627541076
+        "x": 4.895632040504203,
+        "y": 0.8710673348398363
       },
       "nextControl": {
-        "x": 6.327106332024214,
-        "y": 1.4984794711230751
+        "x": 6.347046532335567,
+        "y": 1.4551731669183148
       },
       "holonomicAngle": 52.0,
       "isReversal": false,
-      "velOverride": 1.0,
+      "velOverride": 0.75,
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
@@ -257,18 +257,18 @@
     },
     {
       "anchorPoint": {
-        "x": 6.75350292949826,
-        "y": 2.1198002274424
+        "x": 6.8083253491734945,
+        "y": 2.077160567694995
       },
       "prevControl": {
-        "x": 6.522030490869492,
-        "y": 1.7786829494631626
+        "x": 6.619492570292131,
+        "y": 1.8456881290662277
       },
       "nextControl": {
-        "x": 6.522030490869492,
-        "y": 1.7786829494631626
+        "x": 6.619492570292131,
+        "y": 1.8456881290662277
       },
-      "holonomicAngle": 52.00126755749526,
+      "holonomicAngle": 47.1610794882265,
       "isReversal": true,
       "velOverride": null,
       "isLocked": false,
@@ -307,28 +307,28 @@
     },
     {
       "anchorPoint": {
-        "x": 1.5636472002427282,
+        "x": 1.63,
         "y": 0.9563466543346452
       },
       "prevControl": {
-        "x": 1.990043797716774,
+        "x": 2.0563965974740457,
         "y": 0.9807121741903029
       },
       "nextControl": {
-        "x": 1.1372506027686824,
-        "y": 0.9319811344789874
+        "x": 2.0563965974740457,
+        "y": 0.9807121741903029
       },
       "holonomicAngle": 180.0,
-      "isReversal": false,
+      "isReversal": true,
       "velOverride": null,
       "isLocked": false,
-      "isStopPoint": false,
+      "isStopPoint": true,
       "stopEvent": {
         "names": [
-          "scoreLow",
+          "scoreMid",
           "stowFast"
         ],
-        "executionBehavior": "parallel",
+        "executionBehavior": "sequential",
         "waitBehavior": "none",
         "waitTime": 0
       }
@@ -382,15 +382,15 @@
       ]
     },
     {
-      "position": 8.47999999999982,
+      "position": 9.738181818181854,
       "names": [
         "stowFast"
       ]
     },
     {
-      "position": 4.680000000000242,
+      "position": 11.5,
       "names": [
-        "stowFast"
+        "superstructureMid"
       ]
     }
   ]

@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.NodeHeight;
-import frc.robot.States;
+import frc.robot.intake.HeldGamePiece;
 import frc.robot.managers.AutoRotate;
 import frc.robot.managers.SuperstructureManager;
 import frc.robot.swerve.SwerveSubsystem;
@@ -54,7 +54,12 @@ public class AutoScoreManager extends LifecycleSubsystem {
                 () -> {
                   swerve.setChassisSpeeds(new ChassisSpeeds(0, 0, 0), false);
                 }))
-        .andThen(superstructure.getScoreCommand(NodeHeight.MID, 0.15, true)).withTimeout(2.5)
+        .andThen(superstructure.getScoreCommand(NodeHeight.MID, 0.15, true))
+        .withTimeout(2.5)
+        .andThen(
+            superstructure
+                .getScoreCommand(NodeHeight.MID, 0.15)
+                .unless(() -> superstructure.intake.getGamePiece() == HeldGamePiece.NOTHING))
         .finallyDo(
             (boolean interrupted) -> {
 

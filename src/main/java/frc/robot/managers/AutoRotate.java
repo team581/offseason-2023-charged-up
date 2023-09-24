@@ -68,4 +68,10 @@ public class AutoRotate extends LifecycleSubsystem {
   public Command getDisableCommand() {
     return runOnce(() -> disable());
   }
+
+  @Override
+  public void teleopInit() {
+    // Avoid sudden snaps as soon as you enables
+    disable();
+  }
 }

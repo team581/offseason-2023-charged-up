@@ -28,7 +28,7 @@ import org.littletonrobotics.junction.Logger;
 
 public class SuperstructureManager extends LifecycleSubsystem {
   private final SuperstructureMotionManager motionManager;
-  private final IntakeSubsystem intake;
+  public final IntakeSubsystem intake;
   private SuperstructureState goal = States.STOWED;
   private HeldGamePiece mode = HeldGamePiece.CUBE;
   private ScoringState scoringState = ScoringState.IDLE;
@@ -190,7 +190,7 @@ public class SuperstructureManager extends LifecycleSubsystem {
                 mode == HeldGamePiece.CUBE
                     ? States.INTAKING_CUBE_FLOOR_SPINNING
                     : States.INTAKING_CONE_FLOOR_SPINNING)
-        .andThen(getCommand(States.STOWED))
+        .andThen(getCommand(States.STOWED_UNSAFE))
         .withName("SuperstructureFloorIntakeSpinning");
   }
 

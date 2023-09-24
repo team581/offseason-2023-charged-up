@@ -54,6 +54,7 @@ public class GroundConeManager extends LifecycleSubsystem {
     // Return full command to intake from ground
     return limelight
         .setPipelineCommand(0)
+        .andThen(() -> swerve.disableSnapToAngle())
         .andThen(() -> resetCone())
         .andThen(() -> superstructure.setIntakeMode(HeldGamePiece.CONE))
         .andThen(superstructure.getFloorIntakeIdleCommand())

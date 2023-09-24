@@ -26,6 +26,7 @@ import frc.robot.imu.ImuSubsystem;
 import frc.robot.intake.HeldGamePiece;
 import frc.robot.intake.IntakeSubsystem;
 import frc.robot.localization.LocalizationSubsystem;
+import frc.robot.managers.AutoRotate;
 import frc.robot.managers.Autobalance;
 import frc.robot.managers.SuperstructureManager;
 import frc.robot.managers.vision.AutoScoreManager;
@@ -80,6 +81,7 @@ public class Autos {
   private final Map<AutoKind, WeakReference<Command>> autosCache = new EnumMap<>(AutoKind.class);
   private final AutoScoreManager visionManager;
   private final GroundConeManager groundManager;
+  private final ImuSubsystem imu;
 
   public Autos(
       LocalizationSubsystem localization,
@@ -94,6 +96,7 @@ public class Autos {
       AutoScoreManager visionManager) {
     this.localization = localization;
     this.swerve = swerve;
+    this.imu = imu;
     this.superstructure = superstructure;
     this.intake = intake;
     this.autoBalance = autoBalance;
@@ -270,14 +273,12 @@ public class Autos {
     autoCommand =
         autoCommand.andThen(
             () -> localization.resetPose(pathGroup.get(0).getInitialHolonomicPose()));
-    if (auto == AutoKind.BLUE_MID_RIGHT_2_BALANCE
+    if (false && (auto == AutoKind.BLUE_MID_RIGHT_2_BALANCE
         || auto == AutoKind.BLUE_MID_RIGHT_2_BALANCE_WORN
         || auto == AutoKind.RED_MID_RIGHT_2_BALANCE
         || auto == AutoKind.RED_MID_RIGHT_2_BALANCE_WORN
         || auto == AutoKind.BLUE_MID_LEFT_2_BALANCE
-        || auto == AutoKind.BLUE_MID_LEFT_2_BALANCE_WORN
-        || auto == AutoKind.RED_MID_LEFT_2_BALANCE
-        || auto == AutoKind.RED_MID_LEFT_2_BALANCE_WORN) {
+        || auto == AutoKind.RED_MID_LEFT_2_BALANCE)) {
       autoCommand = getMid2BalanceAuto(pathGroup);
     } else {
       autoCommand = autoCommand.andThen(autoBuilder.fullAuto(pathGroup));
@@ -297,7 +298,7 @@ public class Autos {
   private Command getMid2BalanceAuto(List<PathPlannerTrajectory> pathGroup) {
     return Commands.sequence(
         followPathWithEvents(pathGroup, 0),
-        groundManager.getGroundCone(),
+        // groundManager.getGroundCone(),
         followPathWithEvents(pathGroup, 1),
         visionManager.getAutoScoreMidCone(),
         followPathWithEvents(pathGroup, 2));

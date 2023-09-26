@@ -272,15 +272,8 @@ public class Autos {
     autoCommand =
         autoCommand.andThen(
             () -> localization.resetPose(pathGroup.get(0).getInitialHolonomicPose()));
-    if (false
-        && (auto == AutoKind.BLUE_MID_RIGHT_2_BALANCE
-            || auto == AutoKind.RED_MID_RIGHT_2_BALANCE
-            || auto == AutoKind.BLUE_MID_LEFT_2_BALANCE
-            || auto == AutoKind.RED_MID_LEFT_2_BALANCE)) {
-      autoCommand = getMid2BalanceAuto(pathGroup);
-    } else {
-      autoCommand = autoCommand.andThen(autoBuilder.fullAuto(pathGroup));
-    }
+
+    autoCommand = autoCommand.andThen(autoBuilder.fullAuto(pathGroup));
 
     if (auto.autoBalance) {
       autoCommand = autoCommand.andThen(this.autoBalance.getCommand());
@@ -291,15 +284,6 @@ public class Autos {
     autosCache.put(auto, new WeakReference<>(autoCommand));
 
     return autoCommand;
-  }
-
-  private Command getMid2BalanceAuto(List<PathPlannerTrajectory> pathGroup) {
-    return Commands.sequence(
-        followPathWithEvents(pathGroup, 0),
-        // groundManager.getGroundCone(),
-        followPathWithEvents(pathGroup, 1),
-        visionManager.getAutoScoreMidCone(),
-        followPathWithEvents(pathGroup, 2));
   }
 
   private Command followPathWithEvents(List<PathPlannerTrajectory> pathGroup, int index) {

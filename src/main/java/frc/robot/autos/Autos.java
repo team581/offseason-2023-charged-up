@@ -122,13 +122,13 @@ public class Autos {
             Map.entry(
                 "scoreMid",
                 superstructure
-                    .getScoreCommand(Config.IS_SPIKE ? NodeHeight.MID : NodeHeight.LOW, 0, true)
+                    .getScoreCommand(NodeHeight.MID, 0, true)
                     .withTimeout(3)
                     .andThen(Commands.runOnce(() -> intake.setGamePiece(HeldGamePiece.NOTHING)))),
             Map.entry(
                 "scoreHigh",
                 superstructure
-                    .getScoreCommand(Config.IS_SPIKE ? NodeHeight.HIGH : NodeHeight.LOW, 0, true)
+                    .getScoreCommand(NodeHeight.HIGH, 0, true)
                     .withTimeout(3)
                     .andThen(Commands.runOnce(() -> intake.setGamePiece(HeldGamePiece.NOTHING)))),
             Map.entry(
@@ -138,14 +138,8 @@ public class Autos {
                     .withTimeout(1.5)
                     .andThen(Commands.runOnce(() -> intake.setGamePiece(HeldGamePiece.NOTHING)))),
             Map.entry("superstructureLow", superstructure.getManualScoreCommand(NodeHeight.LOW)),
-            Map.entry(
-                "superstructureMid",
-                superstructure.getManualScoreCommand(
-                    Config.IS_SPIKE ? NodeHeight.MID : NodeHeight.LOW)),
-            Map.entry(
-                "superstructureHigh",
-                superstructure.getManualScoreCommand(
-                    Config.IS_SPIKE ? NodeHeight.HIGH : NodeHeight.LOW)),
+            Map.entry("superstructureMid", superstructure.getManualScoreCommand(NodeHeight.MID)),
+            Map.entry("superstructureHigh", superstructure.getManualScoreCommand(NodeHeight.HIGH)),
             Map.entry("home", superstructure.getHomeCommand()),
             Map.entry(
                 "intakeCone",

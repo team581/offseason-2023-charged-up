@@ -71,7 +71,7 @@ public class AutoRotate extends LifecycleSubsystem {
 
   @Override
   public void teleopInit() {
-    // Avoid sudden snaps as soon as you enables
+    // Avoid sudden snaps as soon as you enable
     disable();
   }
 }

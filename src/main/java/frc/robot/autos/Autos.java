@@ -274,9 +274,7 @@ public class Autos {
         autoCommand.andThen(
             () -> localization.resetPose(pathGroup.get(0).getInitialHolonomicPose()));
     if (false && (auto == AutoKind.BLUE_MID_RIGHT_2_BALANCE
-        || auto == AutoKind.BLUE_MID_RIGHT_2_BALANCE_WORN
         || auto == AutoKind.RED_MID_RIGHT_2_BALANCE
-        || auto == AutoKind.RED_MID_RIGHT_2_BALANCE_WORN
         || auto == AutoKind.BLUE_MID_LEFT_2_BALANCE
         || auto == AutoKind.RED_MID_LEFT_2_BALANCE)) {
       autoCommand = getMid2BalanceAuto(pathGroup);

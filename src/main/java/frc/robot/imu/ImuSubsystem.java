@@ -21,7 +21,6 @@ public class ImuSubsystem extends LifecycleSubsystem {
     this.imu = imu;
   }
 
-
   public Rotation2d getRobotHeading() {
     return Rotation2d.fromDegrees(imu.getYaw());
   }

@@ -26,7 +26,6 @@ import frc.robot.imu.ImuSubsystem;
 import frc.robot.intake.HeldGamePiece;
 import frc.robot.intake.IntakeSubsystem;
 import frc.robot.localization.LocalizationSubsystem;
-import frc.robot.managers.AutoRotate;
 import frc.robot.managers.Autobalance;
 import frc.robot.managers.SuperstructureManager;
 import frc.robot.managers.vision.AutoScoreManager;
@@ -273,10 +272,11 @@ public class Autos {
     autoCommand =
         autoCommand.andThen(
             () -> localization.resetPose(pathGroup.get(0).getInitialHolonomicPose()));
-    if (false && (auto == AutoKind.BLUE_MID_RIGHT_2_BALANCE
-        || auto == AutoKind.RED_MID_RIGHT_2_BALANCE
-        || auto == AutoKind.BLUE_MID_LEFT_2_BALANCE
-        || auto == AutoKind.RED_MID_LEFT_2_BALANCE)) {
+    if (false
+        && (auto == AutoKind.BLUE_MID_RIGHT_2_BALANCE
+            || auto == AutoKind.RED_MID_RIGHT_2_BALANCE
+            || auto == AutoKind.BLUE_MID_LEFT_2_BALANCE
+            || auto == AutoKind.RED_MID_LEFT_2_BALANCE)) {
       autoCommand = getMid2BalanceAuto(pathGroup);
     } else {
       autoCommand = autoCommand.andThen(autoBuilder.fullAuto(pathGroup));

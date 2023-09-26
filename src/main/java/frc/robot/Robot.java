@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.autos.Autos;
@@ -220,8 +219,11 @@ public class Robot extends LoggedRobot {
     // X swerve
     driveController.start().onTrue(swerve.getXSwerveCommand());
 
-    //Manual Auto Balance
-    driveController.povLeft().onTrue(swerve.run(() -> autobalance.setEnabled(true))).onFalse(swerve.runOnce(() -> autobalance.setEnabled(false)));
+    // Manual Auto Balance
+    driveController
+        .povLeft()
+        .onTrue(swerve.run(() -> autobalance.setEnabled(true)))
+        .onFalse(swerve.runOnce(() -> autobalance.setEnabled(false)));
 
     // Snaps for all cardinal directions
     driveController.x().onTrue(autoRotate.getCommand(() -> AutoRotate.getLeftAngle()));

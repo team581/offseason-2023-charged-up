@@ -28,7 +28,7 @@ import org.littletonrobotics.junction.Logger;
 
 public class SuperstructureManager extends LifecycleSubsystem {
   private final SuperstructureMotionManager motionManager;
-  private final IntakeSubsystem intake;
+  public final IntakeSubsystem intake;
   private SuperstructureState goal = States.STOWED;
   private HeldGamePiece mode = HeldGamePiece.CUBE;
   private ScoringState scoringState = ScoringState.IDLE;
@@ -131,16 +131,19 @@ public class SuperstructureManager extends LifecycleSubsystem {
   }
 
   public Command getScoreCommand(NodeHeight scoringLocation, double delay) {
-    return getScoreCommand(scoringLocation, delay, true);
+    return getScoreCommand(scoringLocation, delay, false);
   }
 
-  public Command getScoreCommand(NodeHeight scoringLocation, double delay, boolean autoStow) {
+  public Command getScoreCommand(NodeHeight scoringLocation, double delay, boolean stowFast) {
+    Command stowCommand =
+        stowFast ? Commands.runOnce(() -> set(States.STOWED)) : getCommand(States.STOWED);
+
     return Commands.either(
         finishManualScoreCommand(),
         getManualScoreCommand(scoringLocation)
             .andThen(Commands.waitSeconds(delay))
             .andThen(finishManualScoreCommand())
-            .andThen(getCommand(States.STOWED).unless(() -> !autoStow)),
+            .andThen(stowCommand),
         () ->
             goal.position.height >= Positions.CONE_NODE_MID.height
                 || goal.position.height >= Positions.CUBE_NODE_MID.height);
@@ -187,7 +190,7 @@ public class SuperstructureManager extends LifecycleSubsystem {
                 mode == HeldGamePiece.CUBE
                     ? States.INTAKING_CUBE_FLOOR_SPINNING
                     : States.INTAKING_CONE_FLOOR_SPINNING)
-        .andThen(getCommand(States.STOWED))
+        .andThen(getCommand(States.STOWED_UNSAFE))
         .withName("SuperstructureFloorIntakeSpinning");
   }
 

@@ -14,6 +14,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.NodeHeight;
@@ -27,12 +28,16 @@ import frc.robot.intake.IntakeSubsystem;
 import frc.robot.localization.LocalizationSubsystem;
 import frc.robot.managers.Autobalance;
 import frc.robot.managers.SuperstructureManager;
+import frc.robot.managers.vision.AutoScoreManager;
+import frc.robot.managers.vision.GroundConeManager;
 import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.vision.VisionMode;
 import frc.robot.wrist.WristSubsystem;
 import java.lang.ref.WeakReference;
 import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -67,15 +72,15 @@ public class Autos {
 
   private final LocalizationSubsystem localization;
   private final SwerveSubsystem swerve;
-  private final ImuSubsystem imu;
-  private final ElevatorSubsystem elevator;
-  private final WristSubsystem wrist;
   private final IntakeSubsystem intake;
 
   private final SwerveAutoBuilder autoBuilder;
   private final LoggedDashboardChooser<AutoKindWithoutTeam> autoChooser =
       new LoggedDashboardChooser<>("Auto Choices");
   private final Map<AutoKind, WeakReference<Command>> autosCache = new EnumMap<>(AutoKind.class);
+  private final AutoScoreManager visionManager;
+  private final GroundConeManager groundManager;
+  private final ImuSubsystem imu;
 
   public Autos(
       LocalizationSubsystem localization,
@@ -85,15 +90,17 @@ public class Autos {
       ElevatorSubsystem elevator,
       WristSubsystem wrist,
       IntakeSubsystem intake,
-      Autobalance autoBalance) {
+      Autobalance autoBalance,
+      GroundConeManager groundManager,
+      AutoScoreManager visionManager) {
     this.localization = localization;
     this.swerve = swerve;
     this.imu = imu;
     this.superstructure = superstructure;
-    this.elevator = elevator;
-    this.wrist = wrist;
     this.intake = intake;
     this.autoBalance = autoBalance;
+    this.groundManager = groundManager;
+    this.visionManager = visionManager;
     Map<String, Command> eventMap =
         Map.ofEntries(
             Map.entry(
@@ -105,27 +112,23 @@ public class Autos {
                 superstructure
                     .setIntakeModeCommand(HeldGamePiece.CUBE)
                     .andThen(Commands.runOnce(() -> intake.setGamePiece(HeldGamePiece.CUBE)))),
-            Map.entry(
-                "preloadCone",
-                superstructure
-                    .setIntakeModeCommand(HeldGamePiece.CONE)
-                    .andThen(Commands.runOnce(() -> intake.setGamePiece(HeldGamePiece.CONE)))),
+            Map.entry("preloadCone", getPreloadConeCommand()),
             Map.entry(
                 "scoreLow",
                 superstructure
-                    .getScoreCommand(NodeHeight.LOW, 0, false)
+                    .getScoreCommand(NodeHeight.LOW, 0, true)
                     .withTimeout(3)
                     .andThen(Commands.runOnce(() -> intake.setGamePiece(HeldGamePiece.NOTHING)))),
             Map.entry(
                 "scoreMid",
                 superstructure
-                    .getScoreCommand(Config.IS_SPIKE ? NodeHeight.MID : NodeHeight.LOW, 0, false)
+                    .getScoreCommand(Config.IS_SPIKE ? NodeHeight.MID : NodeHeight.LOW, 0, true)
                     .withTimeout(3)
                     .andThen(Commands.runOnce(() -> intake.setGamePiece(HeldGamePiece.NOTHING)))),
             Map.entry(
                 "scoreHigh",
                 superstructure
-                    .getScoreCommand(Config.IS_SPIKE ? NodeHeight.HIGH : NodeHeight.LOW, 0, false)
+                    .getScoreCommand(Config.IS_SPIKE ? NodeHeight.HIGH : NodeHeight.LOW, 0, true)
                     .withTimeout(3)
                     .andThen(Commands.runOnce(() -> intake.setGamePiece(HeldGamePiece.NOTHING)))),
             Map.entry(
@@ -155,7 +158,7 @@ public class Autos {
                     .setIntakeModeCommand(HeldGamePiece.CUBE)
                     .andThen(superstructure.getFloorIntakeSpinningCommand())),
             Map.entry("stow", superstructure.getCommand(States.STOWED)),
-            Map.entry("stowFast", Commands.runOnce(() -> superstructure.set(States.STOWED))));
+            Map.entry("stowFast", getStowFastCommand()));
 
     eventMap = wrapAutoEventMap(eventMap);
 
@@ -183,16 +186,9 @@ public class Autos {
         .onCommandFinish(
             command -> System.out.println("[COMMANDS] Finished command " + command.getName()));
 
-    autoChooser.addOption("Do nothing", AutoKindWithoutTeam.DO_NOTHING);
-    autoChooser.addOption("Test", AutoKindWithoutTeam.TEST);
-
-    autoChooser.addOption("Long side 2", AutoKindWithoutTeam.LONG_SIDE_2);
-    autoChooser.addOption("Long side 2 balance", AutoKindWithoutTeam.LONG_SIDE_2_BALANCE);
-
-    autoChooser.addDefaultOption("Mid 1.5 balance", AutoKindWithoutTeam.MID_1_5_BALANCE);
-
-    autoChooser.addOption("Short side 2 balance", AutoKindWithoutTeam.SHORT_SIDE_2_BALANCE);
-    autoChooser.addOption("Short side 3", AutoKindWithoutTeam.SHORT_SIDE_3);
+    for (AutoKindWithoutTeam autoKind : EnumSet.allOf(AutoKindWithoutTeam.class)) {
+      autoChooser.addOption(autoKind.toString(), autoKind);
+    }
 
     if (Config.IS_DEVELOPMENT) {
       PathPlannerServer.startServer(5811);
@@ -229,6 +225,16 @@ public class Autos {
         });
   }
 
+  private CommandBase getStowFastCommand() {
+    return Commands.runOnce(() -> superstructure.set(States.STOWED));
+  }
+
+  private Command getPreloadConeCommand() {
+    return superstructure
+        .setIntakeModeCommand(HeldGamePiece.CONE)
+        .andThen(Commands.runOnce(() -> intake.setGamePiece(HeldGamePiece.CONE)));
+  }
+
   public Command getAutoCommand() {
     AutoKindWithoutTeam rawAuto = autoChooser.get();
 
@@ -261,7 +267,13 @@ public class Autos {
           .withName(autoName);
     }
 
-    autoCommand = autoCommand.andThen(autoBuilder.fullAuto(Paths.getInstance().getPath(auto)));
+    List<PathPlannerTrajectory> pathGroup = Paths.getInstance().getPath(auto);
+
+    autoCommand =
+        autoCommand.andThen(
+            () -> localization.resetPose(pathGroup.get(0).getInitialHolonomicPose()));
+
+    autoCommand = autoCommand.andThen(autoBuilder.fullAuto(pathGroup));
 
     if (auto.autoBalance) {
       autoCommand = autoCommand.andThen(this.autoBalance.getCommand());
@@ -272,6 +284,30 @@ public class Autos {
     autosCache.put(auto, new WeakReference<>(autoCommand));
 
     return autoCommand;
+  }
+
+  private Command followPathWithEvents(List<PathPlannerTrajectory> pathGroup, int index) {
+    Command command = Commands.none();
+
+    PathPlannerTrajectory traj = pathGroup.get(index);
+    if (index == 0) {
+      command =
+          command.andThen(
+              () -> {
+                localization.resetPose(traj.getInitialHolonomicPose());
+              });
+    }
+
+    command =
+        command
+            .andThen(autoBuilder.stopEventGroup(traj.getStartStopEvent()))
+            .andThen(autoBuilder.followPathWithEvents(traj));
+
+    if (index == pathGroup.size() - 1) {
+      command = command.andThen(autoBuilder.stopEventGroup(traj.getEndStopEvent()));
+    }
+
+    return command;
   }
 
   public void clearCache() {

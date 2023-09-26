@@ -59,11 +59,11 @@ public class Positions {
           : new SuperstructurePosition(0.5, Rotation2d.fromDegrees(145));
   public static final SuperstructurePosition CONE_NODE_MID =
       Config.IS_SPIKE
-          ? new SuperstructurePosition(12.75, Rotation2d.fromDegrees(52))
+          ? new SuperstructurePosition(12, Rotation2d.fromDegrees(52))
           : new SuperstructurePosition(25, Rotation2d.fromDegrees(175));
   public static final SuperstructurePosition CONE_NODE_HIGH =
       Config.IS_SPIKE
-          ? new SuperstructurePosition(26.3, Rotation2d.fromDegrees(72))
+          ? new SuperstructurePosition(24, Rotation2d.fromDegrees(72))
           : new SuperstructurePosition(31, Rotation2d.fromDegrees(155));
 
   private Positions() {}

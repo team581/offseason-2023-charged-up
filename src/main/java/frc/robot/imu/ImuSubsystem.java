@@ -21,12 +21,6 @@ public class ImuSubsystem extends LifecycleSubsystem {
     this.imu = imu;
   }
 
-  public void robotPeriodic() {
-    Logger.getInstance().recordOutput("Imu/RobotHeading", this.getRobotHeading().getDegrees());
-    Logger.getInstance()
-        .recordOutput("Imu/RobotHeadingRadians", this.getRobotHeading().getRadians());
-  }
-
   public Rotation2d getRobotHeading() {
     return Rotation2d.fromDegrees(imu.getYaw());
   }
@@ -51,5 +45,13 @@ public class ImuSubsystem extends LifecycleSubsystem {
 
   public Command getZeroCommand() {
     return Commands.runOnce(() -> zero());
+  }
+
+  public void robotPeriodic() {
+    Logger.getInstance().recordOutput("Imu/RobotHeading", this.getRobotHeading().getDegrees());
+    Logger.getInstance()
+        .recordOutput("Imu/RobotHeadingRadians", this.getRobotHeading().getRadians());
+    Logger.getInstance().recordOutput("Imu/Yaw", imu.getYaw());
+    Logger.getInstance().recordOutput("Imu/Roll", imu.getRoll());
   }
 }

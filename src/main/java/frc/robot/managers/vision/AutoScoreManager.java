@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.NodeHeight;
+import frc.robot.intake.HeldGamePiece;
 import frc.robot.managers.AutoRotate;
 import frc.robot.managers.SuperstructureManager;
 import frc.robot.swerve.SwerveSubsystem;
@@ -25,10 +26,10 @@ public class AutoScoreManager extends LifecycleSubsystem {
   private final SuperstructureManager superstructure;
 
   private double xP = -0.15;
-  private double yP = 0.4;
+  private double yP = 0.3;
   // tune setpoint value
   private double ySetpoint = 5.5;
-  private double angleRange = 1.3;
+  private double angleRange = 1;
 
   public AutoScoreManager(
       LimelightSubsystem limelight, SwerveSubsystem swerve, SuperstructureManager superstructure) {
@@ -53,14 +54,21 @@ public class AutoScoreManager extends LifecycleSubsystem {
                 () -> {
                   swerve.setChassisSpeeds(new ChassisSpeeds(0, 0, 0), false);
                 }))
-        .andThen(superstructure.getScoreCommand(NodeHeight.MID, 0.3))
+        .andThen(superstructure.getScoreCommand(NodeHeight.MID, 0.15, true))
+        .withTimeout(2.5)
+        .andThen(
+            superstructure
+                .getScoreCommand(NodeHeight.MID, 0.15)
+                .unless(() -> superstructure.intake.getGamePiece() == HeldGamePiece.NOTHING))
         .finallyDo(
             (boolean interrupted) -> {
 
               // Set drive speeds to 0.
-              swerve.setChassisSpeeds(new ChassisSpeeds(0, 0, 0), false);
+              swerve.setChassisSpeeds(new ChassisSpeeds(), false);
+              swerve.disableSnapToAngle();
               // Turn off LEDs.
               limelight.turnOffLights();
+              limelight.setPipeline(0);
             });
   }
 

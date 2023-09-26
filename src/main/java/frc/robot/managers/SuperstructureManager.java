@@ -6,6 +6,7 @@ package frc.robot.managers;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.NodeHeight;
@@ -161,7 +162,7 @@ public class SuperstructureManager extends LifecycleSubsystem {
       coneState = States.CONE_NODE_MID;
     } else {
       cubeState = States.CUBE_NODE_HIGH;
-      coneState = States.CONE_NODE_HIGH;
+      coneState = DriverStation.isAutonomous() ? States.AUTO_CONE_NODE_HIGH : States.CONE_NODE_HIGH;
     }
 
     return Commands.runOnce(() -> scoringState = ScoringState.ALIGNING)

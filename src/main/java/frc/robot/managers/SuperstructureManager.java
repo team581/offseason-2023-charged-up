@@ -168,15 +168,15 @@ public class SuperstructureManager extends LifecycleSubsystem {
     return Commands.runOnce(() -> scoringState = ScoringState.ALIGNING)
         .andThen(
             getCommand(
-                () ->
-                    {
-                      if (DriverStation.isAutonomous() && scoringLocation == NodeHeight.HIGH) {
-                        return States.AUTO_CONE_NODE_HIGH;
-                      }
+                () -> {
+                  if (DriverStation.isAutonomous() && scoringLocation == NodeHeight.HIGH) {
+                    return States.AUTO_CONE_NODE_HIGH;
+                  }
 
-                      return mode == HeldGamePiece.CUBE
-                        ? new SuperstructureState(cubeState.position, IntakeMode.STOPPED, true)
-                        : new SuperstructureState(coneState.position, IntakeMode.STOPPED, true);}))
+                  return mode == HeldGamePiece.CUBE
+                      ? new SuperstructureState(cubeState.position, IntakeMode.STOPPED, true)
+                      : new SuperstructureState(coneState.position, IntakeMode.STOPPED, true);
+                }))
         .withName("SuperstructureManualScore");
   }
 

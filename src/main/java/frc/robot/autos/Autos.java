@@ -233,7 +233,7 @@ public class Autos {
     AutoKindWithoutTeam rawAuto = autoChooser.get();
 
     if (rawAuto == null) {
-      rawAuto = AutoKindWithoutTeam.MID_1_5_BALANCE;
+      rawAuto = AutoKindWithoutTeam.MID_1_BALANCE;
     }
 
     AutoKind auto = FmsSubsystem.isRedAlliance() ? rawAuto.redVersion : rawAuto.blueVersion;

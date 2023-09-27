@@ -79,15 +79,15 @@
     },
     {
       "anchorPoint": {
-        "x": 5.876234910364557,
+        "x": 6.08,
         "y": 2.21
       },
       "prevControl": {
-        "x": 5.6404455872345975,
+        "x": 5.84421067687004,
         "y": 2.21
       },
       "nextControl": {
-        "x": 5.6404455872345975,
+        "x": 5.84421067687004,
         "y": 2.21
       },
       "holonomicAngle": 180.0,
@@ -153,24 +153,5 @@
   "maxVelocity": 3.0,
   "maxAcceleration": 3,
   "isReversed": null,
-  "markers": [
-    {
-      "position": 1.9500000000000002,
-      "names": [
-        "intakeCone"
-      ]
-    },
-    {
-      "position": 2.2699999999999996,
-      "names": [
-        "stowFast"
-      ]
-    },
-    {
-      "position": 2.5599999999999996,
-      "names": [
-        "superstructureLow"
-      ]
-    }
-  ]
+  "markers": []
 }

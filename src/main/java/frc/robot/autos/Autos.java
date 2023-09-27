@@ -117,7 +117,7 @@ public class Autos {
                 "scoreLow",
                 superstructure
                     .getScoreCommand(NodeHeight.LOW, 0, true)
-                    .withTimeout(3)
+                    .withTimeout(1)
                     .andThen(Commands.runOnce(() -> intake.setGamePiece(HeldGamePiece.NOTHING)))),
             Map.entry(
                 "scoreMid",
@@ -128,7 +128,7 @@ public class Autos {
             Map.entry(
                 "scoreHigh",
                 superstructure
-                    .getScoreCommand(NodeHeight.HIGH, 0, true)
+                    .getScoreCommand(NodeHeight.HIGH, 0.254, true)
                     .withTimeout(3)
                     .andThen(Commands.runOnce(() -> intake.setGamePiece(HeldGamePiece.NOTHING)))),
             Map.entry(

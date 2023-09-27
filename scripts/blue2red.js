@@ -67,17 +67,9 @@ for (const filename of filenames) {
     translate(waypoint);
   }
 
-  let outfile = `Red${filename.slice("Blue".length)}`;
-
-  if (outfile.includes("Left")) {
-    outfile = outfile.replace('Left', 'Right');
-  } else if (outfile.includes('Right')) {
-    outfile = outfile.replace('Right', 'Left');
-  }
-
   const outputPath = nodePath.join(
     pathDir,
-    outfile
+    `Red${filename.slice("Blue".length)}`
   );
   await fs.writeFile(outputPath, serialize(path));
   console.log(outputPath);

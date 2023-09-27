@@ -12,8 +12,11 @@ public enum AutoKind {
   BLUE_SHORT_SIDE_3("BlueShortSide3", 4.5, 4, false),
   BLUE_LONG_SIDE_3("BlueLongSide3", 4, 4, false),
 
-  BLUE_MID_1_5_BALANCE("BlueMid1.5Balance", 2, 3, true),
-  BLUE_MID_1_BALANCE("BlueMid1Balance", 2, 3, true),
+  BLUE_MID_BUMP_1_5_BALANCE("BlueMidBump1.5Balance", 2, 3, true),
+  RED_MID_BUMP_1_5_BALANCE("RedMidBump1.5Balance", 2, 3, true),
+
+  BLUE_MID_FLAT_1_5_BALANCE("BlueMidFlat1.5Balance", 2, 3, true),
+  RED_MID_FLAT_1_5_BALANCE("RedMidFlat1.5Balance", 2, 3, true),
 
   BLUE_MID_RIGHT_2_BALANCE("BlueMidRight2Balance", 3, 3, true),
   BLUE_MID_LEFT_2_BALANCE("BlueMidLeft2Balance", 3, 3, true),
@@ -21,7 +24,7 @@ public enum AutoKind {
   RED_SHORT_SIDE_3("RedShortSide3", 4.5, 4, false),
   RED_LONG_SIDE_3("RedLongSide3", 4.5, 4, false),
 
-  RED_MID_1_5_BALANCE("RedMid1.5Balance", 2, 3, true),
+  BLUE_MID_1_BALANCE("BlueMid1Balance", 2, 3, true),
   RED_MID_1_BALANCE("RedMid1Balance", 2, 3, true),
 
   RED_MID_LEFT_2_BALANCE("RedMidLeft2Balance", 3, 3, true),

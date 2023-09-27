@@ -41,7 +41,7 @@ public class Positions {
   public static final SuperstructurePosition CONE_NODE_HIGH =
       new SuperstructurePosition(24, Rotation2d.fromDegrees(72));
   public static final SuperstructurePosition AUTO_CONE_NODE_HIGH =
-      new SuperstructurePosition(25.6, Rotation2d.fromDegrees(65), -1);
+      new SuperstructurePosition(24, Rotation2d.fromDegrees(72), -1);
 
   private Positions() {}
 }

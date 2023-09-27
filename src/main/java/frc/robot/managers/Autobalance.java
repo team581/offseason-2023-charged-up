@@ -8,6 +8,7 @@ import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.fms.FmsSubsystem;
@@ -20,9 +21,10 @@ public class Autobalance extends LifecycleSubsystem {
   private final SwerveSubsystem swerve;
   private final ImuSubsystem imu;
   private boolean enabled = false;
-  private static final double DRIVE_VELOCITY = -0.45;
-  private static final double ANGLE_THRESHOLD = 9;
+  private static final double DRIVE_VELOCITY = -0.5;
+  private static final double ANGLE_THRESHOLD = 10.5;
   private final LinearFilter autoBalanceFilter = LinearFilter.movingAverage(13);
+  private final Timer autoTimer = new Timer();
   private Rotation2d averageRoll = new Rotation2d();
   private final Debouncer driveVelocityDebouncer = new Debouncer(9 * 0.02);
 
@@ -42,6 +44,12 @@ public class Autobalance extends LifecycleSubsystem {
   @Override
   public void robotPeriodic() {
     averageRoll = Rotation2d.fromDegrees(autoBalanceFilter.calculate(ANGLE_THRESHOLD));
+  }
+
+  @Override
+  public void autonomousInit() {
+    autoTimer.reset();
+    autoTimer.start();
   }
 
   @Override
@@ -78,8 +86,7 @@ public class Autobalance extends LifecycleSubsystem {
 
   public Command getCommand() {
     return Commands.run(() -> setEnabled(true), swerve)
-        .until(() -> atGoal())
-        .withTimeout(15.0)
+        .until(() -> atGoal() || autoTimer.hasElapsed(14.8))
         .andThen(runOnce(() -> setEnabled(false)))
         .handleInterrupt(() -> setEnabled(false));
   }

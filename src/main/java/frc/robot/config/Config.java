@@ -17,7 +17,7 @@ public class Config {
   public static final String SERIAL_NUMBER = System.getenv("serialnum");
 
   // TODO: Change this to false during events
-  public static final boolean IS_DEVELOPMENT = true;
+  public static final boolean IS_DEVELOPMENT = false;
 
   public static final double MATCH_DURATION_TELEOP = 135;
 

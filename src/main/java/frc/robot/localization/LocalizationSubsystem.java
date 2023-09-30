@@ -11,18 +11,13 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.InterpolatingTreeMap;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.config.Config;
 import frc.robot.fms.FmsSubsystem;
 import frc.robot.imu.ImuSubsystem;
 import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.util.scheduling.LifecycleSubsystem;
 import frc.robot.util.scheduling.SubsystemPriority;
-import frc.robot.vision.LimelightHelpers;
-import frc.robot.vision.LimelightHelpers.LimelightResults;
-import frc.robot.vision.VisionMode;
 import org.littletonrobotics.junction.Logger;
 
 public class LocalizationSubsystem extends LifecycleSubsystem {
@@ -87,69 +82,7 @@ public class LocalizationSubsystem extends LifecycleSubsystem {
 
     boolean visionIsValid = false; // Indicates if vision is valid in this loop.
 
-    if (Config.VISION_MODE == VisionMode.OFF) {
-      visionWorking = false;
-    } else if (Config.VISION_MODE == VisionMode.ENABLED_UNUSED) {
-      Pose2d ntCurrentVisionPose = LimelightHelpers.getBotPose2d_wpiBlue("");
-      Pose2d angleAdjustedVisionPose =
-          new Pose2d(ntCurrentVisionPose.getTranslation(), imu.getRobotHeading());
-      Logger.getInstance().recordOutput("Localization/VisionPose", angleAdjustedVisionPose);
-      visionWorking = false;
-    } else if (LimelightHelpers.getTV("")) {
-      Pose2d ntCurrentVisionPose = LimelightHelpers.getBotPose2d_wpiBlue("");
-      if (previousPose.getX() != ntCurrentVisionPose.getX()
-          && previousPose.getY() != ntCurrentVisionPose.getY()) {
-        previousPose = ntCurrentVisionPose;
-
-        LimelightResults results = LimelightHelpers.getLatestResults("");
-        Pose2d angleAdjustedVisionPose =
-            new Pose2d(ntCurrentVisionPose.getTranslation(), imu.getRobotHeading());
-
-        double visionTimestamp =
-            Timer.getFPGATimestamp()
-                - ((results.targetingResults.latency_capture
-                        + results.targetingResults.latency_jsonParse
-                        + results.targetingResults.latency_pipeline)
-                    / 1000);
-
-        double averageDistanceToIndividualFiducialTags = 0;
-        double fiducialTagCount = 0;
-
-        // Calculate average distance of each tag seen.
-        if (results.targetingResults.valid
-            && ntCurrentVisionPose.getX() != 0.0
-            && ntCurrentVisionPose.getY() != 0.0) {
-          for (int i = 0; i < results.targetingResults.targets_Fiducials.length; ++i) {
-            Pose2d fiducialPose =
-                results.targetingResults.targets_Fiducials[i].getTargetPose_RobotSpace2D();
-            double fiducialDistanceAway =
-                Math.sqrt(Math.pow(fiducialPose.getX(), 2) + Math.pow(fiducialPose.getY(), 2));
-            averageDistanceToIndividualFiducialTags += fiducialDistanceAway;
-            fiducialTagCount++;
-          }
-          visionIsValid = true;
-        }
-
-        // Update pose estimator if vision is valid.
-        if (visionIsValid) {
-          // Adjust vision measurement standard deviation by average distance from tags.
-          double stdForVision =
-              visionStdLookup.get(averageDistanceToIndividualFiducialTags) / fiducialTagCount;
-          try {
-            poseEstimator.addVisionMeasurement(
-                angleAdjustedVisionPose,
-                visionTimestamp,
-                VecBuilder.fill(stdForVision, stdForVision, Units.degreesToRadians(360)));
-
-          } catch (Exception e) {
-            System.err.println("Pose estimator threw while adding vision measurement:");
-            e.printStackTrace();
-          }
-          Logger.getInstance().recordOutput("Localization/VisionPose", angleAdjustedVisionPose);
-          visionWorking = true;
-        }
-      }
-    }
+    visionWorking = false;
 
     if (!visionIsValid) {
       Logger.getInstance().recordOutput("Localization/VisionPose", new Pose2d());

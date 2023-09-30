@@ -29,7 +29,7 @@ public class Config {
   public static final int PDP_ID = 1;
   public static final ModuleType PDP_TYPE = ModuleType.kRev;
 
-  public static final VisionMode VISION_MODE = VisionMode.ENABLED_UNUSED;
+  public static final VisionMode VISION_MODE = VisionMode.OFF;
 
   public static final int PIGEON_ID = 1;
 

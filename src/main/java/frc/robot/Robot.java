@@ -272,8 +272,6 @@ public class Robot extends LoggedRobot {
     operatorController.back().onTrue(superstructureManager.getHomeCommand());
     // Stow unsafe
     operatorController.start().onTrue(superstructureManager.getCommand(States.STOWED_UNSAFE));
-    operatorController.povUp().whileTrue(visionManager.getAutoScoreMidCone());
-    operatorController.povDown().whileTrue(groundManager.getGroundCone());
   }
 
   @Override

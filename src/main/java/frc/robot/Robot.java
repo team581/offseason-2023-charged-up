@@ -34,13 +34,10 @@ import frc.robot.managers.Autobalance;
 import frc.robot.managers.SuperstructureManager;
 import frc.robot.managers.SuperstructureMotionManager;
 import frc.robot.managers.vision.AutoScoreLocation;
-import frc.robot.managers.vision.AutoScoreManager;
-import frc.robot.managers.vision.GroundConeManager;
 import frc.robot.swerve.SwerveModule;
 import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.util.scheduling.LifecycleSubsystemManager;
 import frc.robot.vision.JacksonLagUtil;
-import frc.robot.vision.LimelightSubsystem;
 import frc.robot.wrist.WristSubsystem;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -119,26 +116,9 @@ public class Robot extends LoggedRobot {
 
   private Command autoCommand;
 
-  private final LimelightSubsystem limelight = new LimelightSubsystem("", swerve);
-
-  private final AutoScoreManager visionManager =
-      new AutoScoreManager(limelight, swerve, superstructureManager);
-
-  private final GroundConeManager groundManager =
-      new GroundConeManager(limelight, swerve, superstructureManager, intake, imu);
-
   private final Autos autos =
       new Autos(
-          localization,
-          swerve,
-          imu,
-          superstructureManager,
-          elevator,
-          wrist,
-          intake,
-          autobalance,
-          groundManager,
-          visionManager);
+          localization, swerve, imu, superstructureManager, elevator, wrist, intake, autobalance);
 
   public Robot() {
     // Log to a USB stick

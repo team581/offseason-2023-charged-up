@@ -267,7 +267,11 @@ public class Autos {
         autoCommand.andThen(
             () -> localization.resetPose(pathGroup.get(0).getInitialHolonomicPose()));
 
-    autoCommand = autoCommand.andThen(autoBuilder.fullAuto(pathGroup));
+    if (auto == AutoKind.RED_MID_1_BALANCE || auto == AutoKind.BLUE_MID_1_BALANCE) {
+      autoCommand = autoCommand.andThen(getMid1Auto(pathGroup));
+    } else {
+      autoCommand = autoCommand.andThen(autoBuilder.fullAuto(pathGroup));
+    }
 
     if (auto.autoBalance) {
       autoCommand = autoCommand.andThen(this.autoBalance.getCommand());
@@ -278,6 +282,14 @@ public class Autos {
     autosCache.put(auto, new WeakReference<>(autoCommand));
 
     return autoCommand;
+  }
+
+  private Command getMid1Auto(List<PathPlannerTrajectory> pathGroup) {
+    return Commands.sequence(
+        followPathWithEvents(pathGroup, 0),
+        // Wait for charge station to level out before going on to balance
+        Commands.waitSeconds(1),
+        followPathWithEvents(pathGroup, 1));
   }
 
   private Command followPathWithEvents(List<PathPlannerTrajectory> pathGroup, int index) {

@@ -265,6 +265,10 @@ public class SwerveSubsystem extends LifecycleSubsystem {
         new Translation2d(forwardPercentage, sidewaysPercentage).times(MAX_VELOCITY);
     Rotation2d fieldRelativeHeading = imu.getRobotHeading();
 
+    Logger.getInstance().recordOutput("Swerve/sidewaysPercentage", sidewaysPercentage);
+    Logger.getInstance().recordOutput("Swerve/forwardPercentage", forwardPercentage);
+    Logger.getInstance().recordOutput("Swerve/thetaPercentage", thetaPercentage);
+
     if (FmsSubsystem.isRedAlliance()) {
       fieldRelativeHeading = fieldRelativeHeading.plus(Rotation2d.fromDegrees(180));
     }

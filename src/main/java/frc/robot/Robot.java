@@ -214,15 +214,17 @@ public class Robot extends LoggedRobot {
         .onTrue(superstructureManager.setIntakeModeCommand(HeldGamePiece.CONE));
     // Intake on shelf
     driveController.leftBumper().onTrue(superstructureManager.getShelfIntakeCommand());
+    // Intake on shelf evil
+    driveController.rightBumper().onTrue(superstructureManager.getShelfIntakeEvilCommand());
 
     // X swerve
     driveController.start().onTrue(swerve.getXSwerveCommand());
 
     // Manual Auto Balance
-    driveController
-        .povLeft()
-        .onTrue(swerve.run(() -> autobalance.setEnabled(true)))
-        .onFalse(swerve.runOnce(() -> autobalance.setEnabled(false)));
+    // driveController
+    //     .povLeft()
+    //     .onTrue(swerve.run(() -> autobalance.setEnabled(true)))
+    //     .onFalse(swerve.runOnce(() -> autobalance.setEnabled(false)));
 
     // Snaps for all cardinal directions
     driveController.x().onTrue(autoRotate.getCommand(() -> AutoRotate.getLeftAngle()));

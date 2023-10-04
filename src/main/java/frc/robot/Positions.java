@@ -31,6 +31,8 @@ public class Positions {
       new SuperstructurePosition(5, Rotation2d.fromDegrees(92), true);
   public static final SuperstructurePosition INTAKING_CONE_SHELF =
       new SuperstructurePosition(26.9, Rotation2d.fromDegrees(92));
+  public static final SuperstructurePosition INTAKING_CONE_SHELF_EVIL =
+      new SuperstructurePosition(9, Rotation2d.fromDegrees(35));
   public static final SuperstructurePosition INTAKING_CONE_SINGLE_SUBSTATION =
       new SuperstructurePosition(1, Rotation2d.fromDegrees(30));
 

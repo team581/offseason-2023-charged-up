@@ -36,6 +36,8 @@ public class States {
       new SuperstructureState(Positions.INTAKING_CONE_FLOOR, IntakeMode.INTAKE_CONE, true);
   public static final SuperstructureState INTAKING_CONE_SHELF =
       new SuperstructureState(Positions.INTAKING_CONE_SHELF, IntakeMode.INTAKE_CONE, true);
+  public static final SuperstructureState INTAKING_CONE_SHELF_EVIL =
+      new SuperstructureState(Positions.INTAKING_CONE_SHELF_EVIL, IntakeMode.INTAKE_CONE, true);
   public static final SuperstructureState CONE_NODE_LOW =
       new SuperstructureState(Positions.CONE_NODE_LOW, IntakeMode.OUTTAKE_CONE, false);
   public static final SuperstructureState CONE_NODE_MID =

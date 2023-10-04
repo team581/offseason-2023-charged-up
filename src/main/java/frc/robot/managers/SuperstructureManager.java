@@ -210,6 +210,12 @@ public class SuperstructureManager extends LifecycleSubsystem {
         .withName("SuperstructureShelfIntake");
   }
 
+  public Command getShelfIntakeEvilCommand() {
+    return getCommand(States.INTAKING_CONE_SHELF_EVIL)
+        .andThen(getCommand(States.STOWED))
+        .withName("SuperstructureShelfIntakeEvil");
+  }
+
   public AutoScoreLocation getAutoScoreLocation(NodeKind node) {
     List<Pose2d> grids = FmsSubsystem.isRedAlliance() ? Landmarks.RED_GRIDS : Landmarks.BLUE_GRIDS;
     Pose2d nearestGrid = localization.getPose().nearest(grids);

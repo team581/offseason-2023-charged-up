@@ -28,8 +28,8 @@ public class WristSubsystem extends LifecycleSubsystem {
 
   private HomingState homingState = HomingState.NOT_HOMED;
 
-  private int current_config_slot = -1;
-  private int new_config_slot = 0;
+  private int currentConfigSlot = -1;
+  private int newConfigSlot = 0;
 
   public WristSubsystem(TalonFX motor) {
     super(SubsystemPriority.WRIST);
@@ -121,16 +121,17 @@ public class WristSubsystem extends LifecycleSubsystem {
     Logger.getInstance().recordOutput("Wrist/Homing", homingState.toString());
 
     Logger.getInstance().recordOutput("Wrist/Voltage", motor.getMotorOutputVoltage());
+    Logger.getInstance().recordOutput("Wrist/MotorProfileSlot", currentConfigSlot);
 
     if (Config.IS_DEVELOPMENT) {
       Logger.getInstance().recordOutput("Wrist/RawAngle", motor.getSelectedSensorPosition());
       Logger.getInstance().recordOutput("Wrist/ControlMode", motor.getControlMode().toString());
     }
 
-    // Only trigger setting profile slot on slot change.
-    if (new_config_slot != current_config_slot) {
-      motor.selectProfileSlot(new_config_slot, 0);
-      current_config_slot = new_config_slot;
+    // Only trigger setting profile slot on slot change
+    if (newConfigSlot != currentConfigSlot) {
+      motor.selectProfileSlot(newConfigSlot, 0);
+      currentConfigSlot = newConfigSlot;
     }
   }
 
@@ -139,7 +140,17 @@ public class WristSubsystem extends LifecycleSubsystem {
         .andThen(Commands.waitUntil(() -> getHomingState() == HomingState.HOMED));
   }
 
-  public void setSlot(int slot) {
-    new_config_slot = slot;
+  public void setEvil(boolean evil) {
+    // Set config slot one if doing evil cone intake and at final destination
+
+    if (evil) {
+      setSlot(1);
+    } else {
+      setSlot(0);
+    }
+  }
+
+  private void setSlot(int slot) {
+    newConfigSlot = slot;
   }
 }

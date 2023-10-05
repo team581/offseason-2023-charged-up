@@ -28,6 +28,9 @@ public class WristSubsystem extends LifecycleSubsystem {
 
   private HomingState homingState = HomingState.NOT_HOMED;
 
+  private int current_config_slot = -1;
+  private int new_config_slot = 0;
+
   public WristSubsystem(TalonFX motor) {
     super(SubsystemPriority.WRIST);
 
@@ -39,6 +42,13 @@ public class WristSubsystem extends LifecycleSubsystem {
     motor.config_kP(0, Config.WRIST_KP);
     motor.config_kI(0, Config.WRIST_KI);
     motor.config_kD(0, Config.WRIST_KD);
+    motor.configClosedLoopPeakOutput(0, Config.WRIST_PEAK_OUTPUT);
+
+    motor.config_kF(1, Config.WRIST_KF_EVIL);
+    motor.config_kP(1, Config.WRIST_KP_EVIL);
+    motor.config_kI(1, Config.WRIST_KI_EVIL);
+    motor.config_kD(1, Config.WRIST_KD_EVIL);
+    motor.configClosedLoopPeakOutput(1, Config.WRIST_PEAK_OUTPUT_EVIL);
 
     this.motor.configMotionCruiseVelocity(Config.WRIST_MOTION_CRUISE_VELOCITY);
     this.motor.configMotionAcceleration(Config.WRIST_MOTION_ACCELERATION);
@@ -116,10 +126,20 @@ public class WristSubsystem extends LifecycleSubsystem {
       Logger.getInstance().recordOutput("Wrist/RawAngle", motor.getSelectedSensorPosition());
       Logger.getInstance().recordOutput("Wrist/ControlMode", motor.getControlMode().toString());
     }
+
+    // Only trigger setting profile slot on slot change.
+    if (new_config_slot != current_config_slot) {
+      motor.selectProfileSlot(new_config_slot, 0);
+      current_config_slot = new_config_slot;
+    }
   }
 
   public Command getHomeCommand() {
     return runOnce(() -> startHoming())
         .andThen(Commands.waitUntil(() -> getHomingState() == HomingState.HOMED));
+  }
+
+  public void setSlot(int slot) {
+    new_config_slot = slot;
   }
 }

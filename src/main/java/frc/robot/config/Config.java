@@ -98,6 +98,12 @@ public class Config {
   public static final double WRIST_KP = 0.15;
   public static final double WRIST_KI = 0;
   public static final double WRIST_KD = 0;
+  public static final double WRIST_PEAK_OUTPUT = 1.0;
+  public static final double WRIST_KF_EVIL = 0;
+  public static final double WRIST_KP_EVIL = 0.15;
+  public static final double WRIST_KI_EVIL = 0;
+  public static final double WRIST_KD_EVIL = 0;
+  public static final double WRIST_PEAK_OUTPUT_EVIL = 0.3;
   public static final int WRIST_MOTION_CRUISE_VELOCITY = 7500;
   public static final int WRIST_MOTION_ACCELERATION = 60000;
   public static final double WRIST_HOMED_CURRENT = 1.3;

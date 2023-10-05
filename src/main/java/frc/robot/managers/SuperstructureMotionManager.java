@@ -99,6 +99,13 @@ public class SuperstructureMotionManager extends LifecycleSubsystem {
     elevator.setGoalPosition(currentPoint.height);
     previousHeight = elevator.getHeight();
 
+    // Set config slot one if doing evil cone intake and at final destination.
+    if (positionList.isEmpty() && goalPosition == Positions.INTAKING_CONE_SHELF_EVIL) {
+      wrist.setSlot(1);
+    } else {
+      wrist.setSlot(0);
+    }
+
     Logger.getInstance()
         .recordOutput(
             "SuperstructureMotionManager/NextPointAngle", currentPoint.angle.getDegrees());

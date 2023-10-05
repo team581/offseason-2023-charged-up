@@ -12,6 +12,7 @@ import frc.robot.controller.DriveController;
 import frc.robot.elevator.ElevatorSubsystem;
 import frc.robot.util.scheduling.LifecycleSubsystem;
 import frc.robot.util.scheduling.SubsystemPriority;
+import frc.robot.wrist.WristMode;
 import frc.robot.wrist.WristSubsystem;
 import java.util.ArrayList;
 import org.littletonrobotics.junction.Logger;
@@ -99,12 +100,8 @@ public class SuperstructureMotionManager extends LifecycleSubsystem {
     elevator.setGoalPosition(currentPoint.height);
     previousHeight = elevator.getHeight();
 
-    // Set config slot one if doing evil cone intake and at final destination.
-    if (positionList.isEmpty() && goalPosition == Positions.INTAKING_CONE_SHELF_EVIL) {
-      wrist.setSlot(1);
-    } else {
-      wrist.setSlot(0);
-    }
+    // Set config slot one if doing evil cone intake and at final destination
+    wrist.setEvil(positionList.isEmpty() && goalPosition == Positions.INTAKING_CONE_SHELF_EVIL);
 
     Logger.getInstance()
         .recordOutput(

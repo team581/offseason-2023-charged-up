@@ -54,7 +54,7 @@ public class SuperstructureManager extends LifecycleSubsystem {
   }
 
   public void set(SuperstructureState state) {
-    if (state == States.STOWED || state == States.STOWED_ROLLING) {
+    if (state.equals(States.STOWED) || state.equals(States.STOWED_ROLLING)) {
       if (goal.intakeMode == IntakeMode.INTAKE_CONE) {
         intake.setGamePiece(HeldGamePiece.CONE);
       } else if (goal.intakeMode == IntakeMode.INTAKE_CUBE) {
@@ -63,7 +63,7 @@ public class SuperstructureManager extends LifecycleSubsystem {
     }
     goal = state;
     manualIntakeMode = null;
-    if (state == States.STOWED || state == States.STOWED_ROLLING) {
+    if (state.equals(States.STOWED) || state.equals(States.STOWED_ROLLING)) {
       scoringState = ScoringState.IDLE;
     }
   }
@@ -270,12 +270,12 @@ public class SuperstructureManager extends LifecycleSubsystem {
             Commands.runOnce(
                 () -> {
                   if (mode == HeldGamePiece.CUBE) {
-                    if (goal.position.height == Positions.CUBE_NODE_LOW.height) {
+                    if (goal.position.equals(Positions.CUBE_NODE_LOW)) {
                       setManualIntakeMode(States.CUBE_NODE_LOW.intakeMode);
                     } else {
                       setManualIntakeMode(IntakeMode.OUTTAKE_CUBE_FAST);
                     }
-                  } else if (goal.position.height == Positions.CONE_NODE_HIGH.height) {
+                  } else if (goal.position.equals(Positions.CONE_NODE_HIGH)) {
                     setManualIntakeMode(States.CONE_NODE_HIGH.intakeMode);
                   } else {
                     setManualIntakeMode(IntakeMode.OUTTAKE_CONE);
@@ -300,9 +300,7 @@ public class SuperstructureManager extends LifecycleSubsystem {
   private boolean shouldDunk() {
     // Only dunk when scoring cones on mid
     // Temporarily disable dunking while we test new mid cone scoring position
-    return false
-        && mode == HeldGamePiece.CONE
-        && goal.position.height == Positions.CONE_NODE_MID.height;
+    return false && mode == HeldGamePiece.CONE && goal.position.equals(Positions.CONE_NODE_MID);
   }
 
   public Command getHomeCommand() {

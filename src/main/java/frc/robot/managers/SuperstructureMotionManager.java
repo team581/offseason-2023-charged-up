@@ -36,9 +36,7 @@ public class SuperstructureMotionManager extends LifecycleSubsystem {
   }
 
   public void set(SuperstructurePosition newGoal) {
-    if (newGoal.height == goalPosition.height
-        && newGoal.angle.equals(goalPosition.angle)
-        && newGoal.earlyTransitionHeight == goalPosition.earlyTransitionHeight) {
+    if (newGoal.equals(goalPosition)) {
       return;
     }
 
@@ -100,7 +98,8 @@ public class SuperstructureMotionManager extends LifecycleSubsystem {
     previousHeight = elevator.getHeight();
 
     // Set config slot one if doing evil cone intake and at final destination
-    wrist.setEvil(positionList.isEmpty() && goalPosition == Positions.INTAKING_CONE_SHELF_EVIL);
+    wrist.setEvil(
+        positionList.isEmpty() && goalPosition.equals(Positions.INTAKING_CONE_SHELF_EVIL));
 
     Logger.getInstance()
         .recordOutput(

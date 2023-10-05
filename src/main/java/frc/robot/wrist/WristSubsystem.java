@@ -121,6 +121,7 @@ public class WristSubsystem extends LifecycleSubsystem {
     Logger.getInstance().recordOutput("Wrist/Homing", homingState.toString());
 
     Logger.getInstance().recordOutput("Wrist/Voltage", motor.getMotorOutputVoltage());
+    Logger.getInstance().recordOutput("Wrist/MotorProfileSlot", currentConfigSlot);
 
     if (Config.IS_DEVELOPMENT) {
       Logger.getInstance().recordOutput("Wrist/RawAngle", motor.getSelectedSensorPosition());

@@ -12,6 +12,7 @@ import frc.robot.controller.DriveController;
 import frc.robot.elevator.ElevatorSubsystem;
 import frc.robot.util.scheduling.LifecycleSubsystem;
 import frc.robot.util.scheduling.SubsystemPriority;
+import frc.robot.wrist.WristMode;
 import frc.robot.wrist.WristSubsystem;
 import java.util.ArrayList;
 import org.littletonrobotics.junction.Logger;

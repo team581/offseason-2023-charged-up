@@ -4,10 +4,16 @@
 
 package frc.robot;
 
+import org.littletonrobotics.junction.LoggedRobot;
+import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.networktables.NT4Publisher;
+import org.littletonrobotics.junction.wpilog.WPILOGWriter;
+
 import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.Pigeon2;
+
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -34,18 +40,11 @@ import frc.robot.managers.Autobalance;
 import frc.robot.managers.SuperstructureManager;
 import frc.robot.managers.SuperstructureMotionManager;
 import frc.robot.managers.vision.AutoScoreLocation;
-import frc.robot.managers.vision.AutoScoreManager;
-import frc.robot.managers.vision.GroundConeManager;
 import frc.robot.swerve.SwerveModule;
 import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.util.scheduling.LifecycleSubsystemManager;
 import frc.robot.vision.JacksonLagUtil;
-import frc.robot.vision.LimelightSubsystem;
 import frc.robot.wrist.WristSubsystem;
-import org.littletonrobotics.junction.LoggedRobot;
-import org.littletonrobotics.junction.Logger;
-import org.littletonrobotics.junction.networktables.NT4Publisher;
-import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -119,13 +118,6 @@ public class Robot extends LoggedRobot {
 
   private Command autoCommand;
 
-  private final LimelightSubsystem limelight = new LimelightSubsystem("", swerve);
-
-  private final AutoScoreManager visionManager =
-      new AutoScoreManager(limelight, swerve, superstructureManager);
-
-  private final GroundConeManager groundManager =
-      new GroundConeManager(limelight, swerve, superstructureManager, intake, imu);
 
   private final Autos autos =
       new Autos(
@@ -136,9 +128,7 @@ public class Robot extends LoggedRobot {
           elevator,
           wrist,
           intake,
-          autobalance,
-          groundManager,
-          visionManager);
+          autobalance);
 
   public Robot() {
     // Log to a USB stick
@@ -274,8 +264,6 @@ public class Robot extends LoggedRobot {
     operatorController.back().onTrue(superstructureManager.getHomeCommand());
     // Stow unsafe
     operatorController.start().onTrue(superstructureManager.getCommand(States.STOWED_UNSAFE));
-    operatorController.povUp().whileTrue(visionManager.getAutoScoreMidCone());
-    operatorController.povDown().whileTrue(groundManager.getGroundCone());
   }
 
   @Override

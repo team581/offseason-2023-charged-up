@@ -27,6 +27,7 @@ public class IntakeSubsystem extends LifecycleSubsystem {
   private final TalonFX motor;
 
   private final Debouncer coneFilterSensor = new Debouncer(10 * 0.02, DebounceType.kBoth);
+  private final Debouncer coneFilterSensorEvil = new Debouncer(15 * 0.02, DebounceType.kBoth);
   private final Debouncer cubeFilterSensor = new Debouncer(10 * 0.02, DebounceType.kBoth);
 
   public IntakeSubsystem(TalonFX motor) {
@@ -60,8 +61,10 @@ public class IntakeSubsystem extends LifecycleSubsystem {
   public void enabledPeriodic() {
 
     boolean coneSensor = coneFilterSensor.calculate(sensorHasCone());
+    boolean coneSensorEvil = coneFilterSensorEvil.calculate(sensorHasCone());
     boolean cubeSensor = cubeFilterSensor.calculate(sensorHasCube());
     Logger.getInstance().recordOutput("Intake/FilteredConeIntakeSensor", coneSensor);
+    Logger.getInstance().recordOutput("Intake/FilteredConeIntakeSensorEvil", coneSensorEvil);
     Logger.getInstance().recordOutput("Intake/FilteredCubeIntakeSensor", cubeSensor);
 
     if (mode == IntakeMode.INTAKE_CUBE) {
@@ -70,6 +73,10 @@ public class IntakeSubsystem extends LifecycleSubsystem {
       }
     } else if (mode == IntakeMode.INTAKE_CONE) {
       if (coneSensor) {
+        gamePiece = HeldGamePiece.CONE;
+      }
+    } else if (mode == IntakeMode.INTAKE_CONE_EVIL) {
+      if (coneSensorEvil) {
         gamePiece = HeldGamePiece.CONE;
       }
     } else if (mode == IntakeMode.OUTTAKE_CUBE_FAST
@@ -104,7 +111,7 @@ public class IntakeSubsystem extends LifecycleSubsystem {
       motor.set(TalonFXControlMode.PercentOutput, -0.1);
     } else if (mode == IntakeMode.INTAKE_CUBE) {
       motor.set(TalonFXControlMode.PercentOutput, 0.75);
-    } else if (mode == IntakeMode.INTAKE_CONE) {
+    } else if (mode == IntakeMode.INTAKE_CONE || mode == IntakeMode.INTAKE_CONE_EVIL) {
       motor.set(TalonFXControlMode.PercentOutput, -1);
     } else {
       motor.set(TalonFXControlMode.PercentOutput, 0);
@@ -139,7 +146,7 @@ public class IntakeSubsystem extends LifecycleSubsystem {
     if (mode == IntakeMode.INTAKE_CUBE) {
       return gamePiece == HeldGamePiece.CUBE;
     }
-    if (mode == IntakeMode.INTAKE_CONE) {
+    if (mode == IntakeMode.INTAKE_CONE || mode == IntakeMode.INTAKE_CONE_EVIL) {
       return gamePiece == HeldGamePiece.CONE;
     }
     if (mode == IntakeMode.MANUAL_INTAKE || mode == IntakeMode.MANUAL_OUTTAKE) {

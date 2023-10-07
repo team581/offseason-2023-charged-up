@@ -18,7 +18,7 @@ import frc.robot.util.scheduling.SubsystemPriority;
 import org.littletonrobotics.junction.Logger;
 
 public class IntakeSubsystem extends LifecycleSubsystem {
-  private static final IntakeDetectionMode CONE_DETECTION_MODE = IntakeDetectionMode.SENSOR;
+  private static final IntakeDetectionMode CONE_DETECTION_MODE = IntakeDetectionMode.CURRENT;
   private static final IntakeDetectionMode CUBE_DETECTION_MODE = IntakeDetectionMode.SENSOR;
 
   private static final SupplyCurrentLimitConfiguration CURRENT_LIMIT =

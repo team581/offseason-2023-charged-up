@@ -10,22 +10,18 @@ function serialize(path) {
 }
 
 function translate(waypoint) {
-  const { x } = waypoint.anchorPoint;
+  const { y } = waypoint.anchorPoint;
 
-  // The origin is on the left side
-  // There is a center line at x = 8.27
-  // We want to reflect the point across the center line
-
-  waypoint.anchorPoint.x = 8.27 - (x - 8.27);
-  waypoint.holonomicAngle = -waypoint.holonomicAngle + 180;
+  waypoint.anchorPoint.y = 2.7432 - (y - 2.7432);
+  waypoint.holonomicAngle = -waypoint.holonomicAngle;
   waypoint.holonomicAngle %= 360;
 
   if (waypoint.prevControl) {
-    waypoint.prevControl.x = 8.27 - (waypoint.prevControl.x - 8.27);
+    waypoint.prevControl.y = 2.7432 - (waypoint.prevControl.y - 2.7432);
   }
 
   if (waypoint.nextControl) {
-    waypoint.nextControl.x = 8.27 - (waypoint.nextControl.x - 8.27);
+    waypoint.nextControl.y = 2.7432 - (waypoint.nextControl.y - 2.7432);
   }
 }
 
@@ -55,10 +51,6 @@ if (filenames.length === 0) {
     .map((absolutePath) => nodePath.basename(absolutePath));
 }
 
-if (filenames.some(filename => filename.startsWith("Red"))) {
-  throw new RangeError('Some of the filenames are red paths, not blue ones');
-}
-
 for (const filename of filenames) {
   const pathBuf = await fs.readFile(nodePath.join(pathDir, filename));
   const path = JSON.parse(pathBuf.toString());
@@ -69,7 +61,7 @@ for (const filename of filenames) {
 
   const outputPath = nodePath.join(
     pathDir,
-    `Red${filename.slice("Blue".length)}`
+    `Bottom_${filename}`
   );
   await fs.writeFile(outputPath, serialize(path));
   console.log(outputPath);

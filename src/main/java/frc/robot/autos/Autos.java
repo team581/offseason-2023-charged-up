@@ -117,18 +117,18 @@ public class Autos {
                 "scoreLow",
                 superstructure
                     .getScoreCommand(NodeHeight.LOW, 0, true)
-                    .withTimeout(3)
+                    .withTimeout(1)
                     .andThen(Commands.runOnce(() -> intake.setGamePiece(HeldGamePiece.NOTHING)))),
             Map.entry(
                 "scoreMid",
                 superstructure
-                    .getScoreCommand(Config.IS_SPIKE ? NodeHeight.MID : NodeHeight.LOW, 0, true)
+                    .getScoreCommand(NodeHeight.MID, 0, true)
                     .withTimeout(3)
                     .andThen(Commands.runOnce(() -> intake.setGamePiece(HeldGamePiece.NOTHING)))),
             Map.entry(
                 "scoreHigh",
                 superstructure
-                    .getScoreCommand(Config.IS_SPIKE ? NodeHeight.HIGH : NodeHeight.LOW, 0, true)
+                    .getScoreCommand(NodeHeight.HIGH, 0.5, true)
                     .withTimeout(3)
                     .andThen(Commands.runOnce(() -> intake.setGamePiece(HeldGamePiece.NOTHING)))),
             Map.entry(
@@ -138,14 +138,8 @@ public class Autos {
                     .withTimeout(1.5)
                     .andThen(Commands.runOnce(() -> intake.setGamePiece(HeldGamePiece.NOTHING)))),
             Map.entry("superstructureLow", superstructure.getManualScoreCommand(NodeHeight.LOW)),
-            Map.entry(
-                "superstructureMid",
-                superstructure.getManualScoreCommand(
-                    Config.IS_SPIKE ? NodeHeight.MID : NodeHeight.LOW)),
-            Map.entry(
-                "superstructureHigh",
-                superstructure.getManualScoreCommand(
-                    Config.IS_SPIKE ? NodeHeight.HIGH : NodeHeight.LOW)),
+            Map.entry("superstructureMid", superstructure.getManualScoreCommand(NodeHeight.MID)),
+            Map.entry("superstructureHigh", superstructure.getManualScoreCommand(NodeHeight.HIGH)),
             Map.entry("home", superstructure.getHomeCommand()),
             Map.entry(
                 "intakeCone",
@@ -239,7 +233,7 @@ public class Autos {
     AutoKindWithoutTeam rawAuto = autoChooser.get();
 
     if (rawAuto == null) {
-      rawAuto = AutoKindWithoutTeam.MID_1_5_BALANCE;
+      rawAuto = AutoKindWithoutTeam.MID_1_BALANCE;
     }
 
     AutoKind auto = FmsSubsystem.isRedAlliance() ? rawAuto.redVersion : rawAuto.blueVersion;
@@ -273,7 +267,11 @@ public class Autos {
         autoCommand.andThen(
             () -> localization.resetPose(pathGroup.get(0).getInitialHolonomicPose()));
 
-    autoCommand = autoCommand.andThen(autoBuilder.fullAuto(pathGroup));
+    if (auto == AutoKind.RED_MID_1_BALANCE || auto == AutoKind.BLUE_MID_1_BALANCE) {
+      autoCommand = autoCommand.andThen(getMid1Auto(pathGroup));
+    } else {
+      autoCommand = autoCommand.andThen(autoBuilder.fullAuto(pathGroup));
+    }
 
     if (auto.autoBalance) {
       autoCommand = autoCommand.andThen(this.autoBalance.getCommand());
@@ -284,6 +282,14 @@ public class Autos {
     autosCache.put(auto, new WeakReference<>(autoCommand));
 
     return autoCommand;
+  }
+
+  private Command getMid1Auto(List<PathPlannerTrajectory> pathGroup) {
+    return Commands.sequence(
+        followPathWithEvents(pathGroup, 0),
+        // Wait for charge station to level out before going on to balance
+        Commands.waitSeconds(1),
+        followPathWithEvents(pathGroup, 1));
   }
 
   private Command followPathWithEvents(List<PathPlannerTrajectory> pathGroup, int index) {

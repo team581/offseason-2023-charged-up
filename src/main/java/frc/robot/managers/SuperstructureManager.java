@@ -6,6 +6,7 @@ package frc.robot.managers;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.NodeHeight;
@@ -167,10 +168,15 @@ public class SuperstructureManager extends LifecycleSubsystem {
     return Commands.runOnce(() -> scoringState = ScoringState.ALIGNING)
         .andThen(
             getCommand(
-                () ->
-                    mode == HeldGamePiece.CUBE
-                        ? new SuperstructureState(cubeState.position, IntakeMode.STOPPED, true)
-                        : new SuperstructureState(coneState.position, IntakeMode.STOPPED, true)))
+                () -> {
+                  if (DriverStation.isAutonomous() && scoringLocation == NodeHeight.HIGH) {
+                    return States.AUTO_CONE_NODE_HIGH;
+                  }
+
+                  return mode == HeldGamePiece.CUBE
+                      ? new SuperstructureState(cubeState.position, IntakeMode.STOPPED, true)
+                      : new SuperstructureState(coneState.position, IntakeMode.STOPPED, true);
+                }))
         .withName("SuperstructureManualScore");
   }
 
@@ -202,6 +208,15 @@ public class SuperstructureManager extends LifecycleSubsystem {
                     : States.INTAKING_CONE_SHELF)
         .andThen(getCommand(States.STOWED))
         .withName("SuperstructureShelfIntake");
+  }
+
+  public Command getShelfIntakeEvilCommand() {
+    return getCommand(States.INTAKING_CONE_SHELF_EVIL)
+        // Interrupt command early, start stowing as soon as we are holding a cone - don't wait
+        // until wrist is at goal (since it gets messed up after the impact with the shelf)
+        .until(() -> intake.getGamePiece() == HeldGamePiece.CONE)
+        .andThen(getCommand(States.STOWED))
+        .withName("SuperstructureShelfIntakeEvil");
   }
 
   public AutoScoreLocation getAutoScoreLocation(NodeKind node) {

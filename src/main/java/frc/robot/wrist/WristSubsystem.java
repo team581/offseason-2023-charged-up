@@ -28,6 +28,9 @@ public class WristSubsystem extends LifecycleSubsystem {
 
   private HomingState homingState = HomingState.NOT_HOMED;
 
+  private int currentConfigSlot = -1;
+  private int newConfigSlot = 0;
+
   public WristSubsystem(TalonFX motor) {
     super(SubsystemPriority.WRIST);
 
@@ -39,6 +42,13 @@ public class WristSubsystem extends LifecycleSubsystem {
     motor.config_kP(0, Config.WRIST_KP);
     motor.config_kI(0, Config.WRIST_KI);
     motor.config_kD(0, Config.WRIST_KD);
+    motor.configClosedLoopPeakOutput(0, Config.WRIST_PEAK_OUTPUT);
+
+    motor.config_kF(1, Config.WRIST_KF_EVIL);
+    motor.config_kP(1, Config.WRIST_KP_EVIL);
+    motor.config_kI(1, Config.WRIST_KI_EVIL);
+    motor.config_kD(1, Config.WRIST_KD_EVIL);
+    motor.configClosedLoopPeakOutput(1, Config.WRIST_PEAK_OUTPUT_EVIL);
 
     this.motor.configMotionCruiseVelocity(Config.WRIST_MOTION_CRUISE_VELOCITY);
     this.motor.configMotionAcceleration(Config.WRIST_MOTION_ACCELERATION);
@@ -111,15 +121,36 @@ public class WristSubsystem extends LifecycleSubsystem {
     Logger.getInstance().recordOutput("Wrist/Homing", homingState.toString());
 
     Logger.getInstance().recordOutput("Wrist/Voltage", motor.getMotorOutputVoltage());
+    Logger.getInstance().recordOutput("Wrist/MotorProfileSlot", currentConfigSlot);
 
     if (Config.IS_DEVELOPMENT) {
       Logger.getInstance().recordOutput("Wrist/RawAngle", motor.getSelectedSensorPosition());
       Logger.getInstance().recordOutput("Wrist/ControlMode", motor.getControlMode().toString());
+    }
+
+    // Only trigger setting profile slot on slot change
+    if (newConfigSlot != currentConfigSlot) {
+      motor.selectProfileSlot(newConfigSlot, 0);
+      currentConfigSlot = newConfigSlot;
     }
   }
 
   public Command getHomeCommand() {
     return runOnce(() -> startHoming())
         .andThen(Commands.waitUntil(() -> getHomingState() == HomingState.HOMED));
+  }
+
+  public void setEvil(boolean evil) {
+    // Set config slot one if doing evil cone intake and at final destination
+
+    if (evil) {
+      setSlot(1);
+    } else {
+      setSlot(0);
+    }
+  }
+
+  private void setSlot(int slot) {
+    newConfigSlot = slot;
   }
 }

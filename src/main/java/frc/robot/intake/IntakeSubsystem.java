@@ -29,6 +29,9 @@ public class IntakeSubsystem extends LifecycleSubsystem {
   private final Debouncer coneFilterSensor = new Debouncer(10 * 0.02, DebounceType.kBoth);
   private final Debouncer cubeFilterSensor = new Debouncer(10 * 0.02, DebounceType.kBoth);
 
+  private boolean coneSensor = false;
+  private boolean cubeSensor = false;
+
   public IntakeSubsystem(TalonFX motor) {
     super(SubsystemPriority.INTAKE);
 
@@ -54,16 +57,15 @@ public class IntakeSubsystem extends LifecycleSubsystem {
     Logger.getInstance().recordOutput("Intake/Voltage", motor.getMotorOutputVoltage());
     Logger.getInstance().recordOutput("Intake/ConeIntakeSensor", sensorHasCone());
     Logger.getInstance().recordOutput("Intake/CubeIntakeSensor", sensorHasCube());
+
+    coneSensor = coneFilterSensor.calculate(sensorHasCone());
+    cubeSensor = cubeFilterSensor.calculate(sensorHasCube());
+    Logger.getInstance().recordOutput("Intake/FilteredConeIntakeSensor", coneSensor);
+    Logger.getInstance().recordOutput("Intake/FilteredCubeIntakeSensor", cubeSensor);
   }
 
   @Override
   public void enabledPeriodic() {
-
-    boolean coneSensor = coneFilterSensor.calculate(sensorHasCone());
-    boolean cubeSensor = cubeFilterSensor.calculate(sensorHasCube());
-    Logger.getInstance().recordOutput("Intake/FilteredConeIntakeSensor", coneSensor);
-    Logger.getInstance().recordOutput("Intake/FilteredCubeIntakeSensor", cubeSensor);
-
     if (mode == IntakeMode.INTAKE_CUBE) {
       if (cubeSensor) {
         gamePiece = HeldGamePiece.CUBE;
@@ -150,6 +152,14 @@ public class IntakeSubsystem extends LifecycleSubsystem {
 
   public HeldGamePiece getGamePiece() {
     return gamePiece;
+  }
+
+  public boolean hasCone() {
+    return coneSensor;
+  }
+
+  public boolean hasCube() {
+    return cubeSensor;
   }
 
   public void setGamePiece(HeldGamePiece gamePiece) {

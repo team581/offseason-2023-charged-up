@@ -214,7 +214,7 @@ public class SuperstructureManager extends LifecycleSubsystem {
     return getCommand(States.INTAKING_CONE_SHELF_EVIL)
         // Interrupt command early, start stowing as soon as we are holding a cone - don't wait
         // until wrist is at goal (since it gets messed up after the impact with the shelf)
-        .until(() -> intake.getGamePiece() == HeldGamePiece.CONE)
+        .until(() -> intake.hasCone())
         .andThen(getCommand(States.STOWED))
         .withName("SuperstructureShelfIntakeEvil");
   }

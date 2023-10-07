@@ -171,7 +171,7 @@ public class IntakeSubsystem extends LifecycleSubsystem {
         .andThen(Commands.runOnce(() -> setMode(IntakeMode.STOPPED)));
   }
 
-  private boolean hasCube() {
+  public boolean hasCube() {
     if (CUBE_DETECTION_MODE == IntakeDetectionMode.SENSOR) {
       return cubeSensor;
     } else if (CUBE_DETECTION_MODE == IntakeDetectionMode.CURRENT) {
@@ -191,7 +191,7 @@ public class IntakeSubsystem extends LifecycleSubsystem {
     return false;
   }
 
-  private boolean hasCone() {
+  public boolean hasCone() {
     if (CONE_DETECTION_MODE == IntakeDetectionMode.SENSOR) {
       return coneSensor;
     } else if (CONE_DETECTION_MODE == IntakeDetectionMode.CURRENT) {

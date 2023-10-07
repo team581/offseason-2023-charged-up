@@ -28,8 +28,6 @@ import frc.robot.intake.IntakeSubsystem;
 import frc.robot.localization.LocalizationSubsystem;
 import frc.robot.managers.Autobalance;
 import frc.robot.managers.SuperstructureManager;
-import frc.robot.managers.vision.AutoScoreManager;
-import frc.robot.managers.vision.GroundConeManager;
 import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.vision.VisionMode;
 import frc.robot.wrist.WristSubsystem;

@@ -35,7 +35,7 @@ public class IntakeSubsystem extends LifecycleSubsystem {
   private boolean coneSensor = false;
   private boolean cubeSensor = false;
 
-  private final LinearFilter currentFilter = LinearFilter.movingAverage(10);
+  private final LinearFilter currentFilter = LinearFilter.movingAverage(20);
   private double filteredCurrent = -1;
 
   public IntakeSubsystem(TalonFX motor) {
@@ -186,6 +186,10 @@ public class IntakeSubsystem extends LifecycleSubsystem {
       if (mode == IntakeMode.YEET_CUBE) {
         return filteredCurrent < 15;
       }
+    } else if (CUBE_DETECTION_MODE == IntakeDetectionMode.NONE) {
+      if (mode == IntakeMode.OUTTAKE_CUBE_SLOW || mode == IntakeMode.OUTTAKE_CUBE_FAST || mode == IntakeMode.YEET_CUBE) {
+        return true;
+      }
     }
 
     return false;
@@ -196,15 +200,19 @@ public class IntakeSubsystem extends LifecycleSubsystem {
       return coneSensor;
     } else if (CONE_DETECTION_MODE == IntakeDetectionMode.CURRENT) {
       if (mode == IntakeMode.INTAKE_CONE) {
-        return filteredCurrent > 25;
+        return filteredCurrent > 85;
       }
 
       if (mode == IntakeMode.OUTTAKE_CONE) {
-        return filteredCurrent < 10;
+        return filteredCurrent > 3 && filteredCurrent < 8.5;
       }
 
       if (mode == IntakeMode.SHOOT_CONE) {
-        return filteredCurrent < 15;
+        return filteredCurrent > 6 && filteredCurrent < 10.5;
+      }
+    } else if (CONE_DETECTION_MODE == IntakeDetectionMode.NONE) {
+      if (mode == IntakeMode.OUTTAKE_CONE || mode == IntakeMode.SHOOT_CONE) {
+        return true;
       }
     }
 

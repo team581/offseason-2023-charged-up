@@ -256,11 +256,11 @@
     },
     {
       "anchorPoint": {
-        "x": 3.41,
+        "x": 3.56,
         "y": 2.21
       },
       "prevControl": {
-        "x": 3.1830242087690497,
+        "x": 3.3330242087690496,
         "y": 2.197953112397453
       },
       "nextControl": null,
@@ -294,7 +294,7 @@
       ]
     },
     {
-      "position": 7.56,
+      "position": 7.2,
       "names": [
         "superstructureLow"
       ]

@@ -187,7 +187,9 @@ public class IntakeSubsystem extends LifecycleSubsystem {
         return filteredCurrent < 15;
       }
     } else if (CUBE_DETECTION_MODE == IntakeDetectionMode.NONE) {
-      if (mode == IntakeMode.OUTTAKE_CUBE_SLOW || mode == IntakeMode.OUTTAKE_CUBE_FAST || mode == IntakeMode.YEET_CUBE) {
+      if (mode == IntakeMode.OUTTAKE_CUBE_SLOW
+          || mode == IntakeMode.OUTTAKE_CUBE_FAST
+          || mode == IntakeMode.YEET_CUBE) {
         return true;
       }
     }

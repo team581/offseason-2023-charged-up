@@ -17,7 +17,7 @@ public class Config {
   public static final String SERIAL_NUMBER = System.getenv("serialnum");
 
   // TODO: Change this to false during events
-  public static final boolean IS_DEVELOPMENT = false;
+  public static final boolean IS_DEVELOPMENT = true;
 
   public static final double MATCH_DURATION_TELEOP = 135;
 
@@ -29,7 +29,7 @@ public class Config {
   public static final int PDP_ID = 1;
   public static final ModuleType PDP_TYPE = ModuleType.kRev;
 
-  public static final VisionMode VISION_MODE = VisionMode.OFF;
+  public static final VisionMode VISION_MODE = VisionMode.ENABLED_UNUSED;
 
   public static final int PIGEON_ID = 1;
 

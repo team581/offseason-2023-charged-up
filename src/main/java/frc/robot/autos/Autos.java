@@ -28,6 +28,8 @@ import frc.robot.intake.IntakeSubsystem;
 import frc.robot.localization.LocalizationSubsystem;
 import frc.robot.managers.Autobalance;
 import frc.robot.managers.SuperstructureManager;
+import frc.robot.managers.vision.AutoScoreManager;
+import frc.robot.managers.vision.GroundConeManager;
 import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.vision.VisionMode;
 import frc.robot.wrist.WristSubsystem;
@@ -76,6 +78,8 @@ public class Autos {
   private final LoggedDashboardChooser<AutoKindWithoutTeam> autoChooser =
       new LoggedDashboardChooser<>("Auto Choices");
   private final Map<AutoKind, WeakReference<Command>> autosCache = new EnumMap<>(AutoKind.class);
+  private final AutoScoreManager visionManager;
+  private final GroundConeManager groundManager;
   private final ImuSubsystem imu;
 
   public Autos(
@@ -86,13 +90,17 @@ public class Autos {
       ElevatorSubsystem elevator,
       WristSubsystem wrist,
       IntakeSubsystem intake,
-      Autobalance autoBalance) {
+      Autobalance autoBalance,
+      GroundConeManager groundManager,
+      AutoScoreManager visionManager) {
     this.localization = localization;
     this.swerve = swerve;
     this.imu = imu;
     this.superstructure = superstructure;
     this.intake = intake;
     this.autoBalance = autoBalance;
+    this.groundManager = groundManager;
+    this.visionManager = visionManager;
     Map<String, Command> eventMap =
         Map.ofEntries(
             Map.entry(

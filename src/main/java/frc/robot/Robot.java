@@ -268,6 +268,13 @@ public class Robot extends LoggedRobot {
         .onTrue(superstructureManager.getManualScoreCommand(NodeHeight.HIGH))
         .onFalse(superstructureManager.getCommand(States.STOWED));
 
+    // Yeet Cube Mid
+    operatorController.povLeft().onTrue(superstructureManager.getCommand(States.YEET_CUBE_MID)).onFalse(superstructureManager.getCommand(States.STOWED));
+    // Yeet Cone Mid
+    //operatorController.povRight().onTrue(superstructureManager.getCommand(States.YEET_CONE_MID)).onFalse(superstructureManager.getCommand(States.STOWED));
+    // Yeet Cone
+    operatorController.povRight().onTrue(superstructureManager.getCommand(States.YEET_CONE)).onFalse(superstructureManager.getCommand(States.STOWED));
+
     // Stow all
     operatorController.x().onTrue(superstructureManager.getCommand(States.STOWED));
     // Home superstructure

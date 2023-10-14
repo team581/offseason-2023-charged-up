@@ -21,6 +21,8 @@ public enum AutoKind {
   BLUE_MID_FLAT_2_BALANCE("BlueMidFlat2Balance", 3, 3, true),
   BLUE_MID_BUMP_2_BALANCE("BlueMidBump2Balance", 3, 3, true),
 
+  RED_MID_BUMP_2_BALANCE_TEST("RedMidBump2BalanceTest", 3, 3, true),
+
   BLUE_LONG_SIDE_3("BlueLongSide3", 4, 4, false),
   RED_LONG_SIDE_3("RedLongSide3", 4, 4, false),
 

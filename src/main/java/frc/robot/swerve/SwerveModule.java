@@ -20,7 +20,6 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import frc.robot.config.Config;
 import frc.robot.util.CircleConverter;
-import frc.robot.util.CtreModuleState;
 import frc.robot.util.GearingConverter;
 import org.littletonrobotics.junction.Logger;
 
@@ -126,8 +125,7 @@ public class SwerveModule {
 
   public void setDesiredState(
       SwerveModuleState state, boolean openLoop, boolean skipJitterOptimization) {
-    final var steerMotorPosition = getSteerMotorPosition();
-    state = CtreModuleState.optimize(state, steerMotorPosition);
+    state = optimize(state);
 
     double commandedSteerPosition =
         STEER_MOTOR_GEARING_CONVERTER.gearingToMotor(state.angle.getRotations());
@@ -209,5 +207,21 @@ public class SwerveModule {
 
   private Rotation2d getRawCancoderPosition() {
     return Rotation2d.fromDegrees(encoder.getAbsolutePosition());
+  }
+
+  private SwerveModuleState optimize(SwerveModuleState desiredState) {
+    SwerveModuleState currentState = getState();
+    var delta = desiredState.angle.minus(currentState.angle);
+
+    // if velocity is greater than 0.2mps then do not invert drive motor else
+    // if delta > 90 then invert drive velocity
+
+    if (Math.abs(delta.getDegrees()) > 90.0 && currentState.speedMetersPerSecond < 0.2) {
+      return new SwerveModuleState(
+          -desiredState.speedMetersPerSecond,
+          desiredState.angle.rotateBy(Rotation2d.fromDegrees(180.0)));
+    } else {
+      return new SwerveModuleState(desiredState.speedMetersPerSecond, desiredState.angle);
+    }
   }
 }

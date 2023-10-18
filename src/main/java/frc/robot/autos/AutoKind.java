@@ -24,7 +24,10 @@ public enum AutoKind {
   RED_MID_BUMP_2_BALANCE_TEST("RedMidBump2BalanceTest", 3, 3, true),
 
   BLUE_LONG_SIDE_3("BlueLongSide3", 4, 4, false),
+  BLUE_LONG_SIDE_3_BALANCE("BlueLongSide3Balance", 4, 4, true),
+
   RED_LONG_SIDE_3("RedLongSide3", 4, 4, false),
+  RED_LONG_SIDE_3_BALANCE("RedLongSide3Balance", 4, 4, true),
 
   BLUE_MID_1_BALANCE("BlueMid1Balance", 2, 3, true),
   RED_MID_1_BALANCE("RedMid1Balance", 2, 3, true),

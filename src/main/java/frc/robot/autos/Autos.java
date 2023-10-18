@@ -140,7 +140,7 @@ public class Autos {
             Map.entry(
                 "yeetCone",
                 superstructure
-                    .getCommand(States.YEET_CONE_MID)
+                    .getCommand(States.YEET_CONE)
                     .withTimeout(0.5)
                     .andThen(Commands.runOnce(() -> intake.setGamePiece(HeldGamePiece.NOTHING)))),
             Map.entry("superstructureLow", superstructure.getManualScoreCommand(NodeHeight.LOW)),
@@ -282,6 +282,7 @@ public class Autos {
     if (auto.autoBalance) {
       autoCommand = autoCommand.andThen(this.autoBalance.getCommand());
     }
+
 
     autoCommand = autoCommand.withName(autoName);
 

@@ -18,6 +18,7 @@ import frc.robot.util.scheduling.LifecycleSubsystem;
 import frc.robot.util.scheduling.SubsystemPriority;
 
 public class Autobalance extends LifecycleSubsystem {
+  private static final double AUTO_END = 14.85;
   private final SwerveSubsystem swerve;
   private final ImuSubsystem imu;
   private boolean enabled = false;
@@ -57,7 +58,7 @@ public class Autobalance extends LifecycleSubsystem {
     if (enabled) {
       Rotation2d goalAngle = Rotation2d.fromDegrees(FmsSubsystem.isRedAlliance() ? 0 : 180);
 
-      if (driveVelocityDebouncer.calculate(getDriveVelocity() == 0)) {
+      if (driveVelocityDebouncer.calculate(getDriveVelocity() == 0) || autoTimer.hasElapsed(AUTO_END)) {
         swerve.setXSwerve(true);
       } else {
         swerve.setXSwerve(false);

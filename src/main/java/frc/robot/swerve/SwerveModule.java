@@ -213,15 +213,18 @@ public class SwerveModule {
     SwerveModuleState currentState = getState();
     var delta = desiredState.angle.minus(currentState.angle);
 
-    // if velocity is greater than 0.2mps then do not invert drive motor else
-    // if delta > 90 then invert drive velocity
+    double angleErrorPercentage =
+        (currentState.angle.getDegrees() / desiredState.angle.getDegrees());
+    double velocity = desiredState.speedMetersPerSecond;
+    if (angleErrorPercentage < 0.9) {
+      velocity = velocity * angleErrorPercentage;
+    }
 
     if (Math.abs(delta.getDegrees()) > 90.0 && currentState.speedMetersPerSecond < 0.2) {
       return new SwerveModuleState(
-          -desiredState.speedMetersPerSecond,
-          desiredState.angle.rotateBy(Rotation2d.fromDegrees(180.0)));
+          -velocity, desiredState.angle.rotateBy(Rotation2d.fromDegrees(180.0)));
     } else {
-      return new SwerveModuleState(desiredState.speedMetersPerSecond, desiredState.angle);
+      return new SwerveModuleState(velocity, desiredState.angle);
     }
   }
 }

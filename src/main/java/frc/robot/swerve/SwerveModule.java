@@ -213,18 +213,21 @@ public class SwerveModule {
     SwerveModuleState currentState = getState();
     var delta = desiredState.angle.minus(currentState.angle);
 
-    double angleErrorPercentage =
-        (currentState.angle.getDegrees() / desiredState.angle.getDegrees());
-    double velocity = desiredState.speedMetersPerSecond;
-    if (angleErrorPercentage < 0.9) {
-      velocity = velocity * angleErrorPercentage;
+    Rotation2d newAngle = desiredState.angle;
+    double newVelocity = desiredState.speedMetersPerSecond;
+
+    if (Math.abs(delta.getDegrees()) > 90.0) {
+      newVelocity = newVelocity * -1;
+      newAngle = newAngle.rotateBy(Rotation2d.fromDegrees(180.0));
     }
 
-    if (Math.abs(delta.getDegrees()) > 90.0 && currentState.speedMetersPerSecond < 0.2) {
-      return new SwerveModuleState(
-          -velocity, desiredState.angle.rotateBy(Rotation2d.fromDegrees(180.0)));
-    } else {
-      return new SwerveModuleState(velocity, desiredState.angle);
+    double angleErrorPercentage =
+        Math.abs(currentState.angle.getDegrees() / newAngle.getDegrees());
+
+    if (angleErrorPercentage < 0.9) {
+      newVelocity = newVelocity * angleErrorPercentage;
     }
+
+    return new SwerveModuleState(newVelocity, newAngle);
   }
 }

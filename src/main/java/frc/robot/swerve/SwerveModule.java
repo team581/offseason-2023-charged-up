@@ -67,7 +67,7 @@ public class SwerveModule {
     driveMotorConfigs.Voltage.PeakForwardVoltage = 12;
     driveMotorConfigs.Voltage.PeakReverseVoltage = -12;
 
-    driveMotorConfigs.CurrentLimits.SupplyCurrentLimit = 35;
+    driveMotorConfigs.CurrentLimits.SupplyCurrentLimit = 15;
     driveMotorConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
 
     if (constants.driveInversion) {

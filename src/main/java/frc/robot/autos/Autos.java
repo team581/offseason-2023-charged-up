@@ -45,7 +45,7 @@ import java.util.Map;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
-public class Autos extends LifecycleSubsystem{
+public class Autos extends LifecycleSubsystem {
   private static Command wrapAutoEvent(String commandName, Command command) {
     return Commands.sequence(
             Commands.print("[COMMANDS] Starting auto event " + commandName),
@@ -97,9 +97,8 @@ public class Autos extends LifecycleSubsystem{
       IntakeSubsystem intake,
       Autobalance autoBalance,
       GroundConeManager groundManager,
-      AutoScoreManager visionManager
-      ) {
-        super(SubsystemPriority.AUTO);
+      AutoScoreManager visionManager) {
+    super(SubsystemPriority.AUTO);
     this.localization = localization;
     this.swerve = swerve;
     this.imu = imu;
@@ -255,7 +254,6 @@ public class Autos extends LifecycleSubsystem{
     Logger.getInstance().recordOutput("Autos/CurrentAuto", rawAuto.toString());
     SmartDashboard.putString("Autos/SelectedAuto", rawAuto.toString());
   }
-
 
   private Command buildAutoCommand(AutoKind auto) {
     WeakReference<Command> ref = autosCache.get(auto);

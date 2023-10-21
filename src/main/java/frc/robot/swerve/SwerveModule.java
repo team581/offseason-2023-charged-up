@@ -221,8 +221,7 @@ public class SwerveModule {
       newAngle = newAngle.rotateBy(Rotation2d.fromDegrees(180.0));
     }
 
-    double angleErrorPercentage =
-        Math.abs(currentState.angle.getDegrees() / newAngle.getDegrees());
+    double angleErrorPercentage = Math.abs(currentState.angle.getDegrees() / newAngle.getDegrees());
 
     if (angleErrorPercentage < 0.9) {
       newVelocity = newVelocity * angleErrorPercentage;

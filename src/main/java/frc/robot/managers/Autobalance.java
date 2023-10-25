@@ -22,7 +22,9 @@ public class Autobalance extends LifecycleSubsystem {
   private final SwerveSubsystem swerve;
   private final ImuSubsystem imu;
   private boolean enabled = false;
-  private static final double DRIVE_VELOCITY = -0.475;
+  private static final double DRIVE_VELOCITY = -0.5;
+  //18.701
+  //
   private static final double ANGLE_THRESHOLD = 11;
   private final LinearFilter autoBalanceFilter = LinearFilter.movingAverage(13);
   private final Timer autoTimer = new Timer();

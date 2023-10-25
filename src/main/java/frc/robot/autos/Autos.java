@@ -118,19 +118,45 @@ public class Autos {
                 superstructure
                     .getScoreCommand(NodeHeight.LOW, 0, true)
                     .withTimeout(1)
-                    .andThen(Commands.runOnce(() -> intake.setGamePiece(HeldGamePiece.NOTHING)))),
+                    .andThen(
+                        Commands.runOnce(
+                            () -> {
+                              intake.setGamePiece(HeldGamePiece.NOTHING);
+                              superstructure.set(States.STOWED);
+                            }))),
             Map.entry(
                 "scoreMid",
                 superstructure
                     .getScoreCommand(NodeHeight.MID, 0, true)
-                    .withTimeout(3)
-                    .andThen(Commands.runOnce(() -> intake.setGamePiece(HeldGamePiece.NOTHING)))),
+                    .withTimeout(2.5)
+                    .andThen(
+                        Commands.runOnce(
+                            () -> {
+                              intake.setGamePiece(HeldGamePiece.NOTHING);
+                              superstructure.set(States.STOWED);
+                            }))),
+            Map.entry(
+                "scoreMidCube",
+                superstructure
+                    .getScoreCommand(NodeHeight.MID, 0, true)
+                    .withTimeout(10)
+                    .andThen(
+                        Commands.runOnce(
+                            () -> {
+                              intake.setGamePiece(HeldGamePiece.NOTHING);
+                              superstructure.set(States.STOWED);
+                            }))),
             Map.entry(
                 "scoreHigh",
                 superstructure
                     .getScoreCommand(NodeHeight.HIGH, 0.5, true)
                     .withTimeout(3)
-                    .andThen(Commands.runOnce(() -> intake.setGamePiece(HeldGamePiece.NOTHING)))),
+                    .andThen(
+                        Commands.runOnce(
+                            () -> {
+                              intake.setGamePiece(HeldGamePiece.NOTHING);
+                              superstructure.set(States.STOWED);
+                            }))),
             Map.entry(
                 "yeetCube",
                 superstructure
@@ -273,16 +299,19 @@ public class Autos {
         autoCommand.andThen(
             () -> localization.resetPose(pathGroup.get(0).getInitialHolonomicPose()));
 
+            if (pathGroup != null) {
+
     if (auto == AutoKind.RED_MID_1_BALANCE || auto == AutoKind.BLUE_MID_1_BALANCE) {
-      autoCommand = autoCommand.andThen(getMid1Auto(pathGroup));
+
+        autoCommand = autoCommand.andThen(getMid1Auto(pathGroup));
+
     } else {
       autoCommand = autoCommand.andThen(autoBuilder.fullAuto(pathGroup));
-    }
+    }}
 
     if (auto.autoBalance) {
       autoCommand = autoCommand.andThen(this.autoBalance.getCommand());
     }
-
 
     autoCommand = autoCommand.withName(autoName);
 

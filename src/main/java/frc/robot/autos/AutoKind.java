@@ -28,6 +28,7 @@ public enum AutoKind {
 
   RED_LONG_SIDE_3("RedLongSide3", 4, 4, false),
   RED_LONG_SIDE_3_BALANCE("RedLongSide3Balance", 4, 4, true),
+  RED_YEET_TEST("RedYeetTest", 4, 4, false),
 
   BLUE_MID_1_BALANCE("BlueMid1Balance", 2, 3, true),
   RED_MID_1_BALANCE("RedMid1Balance", 2, 3, true),

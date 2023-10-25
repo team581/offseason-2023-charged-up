@@ -17,7 +17,8 @@ public enum AutoKindWithoutTeam {
 
   MID_BUMP_2_BALANCE(AutoKind.RED_MID_BUMP_2_BALANCE, AutoKind.BLUE_MID_BUMP_2_BALANCE),
   MID_BUMP_2_BALANCE_TEST(AutoKind.RED_MID_BUMP_2_BALANCE_TEST, AutoKind.BLUE_MID_BUMP_2_BALANCE),
-  MID_FLAT_2_BALANCE(AutoKind.RED_MID_FLAT_2_BALANCE, AutoKind.BLUE_MID_FLAT_2_BALANCE);
+  MID_FLAT_2_BALANCE(AutoKind.RED_MID_FLAT_2_BALANCE, AutoKind.BLUE_MID_FLAT_2_BALANCE),
+  YEET_TEST(AutoKind.RED_YEET_TEST, AutoKind.DO_NOTHING);
 
   public final AutoKind redVersion;
   public final AutoKind blueVersion;

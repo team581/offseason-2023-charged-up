@@ -13,7 +13,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -32,8 +31,6 @@ import frc.robot.managers.SuperstructureManager;
 import frc.robot.managers.vision.AutoScoreManager;
 import frc.robot.managers.vision.GroundConeManager;
 import frc.robot.swerve.SwerveSubsystem;
-import frc.robot.util.scheduling.LifecycleSubsystem;
-import frc.robot.util.scheduling.SubsystemPriority;
 import frc.robot.vision.VisionMode;
 import frc.robot.wrist.WristSubsystem;
 import java.lang.ref.WeakReference;
@@ -45,7 +42,7 @@ import java.util.Map;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
-public class Autos extends LifecycleSubsystem {
+public class Autos {
   private static Command wrapAutoEvent(String commandName, Command command) {
     return Commands.sequence(
             Commands.print("[COMMANDS] Starting auto event " + commandName),
@@ -85,8 +82,6 @@ public class Autos extends LifecycleSubsystem {
   private final GroundConeManager groundManager;
   private final ImuSubsystem imu;
 
-  private AutoKindWithoutTeam rawAuto = AutoKindWithoutTeam.MID_1_BALANCE;
-
   public Autos(
       LocalizationSubsystem localization,
       SwerveSubsystem swerve,
@@ -98,7 +93,6 @@ public class Autos extends LifecycleSubsystem {
       Autobalance autoBalance,
       GroundConeManager groundManager,
       AutoScoreManager visionManager) {
-    super(SubsystemPriority.AUTO);
     this.localization = localization;
     this.swerve = swerve;
     this.imu = imu;
@@ -236,23 +230,15 @@ public class Autos extends LifecycleSubsystem {
   }
 
   public Command getAutoCommand() {
-    AutoKindWithoutTeam rawAutoNullable = autoChooser.get();
+    AutoKindWithoutTeam rawAuto = autoChooser.get();
 
-    if (rawAutoNullable == null) {
+    if (rawAuto == null) {
       rawAuto = AutoKindWithoutTeam.MID_1_BALANCE;
-    } else {
-      rawAuto = rawAutoNullable;
     }
 
     AutoKind auto = FmsSubsystem.isRedAlliance() ? rawAuto.redVersion : rawAuto.blueVersion;
 
     return buildAutoCommand(auto);
-  }
-
-  @Override
-  public void robotPeriodic() {
-    Logger.getInstance().recordOutput("Autos/CurrentAuto", rawAuto.toString());
-    SmartDashboard.putString("Autos/SelectedAuto", rawAuto.toString());
   }
 
   private Command buildAutoCommand(AutoKind auto) {

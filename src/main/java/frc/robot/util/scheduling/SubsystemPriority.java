@@ -6,8 +6,6 @@ package frc.robot.util.scheduling;
 
 public enum SubsystemPriority {
   // Vision runs before vision manager
-  AUTO(24),
-
   VISION(23),
 
   VISION_MANAGER(22),

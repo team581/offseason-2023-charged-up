@@ -313,15 +313,16 @@ public class Autos extends LifecycleSubsystem {
         autoCommand.andThen(
             () -> localization.resetPose(pathGroup.get(0).getInitialHolonomicPose()));
 
-            if (pathGroup != null) {
+    if (pathGroup != null) {
 
-    if (auto == AutoKind.RED_MID_1_BALANCE || auto == AutoKind.BLUE_MID_1_BALANCE) {
+      if (auto == AutoKind.RED_MID_1_BALANCE || auto == AutoKind.BLUE_MID_1_BALANCE) {
 
         autoCommand = autoCommand.andThen(getMid1Auto(pathGroup));
 
-    } else {
-      autoCommand = autoCommand.andThen(autoBuilder.fullAuto(pathGroup));
-    }}
+      } else {
+        autoCommand = autoCommand.andThen(autoBuilder.fullAuto(pathGroup));
+      }
+    }
 
     if (auto.autoBalance) {
       autoCommand = autoCommand.andThen(this.autoBalance.getCommand());

@@ -26,15 +26,15 @@ public class States {
   public static final SuperstructureState CUBE_NODE_MID =
       new SuperstructureState(Positions.CUBE_NODE_MID, IntakeMode.OUTTAKE_CUBE_FAST, false);
   public static final SuperstructureState CUBE_NODE_HIGH =
-  new SuperstructureState(Positions.CUBE_NODE_HIGH, IntakeMode.OUTTAKE_CUBE_FAST, false);
+      new SuperstructureState(Positions.CUBE_NODE_HIGH, IntakeMode.OUTTAKE_CUBE_FAST, false);
 
-  //YEET CONES
+  // YEET CONES
   public static final SuperstructureState YEET_CONE =
-  new SuperstructureState(Positions.STOWED, IntakeMode.SHOOT_CONE, false);
+      new SuperstructureState(Positions.STOWED, IntakeMode.SHOOT_CONE, false);
   public static final SuperstructureState YEET_CONE_MID =
-  new SuperstructureState(Positions.CONE_SHOOT_MID, IntakeMode.SHOOT_CONE, false);
+      new SuperstructureState(Positions.CONE_SHOOT_MID, IntakeMode.SHOOT_CONE, false);
 
-  //YEET CUBES
+  // YEET CUBES
   public static final SuperstructureState YEET_CUBE =
       new SuperstructureState(Positions.STOWED, IntakeMode.YEET_CUBE, false);
   public static final SuperstructureState YEET_CUBE_MID =

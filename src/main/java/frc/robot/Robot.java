@@ -220,11 +220,11 @@ public class Robot extends LoggedRobot {
     // X swerve
     driveController.start().onTrue(swerve.getXSwerveCommand());
 
-    // Manual Auto Balance
-    // driveController
-    //     .povLeft()
-    //     .onTrue(swerve.run(() -> autobalance.setEnabled(true)))
-    //     .onFalse(swerve.runOnce(() -> autobalance.setEnabled(false)));
+    //Manual Auto Balance
+    driveController
+        .povLeft()
+        .onTrue(swerve.run(() -> autobalance.setEnabled(true)))
+        .onFalse(swerve.runOnce(() -> autobalance.setEnabled(false)));
 
     // Snaps for all cardinal directions
     driveController.x().onTrue(autoRotate.getCommand(() -> AutoRotate.getLeftAngle()));
@@ -268,14 +268,6 @@ public class Robot extends LoggedRobot {
         .onTrue(superstructureManager.getManualScoreCommand(NodeHeight.HIGH))
         .onFalse(superstructureManager.getCommand(States.STOWED));
 
-    // Yeet Cube Mid
-    operatorController
-        .povLeft()
-        .onTrue(superstructureManager.getCommand(States.YEET_CUBE_MID))
-        .onFalse(superstructureManager.getCommand(States.STOWED));
-    // Yeet Cone Mid
-    // operatorController.povRight().onTrue(superstructureManager.getCommand(States.YEET_CONE_MID)).onFalse(superstructureManager.getCommand(States.STOWED));
-    // Yeet Cone
     operatorController
         .povRight()
         .onTrue(superstructureManager.getCommand(States.YEET_CONE))

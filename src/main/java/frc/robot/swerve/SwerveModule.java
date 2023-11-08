@@ -126,11 +126,12 @@ public class SwerveModule {
     Logger.getInstance()
         .recordOutput(
             "Swerve/" + constants.corner.toString() + "/SteerMotorCancoderPosition",
-            getRawCancoderPosition().getDegrees());
+            getCancoderPosition().getDegrees());
     Logger.getInstance()
         .recordOutput(
-            "Swerve/" + constants.corner.toString() + "/SteerMorotPosition",
+            "Swerve/" + constants.corner.toString() + "/SteerMotorPosition",
             getSteerMotorPosition().getDegrees());
+
   }
 
   public void setDesiredState(

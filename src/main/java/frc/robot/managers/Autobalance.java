@@ -88,7 +88,7 @@ public class Autobalance extends LifecycleSubsystem {
 
   public Command getCommand() {
     return Commands.run(() -> setEnabled(true), swerve)
-        .until(() -> atGoal() || autoTimer.hasElapsed(14.8))
+        .until(() -> atGoal() || autoTimer.hasElapsed(14.9))
         .andThen(
             runOnce(
                 () -> {

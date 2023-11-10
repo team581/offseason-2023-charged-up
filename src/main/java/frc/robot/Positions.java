@@ -25,8 +25,6 @@ public class Positions {
   public static final SuperstructurePosition CUBE_NODE_HIGH =
       new SuperstructurePosition(23, Rotation2d.fromDegrees(50));
 
-  public static final SuperstructurePosition CUBE_SHOOT_MID =
-      new SuperstructurePosition(10, Rotation2d.fromDegrees(2));
   public static final SuperstructurePosition CONE_SHOOT_MID =
       new SuperstructurePosition(12, Rotation2d.fromDegrees(2));
 

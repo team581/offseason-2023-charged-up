@@ -16,11 +16,10 @@ public enum AutoKindWithoutTeam {
   MID_FLAT_2_BALANCE(AutoKind.RED_MID_FLAT_2_BALANCE, AutoKind.BLUE_MID_FLAT_2_BALANCE),
 
   FLAT_3(AutoKind.RED_SHORT_SIDE_3, AutoKind.BLUE_SHORT_SIDE_3),
+  FLAT_3_YEET(AutoKind.RED_SHORT_SIDE_3_YEET, AutoKind.BLUE_SHORT_SIDE_3_YEET),
   BUMP_3(AutoKind.RED_LONG_SIDE_3, AutoKind.BLUE_LONG_SIDE_3),
   BUMP_3_BALANCE(AutoKind.RED_LONG_SIDE_3_BALANCE, AutoKind.BLUE_LONG_SIDE_3_BALANCE),
-  BUMP_3_5(AutoKind.RED_LONG_SIDE_3_5, AutoKind.BLUE_LONG_SIDE_3_5),
-
-  YEET_TEST(AutoKind.RED_YEET_TEST, AutoKind.DO_NOTHING);
+  BUMP_3_5(AutoKind.RED_LONG_SIDE_3_5, AutoKind.BLUE_LONG_SIDE_3_5);
 
   public final AutoKind redVersion;
   public final AutoKind blueVersion;

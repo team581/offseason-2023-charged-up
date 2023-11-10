@@ -27,18 +27,17 @@ public enum AutoKind {
 
   //3s
   BLUE_SHORT_SIDE_3("BlueShortSide3", 4.5, 4, false),
-  RED_SHORT_SIDE_3("RedShortSide3", 4.5, 4, false),
+  BLUE_SHORT_SIDE_3_YEET("BlueShortSide3Yeet", 4, 4, false),
   BLUE_LONG_SIDE_3("BlueLongSide3", 4, 4, false),
+  RED_SHORT_SIDE_3("RedShortSide3", 4.5, 4, false),
+  RED_SHORT_SIDE_3_YEET("RedShortSide3Yeet", 4, 4, false),
   RED_LONG_SIDE_3("RedLongSide3", 4, 4, false),
 
   //3 extras
   RED_LONG_SIDE_3_BALANCE("RedLongSide3Balance", 4, 4, true),
   BLUE_LONG_SIDE_3_BALANCE("BlueLongSide3Balance", 4, 4, true),
   RED_LONG_SIDE_3_5("RedLongSide3.5", 4, 4, false),
-  BLUE_LONG_SIDE_3_5("BlueLongSide3.5", 4, 4, false),
-
-  //Tests
-  RED_YEET_TEST("RedYeetTest", 4, 4, false);
+  BLUE_LONG_SIDE_3_5("BlueLongSide3.5", 4, 4, false);
 
   public final String pathName;
   public final PathConstraints constraints;

@@ -34,12 +34,6 @@ public class States {
   public static final SuperstructureState YEET_CONE_MID =
       new SuperstructureState(Positions.CONE_SHOOT_MID, IntakeMode.SHOOT_CONE, false);
 
-  // YEET CUBES
-  public static final SuperstructureState YEET_CUBE =
-      new SuperstructureState(Positions.STOWED, IntakeMode.YEET_CUBE, false);
-  public static final SuperstructureState YEET_CUBE_MID =
-      new SuperstructureState(Positions.CUBE_SHOOT_MID, IntakeMode.YEET_CUBE, false);
-
   public static final SuperstructureState INTAKING_CONE_FLOOR_IDLE =
       new SuperstructureState(Positions.INTAKING_CONE_FLOOR, IntakeMode.STOPPED, true);
   public static final SuperstructureState INTAKING_CONE_FLOOR_SPINNING =

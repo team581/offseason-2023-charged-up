@@ -164,17 +164,18 @@ public class Autos extends LifecycleSubsystem {
                               superstructure.set(States.STOWED);
                             }))),
             Map.entry(
-                "yeetCube",
-                superstructure
-                    .getCommand(States.YEET_CUBE)
-                    .withTimeout(0.5)
-                    .andThen(Commands.runOnce(() -> intake.setGamePiece(HeldGamePiece.NOTHING)))),
-            Map.entry(
                 "yeetCone",
                 superstructure
                     .getCommand(States.YEET_CONE)
                     .withTimeout(0.5)
-                    .andThen(Commands.runOnce(() -> intake.setGamePiece(HeldGamePiece.NOTHING)))),
+                    .andThen(Commands.runOnce(() -> intake.setGamePiece(HeldGamePiece.NOTHING)))
+                    .andThen(Commands.runOnce(() -> superstructure.set(States.STOWED)))),
+            Map.entry(
+                "yeetConeMid",
+                superstructure
+                    .getCommand(States.YEET_CONE_MID)
+                    .withTimeout(0.5)
+                    .andThen(Commands.runOnce(() -> intake.setGamePiece(HeldGamePiece.NOTHING))).andThen(Commands.runOnce(() -> superstructure.set(States.STOWED)))),
             Map.entry("superstructureLow", superstructure.getManualScoreCommand(NodeHeight.LOW)),
             Map.entry("superstructureMid", superstructure.getManualScoreCommand(NodeHeight.MID)),
             Map.entry("superstructureHigh", superstructure.getManualScoreCommand(NodeHeight.HIGH)),

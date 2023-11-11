@@ -123,8 +123,15 @@ public class SwerveModule {
             "Swerve/" + constants.corner.toString() + "/DriveMotorStatorCurrent",
             driveMotorStatorCurrent.refresh().getValue());
 
-    Logger.getInstance().recordOutput("Swerve/"+ constants.corner.toString() +"/SteerMotorCancoderPosition", getRawCancoderPosition().getDegrees());
-    Logger.getInstance().recordOutput("Swerve/" + constants.corner.toString() + "/SteerMorotPosition", getSteerMotorPosition().getDegrees());
+    Logger.getInstance()
+        .recordOutput(
+            "Swerve/" + constants.corner.toString() + "/SteerMotorCancoderPosition",
+            getCancoderPosition().getDegrees());
+    Logger.getInstance()
+        .recordOutput(
+            "Swerve/" + constants.corner.toString() + "/SteerMotorPosition",
+            getSteerMotorPosition().getDegrees());
+
   }
 
   public void setDesiredState(

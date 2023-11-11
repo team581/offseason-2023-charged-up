@@ -50,7 +50,6 @@ public class RumbleControllerSubsystem extends LifecycleSubsystem {
   }
 
   private Command getVibrateCommand() {
-
     return getVibrateOnceCommand()
         .andThen(getVibrateOnceCommand())
         .andThen(getVibrateOnceCommand());

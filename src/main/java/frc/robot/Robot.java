@@ -220,7 +220,7 @@ public class Robot extends LoggedRobot {
     // X swerve
     driveController.start().onTrue(swerve.getXSwerveCommand());
 
-    //Manual Auto Balance
+    // Manual Auto Balance
     driveController
         .povLeft()
         .onTrue(swerve.run(() -> autobalance.setEnabled(true)))

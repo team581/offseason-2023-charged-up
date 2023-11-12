@@ -267,7 +267,7 @@
       },
       "holonomicAngle": -180,
       "isReversal": false,
-      "velOverride": 1.7,
+      "velOverride": 2.7,
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
@@ -342,7 +342,7 @@
       ]
     },
     {
-      "position": 6.109090909090871,
+      "position": 5.85,
       "names": [
         "yeetCone"
       ]
@@ -369,12 +369,6 @@
       "position": 9.95,
       "names": [
         "scoreMidCube"
-      ]
-    },
-    {
-      "position": 11.672727272727245,
-      "names": [
-        "intakeCone"
       ]
     }
   ]

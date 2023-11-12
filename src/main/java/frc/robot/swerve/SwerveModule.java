@@ -131,7 +131,6 @@ public class SwerveModule {
         .recordOutput(
             "Swerve/" + constants.corner.toString() + "/SteerMotorPosition",
             getSteerMotorPosition().getDegrees());
-
   }
 
   public void setDesiredState(

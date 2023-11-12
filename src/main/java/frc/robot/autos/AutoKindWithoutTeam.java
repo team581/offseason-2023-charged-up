@@ -7,7 +7,6 @@ package frc.robot.autos;
 public enum AutoKindWithoutTeam {
   DO_NOTHING(AutoKind.DO_NOTHING, AutoKind.DO_NOTHING),
 
-
   MID_1_BALANCE(AutoKind.RED_MID_1_BALANCE, AutoKind.BLUE_MID_1_BALANCE),
   MID_BUMP_1_5_BALANCE(AutoKind.RED_MID_BUMP_1_5_BALANCE, AutoKind.BLUE_MID_BUMP_1_5_BALANCE),
   MID_FLAT_1_5_BALANCE(AutoKind.RED_MID_FLAT_1_5_BALANCE, AutoKind.BLUE_MID_FLAT_1_5_BALANCE),

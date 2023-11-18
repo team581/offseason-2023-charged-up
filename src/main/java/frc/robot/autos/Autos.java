@@ -124,25 +124,59 @@ public class Autos extends LifecycleSubsystem {
                 superstructure
                     .getScoreCommand(NodeHeight.LOW, 0, true)
                     .withTimeout(1)
-                    .andThen(Commands.runOnce(() -> intake.setGamePiece(HeldGamePiece.NOTHING)))),
+                    .andThen(
+                        Commands.runOnce(
+                            () -> {
+                              intake.setGamePiece(HeldGamePiece.NOTHING);
+                              superstructure.set(States.STOWED);
+                            }))),
             Map.entry(
                 "scoreMid",
                 superstructure
                     .getScoreCommand(NodeHeight.MID, 0, true)
-                    .withTimeout(3)
-                    .andThen(Commands.runOnce(() -> intake.setGamePiece(HeldGamePiece.NOTHING)))),
+                    .withTimeout(2.5)
+                    .andThen(
+                        Commands.runOnce(
+                            () -> {
+                              intake.setGamePiece(HeldGamePiece.NOTHING);
+                              superstructure.set(States.STOWED);
+                            }))),
+            Map.entry(
+                "scoreMidCube",
+                superstructure
+                    .getScoreCommand(NodeHeight.MID, 0, true)
+                    .withTimeout(10)
+                    .andThen(
+                        Commands.runOnce(
+                            () -> {
+                              intake.setGamePiece(HeldGamePiece.NOTHING);
+                              superstructure.set(States.STOWED);
+                            }))),
             Map.entry(
                 "scoreHigh",
                 superstructure
                     .getScoreCommand(NodeHeight.HIGH, 0.5, true)
                     .withTimeout(3)
-                    .andThen(Commands.runOnce(() -> intake.setGamePiece(HeldGamePiece.NOTHING)))),
+                    .andThen(
+                        Commands.runOnce(
+                            () -> {
+                              intake.setGamePiece(HeldGamePiece.NOTHING);
+                              superstructure.set(States.STOWED);
+                            }))),
             Map.entry(
-                "yeetMid",
+                "yeetCone",
                 superstructure
-                    .getCommand(States.YEET_CUBE_MID)
-                    .withTimeout(1.5)
-                    .andThen(Commands.runOnce(() -> intake.setGamePiece(HeldGamePiece.NOTHING)))),
+                    .getCommand(States.YEET_CONE)
+                    .withTimeout(0.5)
+                    .andThen(Commands.runOnce(() -> intake.setGamePiece(HeldGamePiece.NOTHING)))
+                    .andThen(Commands.runOnce(() -> superstructure.set(States.STOWED)))),
+            Map.entry(
+                "yeetConeMid",
+                superstructure
+                    .getCommand(States.YEET_CONE_MID)
+                    .withTimeout(0.5)
+                    .andThen(Commands.runOnce(() -> intake.setGamePiece(HeldGamePiece.NOTHING)))
+                    .andThen(Commands.runOnce(() -> superstructure.set(States.STOWED)))),
             Map.entry("superstructureLow", superstructure.getManualScoreCommand(NodeHeight.LOW)),
             Map.entry("superstructureMid", superstructure.getManualScoreCommand(NodeHeight.MID)),
             Map.entry("superstructureHigh", superstructure.getManualScoreCommand(NodeHeight.HIGH)),
@@ -281,10 +315,15 @@ public class Autos extends LifecycleSubsystem {
         autoCommand.andThen(
             () -> localization.resetPose(pathGroup.get(0).getInitialHolonomicPose()));
 
-    if (auto == AutoKind.RED_MID_1_BALANCE || auto == AutoKind.BLUE_MID_1_BALANCE) {
-      autoCommand = autoCommand.andThen(getMid1Auto(pathGroup));
-    } else {
-      autoCommand = autoCommand.andThen(autoBuilder.fullAuto(pathGroup));
+    if (pathGroup != null) {
+
+      if (auto == AutoKind.RED_MID_1_BALANCE || auto == AutoKind.BLUE_MID_1_BALANCE) {
+
+        autoCommand = autoCommand.andThen(getMid1Auto(pathGroup));
+
+      } else {
+        autoCommand = autoCommand.andThen(autoBuilder.fullAuto(pathGroup));
+      }
     }
 
     if (auto.autoBalance) {

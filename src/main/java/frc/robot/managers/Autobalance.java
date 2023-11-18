@@ -18,10 +18,11 @@ import frc.robot.util.scheduling.LifecycleSubsystem;
 import frc.robot.util.scheduling.SubsystemPriority;
 
 public class Autobalance extends LifecycleSubsystem {
+  private static final double AUTO_END = 14.85;
   private final SwerveSubsystem swerve;
   private final ImuSubsystem imu;
   private boolean enabled = false;
-  private static final double DRIVE_VELOCITY = -0.475;
+  private static final double DRIVE_VELOCITY = -0.5;
   private static final double ANGLE_THRESHOLD = 11;
   private final LinearFilter autoBalanceFilter = LinearFilter.movingAverage(13);
   private final Timer autoTimer = new Timer();
@@ -57,7 +58,8 @@ public class Autobalance extends LifecycleSubsystem {
     if (enabled) {
       Rotation2d goalAngle = Rotation2d.fromDegrees(FmsSubsystem.isRedAlliance() ? 0 : 180);
 
-      if (driveVelocityDebouncer.calculate(getDriveVelocity() == 0)) {
+      if (driveVelocityDebouncer.calculate(getDriveVelocity() == 0)
+          || autoTimer.hasElapsed(AUTO_END)) {
         swerve.setXSwerve(true);
       } else {
         swerve.setXSwerve(false);
@@ -86,8 +88,13 @@ public class Autobalance extends LifecycleSubsystem {
 
   public Command getCommand() {
     return Commands.run(() -> setEnabled(true), swerve)
-        .until(() -> atGoal() || autoTimer.hasElapsed(14.8))
-        .andThen(runOnce(() -> setEnabled(false)))
+        .until(() -> atGoal() || autoTimer.hasElapsed(14.9))
+        .andThen(
+            runOnce(
+                () -> {
+                  setEnabled(false);
+                  swerve.setXSwerve(true);
+                }))
         .handleInterrupt(() -> setEnabled(false));
   }
 }

@@ -24,8 +24,9 @@ public class Positions {
       new SuperstructurePosition(12, Rotation2d.fromDegrees(50));
   public static final SuperstructurePosition CUBE_NODE_HIGH =
       new SuperstructurePosition(23, Rotation2d.fromDegrees(50));
-  public static final SuperstructurePosition YEET_CUBE_MID =
-      new SuperstructurePosition(3, Rotation2d.fromDegrees(20));
+
+  public static final SuperstructurePosition CONE_SHOOT_MID =
+      new SuperstructurePosition(12, Rotation2d.fromDegrees(2));
 
   public static final SuperstructurePosition INTAKING_CONE_FLOOR =
       new SuperstructurePosition(5, Rotation2d.fromDegrees(92), true);

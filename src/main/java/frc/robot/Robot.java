@@ -221,10 +221,10 @@ public class Robot extends LoggedRobot {
     driveController.start().onTrue(swerve.getXSwerveCommand());
 
     // Manual Auto Balance
-    // driveController
-    //     .povLeft()
-    //     .onTrue(swerve.run(() -> autobalance.setEnabled(true)))
-    //     .onFalse(swerve.runOnce(() -> autobalance.setEnabled(false)));
+    driveController
+        .povLeft()
+        .onTrue(swerve.run(() -> autobalance.setEnabled(true)))
+        .onFalse(swerve.runOnce(() -> autobalance.setEnabled(false)));
 
     // Snaps for all cardinal directions
     driveController.x().onTrue(autoRotate.getCommand(() -> AutoRotate.getLeftAngle()));
@@ -266,6 +266,11 @@ public class Robot extends LoggedRobot {
     operatorController
         .y()
         .onTrue(superstructureManager.getManualScoreCommand(NodeHeight.HIGH))
+        .onFalse(superstructureManager.getCommand(States.STOWED));
+
+    operatorController
+        .povRight()
+        .onTrue(superstructureManager.getCommand(States.YEET_CONE))
         .onFalse(superstructureManager.getCommand(States.STOWED));
 
     // Stow all

@@ -9,6 +9,8 @@ import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
+import edu.wpi.first.math.filter.LinearFilter;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.config.Config;
@@ -27,7 +29,10 @@ public class IntakeSubsystem extends LifecycleSubsystem {
   private final TalonFX motor;
 
   private final Debouncer coneFilterSensor = new Debouncer(10 * 0.02, DebounceType.kBoth);
-  private final Debouncer cubeFilterSensor = new Debouncer(10 * 0.02, DebounceType.kBoth);
+
+  private final LinearFilter voltageFilter = LinearFilter.movingAverage(7);
+  private final LinearFilter velocityFilter = LinearFilter.movingAverage(7);
+  private final Timer intakeTimer = new Timer();
 
   public IntakeSubsystem(TalonFX motor) {
     super(SubsystemPriority.INTAKE);
@@ -36,10 +41,6 @@ public class IntakeSubsystem extends LifecycleSubsystem {
     motor.setInverted(Config.INVERTED_INTAKE);
     motor.configSupplyCurrentLimit(CURRENT_LIMIT);
     motor.overrideLimitSwitchesEnable(false);
-  }
-
-  private boolean sensorHasCube() {
-    return motor.isFwdLimitSwitchClosed() == 1;
   }
 
   private boolean sensorHasCone() {
@@ -53,33 +54,45 @@ public class IntakeSubsystem extends LifecycleSubsystem {
     Logger.getInstance().recordOutput("Intake/Current", motor.getStatorCurrent());
     Logger.getInstance().recordOutput("Intake/Voltage", motor.getMotorOutputVoltage());
     Logger.getInstance().recordOutput("Intake/ConeIntakeSensor", sensorHasCone());
-    Logger.getInstance().recordOutput("Intake/CubeIntakeSensor", sensorHasCube());
   }
 
   @Override
   public void enabledPeriodic() {
 
     boolean coneSensor = coneFilterSensor.calculate(sensorHasCone());
-    boolean cubeSensor = cubeFilterSensor.calculate(sensorHasCube());
     Logger.getInstance().recordOutput("Intake/FilteredConeIntakeSensor", coneSensor);
-    Logger.getInstance().recordOutput("Intake/FilteredCubeIntakeSensor", cubeSensor);
 
-    if (mode == IntakeMode.INTAKE_CUBE) {
-      if (cubeSensor) {
-        gamePiece = HeldGamePiece.CUBE;
-      }
-    } else if (mode == IntakeMode.INTAKE_CONE) {
+    if (mode == IntakeMode.INTAKE_CONE) {
       if (coneSensor) {
         gamePiece = HeldGamePiece.CONE;
       }
-    } else if (mode == IntakeMode.OUTTAKE_CUBE_FAST
-        || mode == IntakeMode.OUTTAKE_CUBE_SLOW
-        || mode == IntakeMode.YEET_CUBE) {
-      if (!cubeSensor) {
-        gamePiece = HeldGamePiece.NOTHING;
-      }
     } else if (mode == IntakeMode.OUTTAKE_CONE || mode == IntakeMode.SHOOT_CONE) {
       if (!coneSensor) {
+        gamePiece = HeldGamePiece.NOTHING;
+      }
+    }
+
+    // Velocity based game piece detection
+    // TODO: Account for native units
+    double motorVelocity = Math.abs(velocityFilter.calculate(motor.getSelectedSensorVelocity()));
+    // TODO: Double check that this is -1 to 1
+    double intakeVoltage = Math.abs(voltageFilter.calculate(motor.getMotorOutputVoltage()) * 12.0);
+    // TODO: Account for native units
+    double theoreticalSpeed = ((6000.0 / 600.0) * (2048.0)); // Talon fx is 6000
+    double threshold = theoreticalSpeed * 0.5;
+    Logger.getInstance().recordOutput("Intake/MotorVelocity", motorVelocity);
+    Logger.getInstance().recordOutput("Intake/IntakeVoltage", intakeVoltage);
+    Logger.getInstance().recordOutput("Intake/TheoreticalSpeed", theoreticalSpeed);
+    Logger.getInstance().recordOutput("Intake/Threshold", threshold);
+    Logger.getInstance().recordOutput("Intake/IntakeTimer", intakeTimer.get());
+    Logger.getInstance().recordOutput("Intake/velocitySurpassThreshold", motorVelocity > threshold);
+
+    if (intakeTimer.hasElapsed(0.5)) {
+      if (motorVelocity < threshold && mode == IntakeMode.INTAKE_CUBE) {
+        gamePiece = HeldGamePiece.CUBE;
+      } else if ((mode == IntakeMode.OUTTAKE_CUBE_FAST
+          || mode == IntakeMode.OUTTAKE_CUBE_SLOW
+          || mode == IntakeMode.YEET_CUBE)) {
         gamePiece = HeldGamePiece.NOTHING;
       }
     }
@@ -115,6 +128,12 @@ public class IntakeSubsystem extends LifecycleSubsystem {
     if (this.mode != mode && (mode == IntakeMode.INTAKE_CONE || mode == IntakeMode.INTAKE_CUBE)) {
       gamePiece = HeldGamePiece.NOTHING;
     }
+
+    if (this.mode != mode) {
+      intakeTimer.reset();
+      intakeTimer.start();
+    }
+
     this.mode = mode;
   }
 

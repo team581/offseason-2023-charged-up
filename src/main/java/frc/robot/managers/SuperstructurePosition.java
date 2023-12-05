@@ -5,6 +5,7 @@
 package frc.robot.managers;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import java.util.Objects;
 
 public class SuperstructurePosition {
   public final double height;
@@ -33,5 +34,28 @@ public class SuperstructurePosition {
     this.angle = angle;
     this.earlyTransitionHeight = earlyTransitionHeight;
     this.skipCollisionAvoidance = skipCollisionAvoidance;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == this) {
+      return true;
+    }
+
+    if (!(obj instanceof SuperstructurePosition)) {
+      return false;
+    }
+
+    SuperstructurePosition other = (SuperstructurePosition) obj;
+
+    return height == other.height
+        && angle.equals(other.angle)
+        && earlyTransitionHeight == other.earlyTransitionHeight
+        && skipCollisionAvoidance == other.skipCollisionAvoidance;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(height, angle, earlyTransitionHeight, skipCollisionAvoidance);
   }
 }

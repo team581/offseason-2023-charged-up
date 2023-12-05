@@ -202,7 +202,7 @@ public class Autos extends LifecycleSubsystem {
                 ? localization::getPose
                 : localization::getOdometryPose,
             localization::resetPose,
-            SwerveSubsystem.KINEMATICS,
+            SwerveSubsystem.SECOND_ORDER_KINEMATICS,
             Config.SWERVE_TRANSLATION_PID,
             Config.SWERVE_ROTATION_PID,
             (states) -> swerve.setModuleStates(states, false, false),

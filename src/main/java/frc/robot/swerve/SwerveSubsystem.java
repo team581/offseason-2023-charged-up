@@ -34,8 +34,13 @@ public class SwerveSubsystem extends LifecycleSubsystem {
   private static final Translation2d FRONT_RIGHT_LOCATION = Config.SWERVE_FRONT_RIGHT_LOCATION;
   private static final Translation2d BACK_LEFT_LOCATION = Config.SWERVE_BACK_LEFT_LOCATION;
   private static final Translation2d BACK_RIGHT_LOCATION = Config.SWERVE_BACK_RIGHT_LOCATION;
-  public static final SwerveDriveKinematics KINEMATICS =
+  // TODO: Make a regular set of swerve kinematics, call it FIRST_ORDER_KINEMATICS
+  // Then, somewhere later on, take the 1st order kinematics, calculate some ChassisSpeeds, and then log them
+  public static final SwerveDriveKinematics FIRST_ORDER_KINEMATICS =
       new SwerveDriveKinematics(
+          FRONT_LEFT_LOCATION, FRONT_RIGHT_LOCATION, BACK_LEFT_LOCATION, BACK_RIGHT_LOCATION);
+  public static final SwerveKinematics2 SECOND_ORDER_KINEMATICS =
+      new SwerveKinematics2(
           FRONT_LEFT_LOCATION, FRONT_RIGHT_LOCATION, BACK_LEFT_LOCATION, BACK_RIGHT_LOCATION);
   public static final double MAX_VELOCITY =
       ((6080.0 / 60.0) / Config.SWERVE_DRIVE_GEARING_REDUCTION) * (Config.WHEEL_DIAMETER * Math.PI);
@@ -145,6 +150,7 @@ public class SwerveSubsystem extends LifecycleSubsystem {
 
     Logger.getInstance().recordOutput("Swerve/SnapToAngle/Goal", goalAngle.getDegrees());
     Logger.getInstance().recordOutput("Swerve/SnapToAngle/Enabled", snapToAngle);
+
   }
 
   @Override
@@ -160,7 +166,7 @@ public class SwerveSubsystem extends LifecycleSubsystem {
     final var backLeftState = backLeft.getState();
     final var backRightState = backRight.getState();
 
-    return KINEMATICS.toChassisSpeeds(
+    return SECOND_ORDER_KINEMATICS.toChassisSpeeds(
         frontLeftState, frontRightState, backLeftState, backRightState);
   }
 
@@ -205,20 +211,28 @@ public class SwerveSubsystem extends LifecycleSubsystem {
     Logger.getInstance().recordOutput("Swerve/CommandedSpeeds/Y", speeds.vyMetersPerSecond);
     Logger.getInstance().recordOutput("Swerve/CommandedSpeeds/Omega", speeds.omegaRadiansPerSecond);
 
-    // Twist computation.
-    double lookAheadSeconds = 0.1;
-    Pose2d target_pose =
-        new Pose2d(
-            lookAheadSeconds * speeds.vxMetersPerSecond,
-            lookAheadSeconds * speeds.vyMetersPerSecond,
-            Rotation2d.fromRadians(lookAheadSeconds * speeds.omegaRadiansPerSecond));
-    Twist2d twist = (new Pose2d()).log(target_pose);
-    speeds.vxMetersPerSecond = twist.dx / lookAheadSeconds;
-    speeds.vyMetersPerSecond = twist.dy / lookAheadSeconds;
-    speeds.omegaRadiansPerSecond = twist.dtheta / lookAheadSeconds; // omega should stay the same.
+    // // Twist computation.
+    // double lookAheadSeconds = 0.1;
+    // Pose2d target_pose =
+    //     new Pose2d(
+    //         lookAheadSeconds * speeds.vxMetersPerSecond,
+    //         lookAheadSeconds * speeds.vyMetersPerSecond,
+    //         Rotation2d.fromRadians(lookAheadSeconds * speeds.omegaRadiansPerSecond));
+    // Twist2d twist = (new Pose2d()).log(target_pose);
+    // speeds.vxMetersPerSecond = twist.dx / lookAheadSeconds;
+    // speeds.vyMetersPerSecond = twist.dy / lookAheadSeconds;
+    // speeds.omegaRadiansPerSecond = twist.dtheta / lookAheadSeconds; // omega should stay the same.
     // Kinematics to convert target chassis speeds to module states.
-    final var moduleStates = KINEMATICS.toSwerveModuleStates(speeds);
-    setModuleStates(moduleStates, openLoop, false);
+    final var secondOrderModuleStates = SECOND_ORDER_KINEMATICS.toSwerveModuleStates(speeds);
+    Logger.getInstance().recordOutput("Swerve/SecondOrderGoalModuleStates", secondOrderModuleStates);
+    setModuleStates(secondOrderModuleStates, openLoop, false);
+    //desiredState = SwerveMath.optimize(desiredState, getState().angle,
+   // Units.radiansToDegrees(lastState.omegaRadPerSecond * configuration.angleKV) *
+   // 0.065);       Change omega based off of this
+
+    final var firstOrderModuleStates = FIRST_ORDER_KINEMATICS.toSwerveModuleStates(speeds);
+    SwerveDriveKinematics.desaturateWheelSpeeds(firstOrderModuleStates, MAX_VELOCITY);
+    Logger.getInstance().recordOutput("Swerve/FirstOrderGoalModuleStates", firstOrderModuleStates);
   }
 
   public void setModuleStates(
@@ -279,8 +293,8 @@ public class SwerveSubsystem extends LifecycleSubsystem {
             robotTranslation.getY(),
             thetaPercentage * MAX_ANGULAR_VELOCITY,
             fieldRelative ? fieldRelativeHeading : new Rotation2d());
-    SwerveModuleState[] moduleStates = KINEMATICS.toSwerveModuleStates(chassisSpeeds);
-    setChassisSpeeds(KINEMATICS.toChassisSpeeds(moduleStates), openLoop);
+    SwerveModuleState[] moduleStates = SECOND_ORDER_KINEMATICS.toSwerveModuleStates(chassisSpeeds);
+    setChassisSpeeds(SECOND_ORDER_KINEMATICS.toChassisSpeeds(moduleStates), openLoop);
   }
 
   public Command getDriveTeleopCommand(DriveController controller) {
@@ -308,7 +322,7 @@ public class SwerveSubsystem extends LifecycleSubsystem {
     return new PPSwerveControllerCommand(
             traj,
             localization::getPose,
-            SwerveSubsystem.KINEMATICS,
+            SwerveSubsystem.SECOND_ORDER_KINEMATICS,
             // x controller
             xController,
             // y controller

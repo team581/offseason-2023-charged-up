@@ -3,17 +3,16 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.swerve;
-
-import com.ctre.phoenix.sensors.CANCoder;
-import com.ctre.phoenixpro.StatusCode;
-import com.ctre.phoenixpro.StatusSignalValue;
-import com.ctre.phoenixpro.configs.ClosedLoopGeneralConfigs;
-import com.ctre.phoenixpro.configs.TalonFXConfiguration;
-import com.ctre.phoenixpro.controls.DutyCycleOut;
-import com.ctre.phoenixpro.controls.PositionVoltage;
-import com.ctre.phoenixpro.controls.VelocityVoltage;
-import com.ctre.phoenixpro.hardware.TalonFX;
-import com.ctre.phoenixpro.signals.InvertedValue;
+import com.ctre.phoenix6.StatusCode;
+import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.ClosedLoopGeneralConfigs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -36,7 +35,7 @@ public class SwerveModule {
   private final SwerveModuleConstants constants;
   private final TalonFX driveMotor;
   private final TalonFX steerMotor;
-  private final CANCoder encoder;
+  private final CANcoder encoder;
   private final DutyCycleOut driveVoltageOpenLoopRequest =
       new DutyCycleOut(0, Config.SWERVE_USE_FOC, true);
   private final PositionVoltage steerMotorControl =
@@ -47,16 +46,16 @@ public class SwerveModule {
   private double commandedDriveVelocity = 0;
   private boolean rotorPositionSet = false;
 
-  private StatusSignalValue<Double> driveMotorStatorCurrent;
+  private StatusSignal<Double> driveMotorStatorCurrent;
 
   public SwerveModule(
-      SwerveModuleConstants constants, TalonFX driveMotor, TalonFX steerMotor, CANCoder encoder) {
+      SwerveModuleConstants constants, TalonFX driveMotor, TalonFX steerMotor, CANcoder encoder) {
     this.constants = constants;
     this.driveMotor = driveMotor;
     this.steerMotor = steerMotor;
     this.encoder = encoder;
 
-    com.ctre.phoenixpro.configs.TalonFXConfiguration driveMotorConfigs = new TalonFXConfiguration();
+    TalonFXConfiguration driveMotorConfigs = new TalonFXConfiguration();
 
     driveMotorConfigs.Slot0.kP = Config.SWERVE_DRIVE_KP;
     driveMotorConfigs.Slot0.kI = Config.SWERVE_DRIVE_KI;
@@ -85,7 +84,7 @@ public class SwerveModule {
       System.out.println("Could not apply configs, error code: " + driveStatus.toString());
     }
 
-    com.ctre.phoenixpro.configs.TalonFXConfiguration steerMotorConfigs = new TalonFXConfiguration();
+    TalonFXConfiguration steerMotorConfigs = new TalonFXConfiguration();
     ClosedLoopGeneralConfigs steerMotorClosedLoopGeneralConfigs = new ClosedLoopGeneralConfigs();
     steerMotorClosedLoopGeneralConfigs.ContinuousWrap = false;
 
@@ -217,6 +216,6 @@ public class SwerveModule {
   }
 
   private Rotation2d getRawCancoderPosition() {
-    return Rotation2d.fromDegrees(encoder.getAbsolutePosition());
+    return Rotation2d.fromDegrees(encoder.getAbsolutePosition().getValue());
   }
 }
